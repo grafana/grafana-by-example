@@ -1,0 +1,21 @@
+receivers:
+ jaeger:
+   protocols:
+     thrift_compact:
+       endpoint: "0.0.0.0:36831"
+
+processors:
+ batch:
+
+exporters:
+ otlp:
+   endpoint: tempo-us-central1.grafana.net:443
+   headers:
+     authorization: ${GRAFANA_TRACES_OTEL_AUTH_HEADER}
+
+service:
+ pipelines:
+   traces:
+     receivers: [jaeger]
+     processors: [batch]
+     exporters: [otlp]

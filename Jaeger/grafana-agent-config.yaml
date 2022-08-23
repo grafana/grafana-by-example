@@ -1,0 +1,42 @@
+server:
+  log_level: debug
+
+# Grafana Cloud Metrics
+metrics:
+  global:
+    scrape_interval: 60s
+    remote_write:
+      - url: ${GRAFANA_METRICS_WRITE_URL}
+        basic_auth:
+          username: ${GRAFANA_METRICS_USERNAME}
+          password: ${GRAFANA_METRICS_API_KEY}
+        send_exemplars: true
+
+# Configures a log ingestion endpoint, used for the autologging feature.
+logs:
+    configs:
+    - name: loki
+      clients:
+        - url: ${GRAFANA_LOGS_WRITE_URL}
+          basic_auth:
+            username: ${GRAFANA_LOGS_USERNAME}
+            password: ${GRAFANA_LOGS_API_KEY}
+          external_labels:
+            job: agent
+    positions_directory: /tmp/positions
+
+# Configures a Tempo instance to receive traces from the microservices.
+traces:
+  configs:
+  - name: tempotraces
+    receivers:
+      jaeger:
+        protocols:
+          thrift_compact:
+            endpoint: "0.0.0.0:16831"
+    # Send batched traces to the Tempo instance.
+    remote_write:
+      - endpoint: ${GRAFANA_TRACES_HOST}
+        basic_auth:
+          username: ${GRAFANA_TRACES_USERNAME}
+          password: ${GRAFANA_TRACES_API_KEY}
