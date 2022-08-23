@@ -24,8 +24,8 @@ source envvars-grafana-cloud-unconfigured.s
 ```
 
 ## Generate Traces
-Browser to: http://127.0.0.1:8080/
+Browse to: http://127.0.0.1:8080/
 
 ## Explore Grafana Cloud Traces
-Browser to your Grafana Cloud account and explore traces from the tempo datasource
+Browse to your Grafana Cloud account and explore traces from the tempo datasource
 
