@@ -3,6 +3,8 @@ Grafana Configuration Examples
 
 Requires Docker and Docker Compose
 
+### Grafana Agent and Jaeger Traces
+
 ## Configure the environment variables
 
 Configure the environment variables below from your Grafana Cloud Account:
