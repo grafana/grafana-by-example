@@ -3,7 +3,7 @@ Grafana Configuration Examples
 
 Requires Docker and Docker Compose
 
-### Grafana Agent and Jaeger Traces
+# Grafana Agent and Jaeger Traces
 
 ## Configure the environment variables
 
