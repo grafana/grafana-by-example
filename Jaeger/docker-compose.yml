@@ -24,7 +24,7 @@ services:
       - "16831:16831"
       - "55679:55679"
     volumes:
-      - "./configured-grafana-config.yaml:/etc/agent/agent.yaml"
+      - "./configured-grafana-agent-config.yaml:/etc/agent/agent.yaml"
     command: [ "-config.file=/etc/agent/agent.yaml" ]
 
   jaeger:
