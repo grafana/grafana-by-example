@@ -11,7 +11,7 @@ Configure the environment variables below from your Grafana Cloud Account:
 
 1. Log into your [Grafana Cloud account](https://grafana.com/auth/sign-in) to access the Cloud Portal
 2. Edit the file: ```envvars-grafana-cloud-unconfigured.sh```
-3. Configure the _USERNAME, _API_KEY and _HOST environment variables from Metrics, Logs and Traces
+3. Configure the _USERNAME, _API_KEY and _HOST environment variables from the Metrics, Logs and Traces sections of Grafana Cloud
 
 ## Configure
 ```
