@@ -1,0 +1,12 @@
+version: "3.7"
+
+services:
+  # Run carbon-relay-ng and generates synthetics metrics
+  carbon-relay:
+    image: carbon-relay-ng
+    ports:
+      - "2003:2003"
+      - "2013:2013"
+    volumes:
+      - "${PWD}/carbon-relay-ng-configured.ini:/etc/carbon-relay-ng/carbon-relay-ng.ini"
+      - "${PWD}/ctl.sh:/carbon-relay-ng/ctl.sh"
