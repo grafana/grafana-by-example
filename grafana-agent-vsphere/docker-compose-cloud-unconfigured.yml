@@ -1,0 +1,41 @@
+version: "2.1"
+
+services:
+  # Grafana agent
+  grafana-agent:
+    image: grafana/agent:latest
+    hostname: grafana-agent
+    ports:
+      - "12347:12345"
+      - "12348:12348"
+      - "6832:6832"
+      - "55679:55679"
+    volumes:
+      - "${PWD}/grafana-agent-config-configured.yaml:/etc/agent/agent.yaml"
+    command: [
+      "-config.file=/etc/agent/agent.yaml",
+      "-enable-features=integrations-next",
+      "-server.http.address=0.0.0.0:12345",
+    ]
+
+  # vsphere Simulator  
+  # docker run --rm -d -p 443:443/tcp nimmis/vcsim:latest
+  vcsimulator:
+    image: nimmis/vcsim:latest
+    hostname: vcsimulator
+    restart: always
+    ports:
+      - "443:443"
+
+  # vsphere powercorecli  
+  # docker run --rm -it --net=host vmware/powerclicore
+  # Set-PowerCLIConfiguration -InvalidCertificateAction ignore -confirm:$false
+  # Connect-VIServer -Server vcsimulator -Port 443 -User u -Password p
+  # Get-VM
+  vcpowerclicore:
+    image: vmware/powerclicore
+    hostname: vcpowerclicore
+    entrypoint: [ "sleep", "86400" ]
+    #network_mode: "host"
+    #restart: always
+    #command: [ "/opt/microsoft/powershell/7-lts/pwsh" ]

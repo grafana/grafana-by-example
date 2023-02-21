@@ -1,0 +1,76 @@
+# Updated 08-Feb-2023 by David Ryder, Grafana Labs
+#
+# Requires the use of the Grafana Agent -enable-features=integrations-next flag to enable the revamped integrations subsystem
+# The Integrations Revamp (Experimental) https://grafana.com/docs/agent/latest/configuration/integrations/integrations-next/#integrations-revamp-experimental
+# Grafana Agent - https://github.com/grafana/agent/releases
+# ./agent-darwin-amd64 -config.file=grafana-agent-config-configured.yaml -enable-features=integrations-next
+
+# vsphere config (beta) - https://grafana.com/docs/agent/latest/configuration/integrations/integrations-next/vsphere-config/#vsphere-config-beta
+integrations:
+  vsphere_configs:
+    - vsphere_url: https://vcsimulator:443/sdk
+      vsphere_user: u
+      vsphere_password: p
+      request_chunk_size: 256
+      collect_concurrency: 8
+      instance: vsphere
+      autoscrape:
+        enable: true
+        metrics_instance: integrations
+
+# logs_config - https://grafana.com/docs/agent/latest/configuration/logs-config/#logs_config
+# logs:
+#   configs:
+#   - clients:
+#     - basic_auth:
+#         password: ${GRAFANA_LOGS_API_KEY}
+#         username: ${GRAFANA_LOGS_USERNAME}
+#       url: ${GRAFANA_LOGS_WRITE_URL}
+#     name: integrations
+#     positions:
+#       filename: /tmp/positions.yaml
+#     scrape_configs:
+#     - job_name: integrations/node_exporter_journal_scrape
+#       journal:
+#         labels:
+#           instance: il-itacess-lp2
+#           job: integrations/node_exporter
+#         max_age: 24h
+#       relabel_configs:
+#       - source_labels:
+#         - __journal__systemd_unit
+#         target_label: unit
+#       - source_labels:
+#         - __journal__boot_id
+#         target_label: boot_id
+#       - source_labels:
+#         - __journal__transport
+#         target_label: transport
+#       - source_labels:
+#         - __journal_priority_keyword
+#         target_label: level
+#     - job_name: integrations/node_exporter_direct_scrape
+#       static_configs:
+#       - labels:
+#           __path__: /var/log/{syslog,messages,*.log}
+#           instance: il-itacess-lp2
+#           job: integrations/node_exporter
+#         targets:
+#         - localhost
+#     target_config:
+#       sync_period: 10s
+
+# metrics_config - https://grafana.com/docs/agent/latest/configuration/metrics-config/#metrics_config
+metrics:
+  configs:
+  - name: integrations
+    remote_write:
+    - basic_auth:
+        password: ${GRAFANA_METRICS_API_KEY}
+        username: ${GRAFANA_METRICS_USERNAME}
+      url: ${GRAFANA_METRICS_WRITE_URL}
+  global:
+    scrape_interval: 60s
+  wal_directory: /tmp/grafana-agent-wal
+  #
+  # End
