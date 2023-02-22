@@ -12,6 +12,7 @@ DOCKER_FILES_DIR="dockerfiles"
 DOCKER_COMPOSE_DIR="docker-compose"
 UNCONFIGURE_FILE="unconfigure.sh"
 
+CONFIGURED_DIR="./configured"
 
 _escapeRegex() {
   echo $(printf '%s\n' "$1" | sed 's/[\[\.*^$/]/\\&/g' )
@@ -33,8 +34,21 @@ _getContainerIdFromName() {
   echo $CONTAINER_ID
 }
 
+_configureFromEnvvars() {
+  CURRENT_DIR_NAME="${PWD##*/}"
+  mkdir -p $CONFIGURED_DIR
+  SRC_CONFIG_FILE=$1
+  DST_CONFIG_FILE="$CONFIGURED_DIR/$SRC_CONFIG_FILE"
+  cat $SRC_CONFIG_FILE | envsubst > $DST_CONFIG_FILE
+  echo "Created: $DST_CONFIG_FILE"
+}
+
 case "$CMD" in
   configure)
+    _configureFromEnvvars docker-compose-cloud.yaml
+    _configureFromEnvvars grafana-agent-config.yaml
+  ;;
+  configure-previous)
     # Configure Docker Compose config
     DST_CONFIG_FILE="docker-compose-cloud-configured.yml"
     SRC_CONFIG_FILE="docker-compose-cloud-unconfigured.yml"
@@ -50,17 +64,14 @@ case "$CMD" in
     echo "Created: $DST_CONFIG_FILE"
     echo "rm $DST_CONFIG_FILE" >> $UNCONFIGURE_FILE
   ;;
-  start-vcsim)
-  date
-  ;;
   run)
     docker run -i -t $CMD_ARG1 bash
   ;;
   cloud-up|up)
-    docker-compose -f docker-compose-cloud-configured.yml up -d
+    docker-compose -f $CONFIGURED_DIR/docker-compose-cloud.yaml up -d
   ;;
   cloud-down|down)
-    docker-compose -f docker-compose-cloud-configured.yml down
+    docker-compose -f $CONFIGURED_DIR/docker-compose-cloud.yaml down
   ;;
   restart)
     ./ctl.sh down

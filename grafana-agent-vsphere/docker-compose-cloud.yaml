@@ -11,7 +11,7 @@ services:
       - "6832:6832"
       - "55679:55679"
     volumes:
-      - "${PWD}/grafana-agent-config-configured.yaml:/etc/agent/agent.yaml"
+      - "${PWD}/configured/grafana-agent-config.yaml:/etc/agent/agent.yaml"
     command: [
       "-config.file=/etc/agent/agent.yaml",
       "-enable-features=integrations-next",
