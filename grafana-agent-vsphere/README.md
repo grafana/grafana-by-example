@@ -7,7 +7,8 @@ The grafana Agent [vsphere_config](https://grafana.com/docs/agent/latest/configu
 
 ## Usage
 
-
+Requires Docker, docker-compose, and Linux envsubst and jq
+ 
 ### Environment Varibles
 Configure the environment variables below from your Grafana Cloud Account:
 
