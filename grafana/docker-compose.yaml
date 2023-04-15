@@ -1,0 +1,21 @@
+version: "3.8"
+volumes:
+  grafana:
+  postgres:
+
+services:
+
+  # Grafana for exploring and visualizing data
+  grafana-server:
+    image: grafana/grafana:9.0.6-ubuntu
+    #image: grafana/grafana:latest
+    #image: grafana/grafana:8.2.1
+    #image: grafana/grafana:8.5.6
+    #restart: always
+    volumes:
+      - "./grafana/grafana.ini:/etc/grafana/grafana.ini"
+
+    ports:
+      - "3000:3000"
+
+ 
