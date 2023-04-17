@@ -23,6 +23,7 @@ case "$CMD" in
     # Requires
     # export GRAFANA_FARO_KEY=
     cat unconfigured-index.html | envsubst > configured-index.html
+  ;;
   run)
     docker run -i -t $CMD_ARG1 bash
   ;;
