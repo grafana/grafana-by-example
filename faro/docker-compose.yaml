@@ -15,7 +15,7 @@ services:
     #restart: always
     volumes:
       - "./grafana/grafana.ini:/etc/grafana/grafana.ini"
-      - "./configued-index.html:/usr/share/grafana/public/views/index.html"
+      - "./configured-index.html:/usr/share/grafana/public/views/index.html"
       #- "./index-template.html:/usr/share/grafana/public/views/index-template.html"
       #- "./grafana/provisioning:/etc/grafana/provisioning"
       #- "./grafana/provisioning/dashboards:/var/lib/grafana/dashboards"
