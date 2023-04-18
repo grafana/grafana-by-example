@@ -11,9 +11,9 @@
     window.GrafanaFaroWebSdk.initializeFaro({
         url: 'https://faro-collector-prod-us-central-0.grafana.net/collect/${GRAFANA_FARO_APP_KEY}',
         app: {
-            name: 'Grafana Server',
-            version: '1.0.0',
-            environment: 'production'
+            name: '${GRAFANA_FARO_APP_NAME}',
+            version: '${GRAFANA_FARO_APP_VERSION}',
+            environment: '${GRAFANA_FARO_APP_ENVIRONMENT}'
             },
         });
 
