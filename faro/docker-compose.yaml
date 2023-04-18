@@ -19,7 +19,7 @@ services:
       #- "./index-template.html:/usr/share/grafana/public/views/index-template.html"
       #- "./grafana/provisioning:/etc/grafana/provisioning"
       #- "./grafana/provisioning/dashboards:/var/lib/grafana/dashboards"
-      - "/tmp/container-tmp:/tmp/container-tmp"
+      #- "/tmp/container-tmp:/tmp/container-tmp"
     ports:
       - "3000:3000"
     environment:
