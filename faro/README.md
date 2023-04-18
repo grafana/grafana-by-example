@@ -16,6 +16,7 @@ Requires the environment variable ```GRAFANA_FARO_APP_KEY``` to be set to the Gr
 
 ### Access the local Grafana instance
 Browser to the local: [Grafana instance](http://localhost:3000) and login using ```admin/welcome1```
+
 Navigate around to generate Faro telememetry data
 
 ### Validate the Faro telemetry data
