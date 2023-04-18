@@ -9,7 +9,7 @@
   webSdkScript.src = 'https://unpkg.com/@grafana/faro-web-sdk@^1.0.0/dist/bundle/faro-web-sdk.iife.js';
   webSdkScript.onload = () => {
     window.GrafanaFaroWebSdk.initializeFaro({
-        url: 'https://faro-collector-prod-us-central-0.grafana.net/collect/${GRAFANA_FARO_KEY}',
+        url: 'https://faro-collector-prod-us-central-0.grafana.net/collect/${GRAFANA_FARO_APP_KEY}',
         app: {
             name: 'Grafana Server',
             version: '1.0.0',
