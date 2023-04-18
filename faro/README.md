@@ -4,7 +4,7 @@
 
 ### Configure the required environment variables
 
-Requires the environment variable ```GRAFANA_FARO_APP_KEY``` to be set to the Grafana Cloud Observability Application
+Configure the environment variables in ```envvars-empty.sh``` to match the Grafana Cloud Observability Application. Ensure the environment variable ```GRAFANA_FARO_APP_KEY``` is set to match the Grafana Cloud Observability Application.
 
 ```source envvars-empty.sh```
 
