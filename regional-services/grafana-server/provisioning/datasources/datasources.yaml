@@ -1,0 +1,28 @@
+apiVersion: 1
+
+datasources:
+  - name: Loki
+    type: loki
+    isDefault: false
+    access: proxy
+    uid: loki
+    url: http://loki:3100
+    jsonData:
+      derivedFields:
+        - datasourceUid: tempo
+          matcherRegex: "^.*?traceI[d|D]=(\\w+).*$"
+          name: traceId
+          url: '$${__value.raw}'
+ 
+  - name: Mimir
+    type: prometheus
+    access: proxy
+    isDefault: false
+    uid: mimir
+    url: http://mimir:9009/prometheus
+    jsonData:
+      exemplarTraceIdDestinations:
+        - datasourceUid: mimir
+          name: traceId
+      httpMethod: POST
+      timeInterval: "2s"

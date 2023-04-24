@@ -1,0 +1,58 @@
+version: "3.8"
+volumes:
+  grafana:
+  postgres:
+
+services:
+
+  # Grafana for exploring and visualizing data
+  grafana-server:
+    image: grafana/grafana:latest
+    #image: grafana/grafana:9.0.6-ubuntu
+    #image: grafana/grafana:8.2.1
+    #image: grafana/grafana:8.5.6
+    #restart: always
+    volumes:
+      - "./grafana-server/grafana.ini:/etc/grafana/grafana.ini"
+      - "./grafana-server/provisioning:/etc/grafana/provisioning"
+      - "./grafana-server/provisioning/dashboards:/var/lib/grafana/dashboards"
+
+    ports:
+      - "3000:3000"
+
+  # Grafana Metrics
+  mimir:
+    image: grafana/mimir:latest
+    depends_on:
+      - grafana-server
+    volumes:
+      - "./mimir/config-single.yaml:/etc/mimir/config.yaml"
+    ports:
+      - "9009:9009"
+    command: [
+      "-config.file=/etc/mimir/config.yaml"
+    ]
+
+  # Metrics Generator
+  metrics-generator:
+    image: metrics-generator/metrics-generator
+    build: ./metrics-generator
+    environment:
+      - PROMTHEUS_HTTP_PORT=8001
+    ports:
+      - "8001:8001"
+    command: [ "5", "5", "300", "4" ]
+
+  # Grafana Agent
+  # https://grafana.com/docs/agent/latest/
+  grafana-agent:
+    image: grafana/agent:latest
+    ports:
+      - "12347:12345"
+      - "12348:12348"
+      - "16685:16685"
+      - "16831:16831"
+      - "55679:55679"
+    volumes:
+      - "./grafana-agent/config.yaml:/etc/agent/agent.yaml"
+    command: [ "-config.file=/etc/agent/agent.yaml" ]
