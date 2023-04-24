@@ -1,0 +1,864 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 2,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Mimir"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 18,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Mimir"
+          },
+          "editorMode": "code",
+          "expr": "sum without( group, instance, job) (test_service_status{region=~\"$VAR_REGION_LIST\", service=~\"$VAR_SERVICE_LIST\"} )",
+          "legendFormat": "{{region}}-{{service}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Regional Services",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mimir"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 18,
+        "y": 0
+      },
+      "id": 5,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "editorMode": "code",
+          "expr": "test_service_samples_total{}",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Total Samples",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Mimir"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "center",
+            "cellOptions": {
+              "mode": "basic",
+              "type": "color-background"
+            },
+            "inspect": false
+          },
+          "links": [
+            {
+              "title": "",
+              "url": "Service ${__data.fields[\"service\"]} Region ${__field.name} Value ${__value.text}"
+            }
+          ],
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "red",
+                  "index": 0,
+                  "text": "Error"
+                },
+                "1": {
+                  "color": "orange",
+                  "index": 1,
+                  "text": "Offline"
+                },
+                "2": {
+                  "color": "yellow",
+                  "index": 2,
+                  "text": "Starting"
+                },
+                "3": {
+                  "color": "blue",
+                  "index": 3,
+                  "text": "Pending"
+                },
+                "4": {
+                  "color": "green",
+                  "index": 4,
+                  "text": "Running"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "service"
+            },
+            "properties": [
+              {
+                "id": "custom.align",
+                "value": "left"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "purple",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "id": 3,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Mimir"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum without( group, instance, job) ( test_service_status{region=~\"AL\", service=~\".+\"})",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "{{service}}",
+          "range": false,
+          "refId": "AL"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Mimir"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum without( group, instance, job) ( test_service_status{region=~\"AK\", service=~\".+\"} )",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "{{service}}",
+          "range": false,
+          "refId": "AK"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Mimir"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum without( group, instance, job) ( test_service_status{region=~\"AZ\", service=~\".+\"} )",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "{{service}}",
+          "range": false,
+          "refId": "AZ"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Mimir"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum without( group, instance, job) ( test_service_status{region=~\"AR\", service=~\".+\"} )",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "{{service}}",
+          "range": false,
+          "refId": "AR"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Mimir"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum without( group, instance, job) ( test_service_status{region=~\"CA\", service=~\".+\"} )",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "{{service}}",
+          "range": false,
+          "refId": "CA"
+        }
+      ],
+      "title": "Regional Services",
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "service",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "region": true,
+              "service": false
+            },
+            "indexByName": {},
+            "renameByName": {
+              "Value #AK": "AK",
+              "Value #AL": "AL",
+              "Value #AR": "AR",
+              "Value #AZ": "AZ",
+              "Value #CA": "CZ",
+              "region 4": ""
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Mimir"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 15,
+        "w": 24,
+        "x": 0,
+        "y": 20
+      },
+      "id": 2,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Mimir"
+          },
+          "editorMode": "code",
+          "expr": "test_service_status{}",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Regional Services",
+      "type": "stat"
+    }
+  ],
+  "refresh": "10s",
+  "revision": 1,
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "VAR_REGION_LIST",
+        "options": [
+          {
+            "selected": true,
+            "text": "All",
+            "value": "$__all"
+          },
+          {
+            "selected": false,
+            "text": "AL",
+            "value": "AL"
+          },
+          {
+            "selected": false,
+            "text": "AK",
+            "value": "AK"
+          },
+          {
+            "selected": false,
+            "text": "AZ",
+            "value": "AZ"
+          },
+          {
+            "selected": false,
+            "text": "AR",
+            "value": "AR"
+          },
+          {
+            "selected": false,
+            "text": "CA",
+            "value": "CA"
+          },
+          {
+            "selected": false,
+            "text": "CO",
+            "value": "CO"
+          },
+          {
+            "selected": false,
+            "text": "CT",
+            "value": "CT"
+          },
+          {
+            "selected": false,
+            "text": "DE",
+            "value": "DE"
+          },
+          {
+            "selected": false,
+            "text": "FL",
+            "value": "FL"
+          },
+          {
+            "selected": false,
+            "text": "GA",
+            "value": "GA"
+          },
+          {
+            "selected": false,
+            "text": "HI",
+            "value": "HI"
+          },
+          {
+            "selected": false,
+            "text": "ID",
+            "value": "ID"
+          },
+          {
+            "selected": false,
+            "text": "IL",
+            "value": "IL"
+          },
+          {
+            "selected": false,
+            "text": "IN",
+            "value": "IN"
+          },
+          {
+            "selected": false,
+            "text": "IA",
+            "value": "IA"
+          },
+          {
+            "selected": false,
+            "text": "KS",
+            "value": "KS"
+          },
+          {
+            "selected": false,
+            "text": "KY",
+            "value": "KY"
+          },
+          {
+            "selected": false,
+            "text": "LA",
+            "value": "LA"
+          },
+          {
+            "selected": false,
+            "text": "ME",
+            "value": "ME"
+          },
+          {
+            "selected": false,
+            "text": "MD",
+            "value": "MD"
+          },
+          {
+            "selected": false,
+            "text": "MA",
+            "value": "MA"
+          },
+          {
+            "selected": false,
+            "text": "MI",
+            "value": "MI"
+          },
+          {
+            "selected": false,
+            "text": "MN",
+            "value": "MN"
+          },
+          {
+            "selected": false,
+            "text": "MS",
+            "value": "MS"
+          },
+          {
+            "selected": false,
+            "text": "MO",
+            "value": "MO"
+          },
+          {
+            "selected": false,
+            "text": "MT",
+            "value": "MT"
+          },
+          {
+            "selected": false,
+            "text": "NE",
+            "value": "NE"
+          },
+          {
+            "selected": false,
+            "text": "NV",
+            "value": "NV"
+          },
+          {
+            "selected": false,
+            "text": "NH",
+            "value": "NH"
+          },
+          {
+            "selected": false,
+            "text": "NJ",
+            "value": "NJ"
+          },
+          {
+            "selected": false,
+            "text": "NM",
+            "value": "NM"
+          },
+          {
+            "selected": false,
+            "text": "NY",
+            "value": "NY"
+          },
+          {
+            "selected": false,
+            "text": "NC",
+            "value": "NC"
+          },
+          {
+            "selected": false,
+            "text": "ND",
+            "value": "ND"
+          },
+          {
+            "selected": false,
+            "text": "OH",
+            "value": "OH"
+          },
+          {
+            "selected": false,
+            "text": "OK",
+            "value": "OK"
+          },
+          {
+            "selected": false,
+            "text": "OR",
+            "value": "OR"
+          },
+          {
+            "selected": false,
+            "text": "PA",
+            "value": "PA"
+          },
+          {
+            "selected": false,
+            "text": "RI",
+            "value": "RI"
+          },
+          {
+            "selected": false,
+            "text": "SC",
+            "value": "SC"
+          },
+          {
+            "selected": false,
+            "text": "SD",
+            "value": "SD"
+          },
+          {
+            "selected": false,
+            "text": "TN",
+            "value": "TN"
+          },
+          {
+            "selected": false,
+            "text": "TX",
+            "value": "TX"
+          },
+          {
+            "selected": false,
+            "text": "UT",
+            "value": "UT"
+          },
+          {
+            "selected": false,
+            "text": "VT",
+            "value": "VT"
+          },
+          {
+            "selected": false,
+            "text": "VA",
+            "value": "VA"
+          },
+          {
+            "selected": false,
+            "text": "WA",
+            "value": "WA"
+          },
+          {
+            "selected": false,
+            "text": "WV",
+            "value": "WV"
+          },
+          {
+            "selected": false,
+            "text": "WI",
+            "value": "WI"
+          },
+          {
+            "selected": false,
+            "text": "WY",
+            "value": "WY"
+          }
+        ],
+        "query": "AL,AK,AZ,AR,CA,CO,CT,DE,FL,GA,HI,ID,IL,IN,IA,KS,KY,LA,ME,MD,MA,MI,MN,MS,MO,MT,NE,NV,NH,NJ,NM,NY,NC,ND,OH,OK,OR,PA,RI,SC,SD,TN,TX,UT,VT,VA,WA,WV,WI,WY",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "compute",
+          "value": "compute"
+        },
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "VAR_SERVICE_LIST",
+        "options": [
+          {
+            "selected": false,
+            "text": "All",
+            "value": "$__all"
+          },
+          {
+            "selected": true,
+            "text": "compute",
+            "value": "compute"
+          },
+          {
+            "selected": false,
+            "text": "database",
+            "value": "database"
+          },
+          {
+            "selected": false,
+            "text": "storage",
+            "value": "storage"
+          },
+          {
+            "selected": false,
+            "text": "network",
+            "value": "network"
+          },
+          {
+            "selected": false,
+            "text": "security",
+            "value": "security"
+          },
+          {
+            "selected": false,
+            "text": "kubernetes",
+            "value": "kubernetes"
+          },
+          {
+            "selected": false,
+            "text": "containers",
+            "value": "containers"
+          },
+          {
+            "selected": false,
+            "text": "web-apps",
+            "value": "web-apps"
+          },
+          {
+            "selected": false,
+            "text": "mobile-apps",
+            "value": "mobile-apps"
+          },
+          {
+            "selected": false,
+            "text": "serveless",
+            "value": "serveless"
+          },
+          {
+            "selected": false,
+            "text": "ml-ai",
+            "value": "ml-ai"
+          },
+          {
+            "selected": false,
+            "text": "visualization",
+            "value": "visualization"
+          }
+        ],
+        "query": "compute,database,storage,network,security,kubernetes,containers,web-apps,mobile-apps,serveless,ml-ai,visualization",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "Mimir"
+        },
+        "filters": [],
+        "hide": 0,
+        "name": "Filters",
+        "skipUrlSync": false,
+        "type": "adhoc"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Regional Services 2",
+  "uid": "b913ad8v",
+  "version": 1,
+  "weekStart": ""
+}
