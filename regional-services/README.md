@@ -1,6 +1,6 @@
 ## Grafana Prometheus Client Examples
 
-Provides a Grafana stack including: Grafana Server, Mimir, Grafana Agent and a Prometheus Client metrics generator
+Provides a Grafana stack including: Grafana Server, Mimir, Grafana Agent and a Python Prometheus Client metrics generator
 
 [Documentation: Promtheus Python Client ](https://github.com/prometheus/client_python)
 
