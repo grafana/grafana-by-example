@@ -39,6 +39,10 @@ case "$CMD" in
   down|stop)
     docker-compose -f docker-compose.yaml down
   ;;
+  restart)
+    docker-compose -f docker-compose.yaml down
+    docker-compose -f docker-compose.yaml up -d
+  ;;
   logs)
     CONTAINER_ID=$(_getContainerIdFromName $2)
     docker logs $CONTAINER_ID -f

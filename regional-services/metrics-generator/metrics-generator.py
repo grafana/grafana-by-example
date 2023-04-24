@@ -47,10 +47,11 @@ if __name__ == "__main__":
         # Initial values
         statusData = [ [ random.choices(statusList)[0] for i in range(numberOfRegions) ] for ii in range(numberOfServices) ]
 
-        # Promethues Metric
+        # Promethues Metrics
         metric1 = Gauge("test_service_status", "Regional Services Test Metric", ["region", "service"] )
         metric2 = Counter("test_service_samples", "Regional Services Test Metric Samples Sent" )
-        metric3 = Info("test_service_version", "Version Information")               
+        metric3 = Info("test_service_version", "Version Information")
+        METRIC_GENERATION_TIME = Summary('test_service_metric_generation_seconds', 'Time spent generating metrics')               
         start_http_server(prometheusHttpPort)
 
         metric3.info({"version": "1.0.0", "buildInfo": "test1"})
@@ -64,7 +65,7 @@ if __name__ == "__main__":
                 for region in range( numberOfRegions ):
                     for service in range( numberOfServices ):
                         metric1.labels(region=regionList[ region ],
-                                 service=serviceList[ service ]).set( statusData[region][service] )
+                                service=serviceList[ service ]).set( statusData[region][service] )
                 samplesSent += 1
                 metric2.inc()
 
