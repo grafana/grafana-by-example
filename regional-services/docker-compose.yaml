@@ -34,6 +34,7 @@ services:
     ]
 
   # Metrics Generator
+  # https://github.com/prometheus/client_python
   metrics-generator:
     image: metrics-generator/metrics-generator
     build: ./metrics-generator

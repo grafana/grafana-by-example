@@ -3,6 +3,7 @@ from prometheus_client import Summary
 from prometheus_client import Counter
 from prometheus_client import Gauge
 from prometheus_client import Histogram
+from prometheus_client import Info
 import prometheus_client
 import random
 import time
@@ -11,9 +12,8 @@ from datetime import datetime, timedelta
 import platform
 
 
-#
-#
-#https://github.com/prometheus/client_python
+# References
+# https://github.com/prometheus/client_python
 
 # Disabling Default Collector metrics
 prometheus_client.REGISTRY.unregister(prometheus_client.GC_COLLECTOR)
@@ -49,7 +49,11 @@ if __name__ == "__main__":
 
         # Promethues Metric
         metric1 = Gauge("test_service_status", "Regional Services Test Metric", ["region", "service"] )
+        metric2 = Counter("test_service_samples", "Regional Services Test Metric Samples Sent" )
+        metric3 = Info("test_service_version", "Version Information")               
         start_http_server(prometheusHttpPort)
+
+        metric3.info({"version": "1.0.0", "buildInfo": "test1"})
 
         # Run
         while datetime.now() < timeoutTime:
@@ -62,6 +66,7 @@ if __name__ == "__main__":
                         metric1.labels(region=regionList[ region ],
                                  service=serviceList[ service ]).set( statusData[region][service] )
                 samplesSent += 1
+                metric2.inc()
 
                 # Update sample values
                 statusData = [[ ((statusData[r][s] + 1) % len( statusList )) for r in range(numberOfRegions) ] for s in range(numberOfServices) ]
