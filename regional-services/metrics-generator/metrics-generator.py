@@ -30,12 +30,14 @@ if __name__ == "__main__":
         numberOfServices = int(sys.argv[3])if len(sys.argv) > 3 else 5
         durationMinutes = int(sys.argv[4])if len(sys.argv) > 4 else 60 # Run for 60 minutes
         ratePerMinute = float(sys.argv[5])if len(sys.argv) > 5 else 1 # Produce 1 sample per minute
+        reportIntervalSec = float(sys.argv[6])if len(sys.argv) > 6 else 60
+
         delaySec = 60.0 / ratePerMinute
         timeoutSec = durationMinutes * 60
         timeoutTime = datetime.now() + timedelta(seconds=timeoutSec)
         startTime = datetime.now()
         sendMetricTime = datetime.now() + timedelta(seconds=delaySec)
-        reportTime = datetime.now() + timedelta(seconds=60)
+        reportTime = datetime.now() + timedelta(seconds=reportIntervalSec)
         samplesSent = 0
 
         # Data set
@@ -56,7 +58,7 @@ if __name__ == "__main__":
         # Start the Prometheus HTTP Server               
         start_http_server(prometheusHttpPort)
 
-        # Set a metric sample value
+        # Set an Information metric sample value
         metric3.info({"version": "1.0.0", "buildInfo": "test1"})
 
         # Run
@@ -70,16 +72,19 @@ if __name__ == "__main__":
                         # Set a metric sample value: set the label values and the sample value
                         metric1.labels(region=regionList[ region ], service=serviceList[ service ]).set( statusData[region][service] )
                 samplesSent += 1
+
+                # Increment a Counter metric
                 metric2.inc()
 
                 # Update sample values
                 statusData = [[ ((statusData[r][s] + 1) % len( statusList )) for r in range(numberOfRegions) ] for s in range(numberOfServices) ]
             if now > reportTime:
                 reportTime = now + timedelta(seconds=60)
+                runTimeRemaining = (timeoutTime - now).seconds
                 runTimeSeconds = (now - startTime).seconds
                 runTimeMinutes = runTimeSeconds / 60
                 samplesPerMinute = samplesSent /  runTimeSeconds * 60.0
-                print( "{} {:.2f} {} {:.2f} {:.2f}".format(now, runTimeMinutes, samplesSent, samplesPerMinute, delaySec))
+                print( "{} {:.2f} {} {:.2f} {:.2f} {}".format(now, runTimeMinutes, samplesSent, samplesPerMinute, delaySec, runTimeRemaining))
         
     elif cmd == "test":
         print("test")
