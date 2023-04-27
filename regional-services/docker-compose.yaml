@@ -7,7 +7,8 @@ services:
 
   # Grafana for exploring and visualizing data
   grafana-server:
-    image: grafana/grafana:latest
+    #image: grafana/grafana:latest
+    image: grafana/grafana-enterprise:latest
     #image: grafana/grafana:9.0.6-ubuntu
     #image: grafana/grafana:8.2.1
     #image: grafana/grafana:8.5.6
@@ -16,7 +17,7 @@ services:
       - "./grafana-server/grafana.ini:/etc/grafana/grafana.ini"
       - "./grafana-server/provisioning:/etc/grafana/provisioning"
       - "./grafana-server/provisioning/dashboards:/var/lib/grafana/dashboards"
-
+      - "./grafana-server/grafana-enterprise-license.jwt:/var/lib/grafana/license.jwt"
     ports:
       - "3000:3000"
 
