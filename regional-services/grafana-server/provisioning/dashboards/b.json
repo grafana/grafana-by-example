@@ -24,7 +24,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 2,
+  "id": 3,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -141,7 +141,7 @@
           "links": [
             {
               "title": "",
-              "url": "http://localhost:3000/d/a913ad8v/regional-services-1?orgId=1&refresh=10s&var-VAR_REGION_LIST=${__field.displayName}&var-VAR_SERVICE_LIST=${__data.fields[\"service\"]}&var-VAR_VALUE=${__value.text}"
+              "url": "Service ${__data.fields[\"service\"]} Region ${__field.name} Value ${__value.text}"
             }
           ],
           "mappings": [
@@ -328,36 +328,19 @@
           "options": {
             "excludeByName": {
               "Time": true,
-              "Time 1": true,
-              "Time 2": true,
-              "Time 3": true,
-              "Time 4": true,
-              "Time 5": true,
               "__name__": true,
               "region": true,
-              "region 1": true,
-              "region 2": true,
-              "region 3": true,
-              "region 4": true,
-              "region 5": true,
               "service": false
             },
             "indexByName": {},
             "renameByName": {
-              "Value #AK": "",
-              "Value #AL": "",
-              "Value #AR": "",
-              "Value #AZ": "",
-              "Value #CA": "",
+              "Value #AK": "AK",
+              "Value #AL": "AL",
+              "Value #AR": "AR",
+              "Value #AZ": "AZ",
+              "Value #CA": "CZ",
               "region 4": ""
             }
-          }
-        },
-        {
-          "id": "renameByRegex",
-          "options": {
-            "regex": "Value #(.*)",
-            "renamePattern": "$1"
           }
         }
       ],
@@ -438,12 +421,8 @@
       {
         "current": {
           "selected": false,
-          "text": [
-            "AR"
-          ],
-          "value": [
-            "AR"
-          ]
+          "text": "All",
+          "value": "$__all"
         },
         "hide": 0,
         "includeAll": true,
@@ -451,7 +430,7 @@
         "name": "VAR_REGION_LIST",
         "options": [
           {
-            "selected": false,
+            "selected": true,
             "text": "All",
             "value": "$__all"
           },
@@ -471,7 +450,7 @@
             "value": "AZ"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "AR",
             "value": "AR"
           },
@@ -714,12 +693,8 @@
       {
         "current": {
           "selected": false,
-          "text": [
-            "storage"
-          ],
-          "value": [
-            "storage"
-          ]
+          "text": "compute",
+          "value": "compute"
         },
         "hide": 0,
         "includeAll": true,
@@ -732,7 +707,7 @@
             "value": "$__all"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "compute",
             "value": "compute"
           },
@@ -742,7 +717,7 @@
             "value": "database"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "storage",
             "value": "storage"
           },
@@ -816,8 +791,8 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Regional Services 1",
-  "uid": "a913ad8v",
+  "title": "Regional Services 5",
+  "uid": "a914ad8v",
   "version": 1,
   "weekStart": ""
 }

@@ -1,4 +1,41 @@
 {
+  "__inputs": [
+    {
+      "name": "DS_MIMIR",
+      "label": "Mimir",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Mimir"
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "9.5.1"
+    },
+    {
+      "type": "datasource",
+      "id": "prometheus",
+      "name": "Prometheus",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "stat",
+      "name": "Stat",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    }
+  ],
   "annotations": {
     "list": [
       {
@@ -24,7 +61,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 2,
+  "id": null,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -36,37 +73,14 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "thresholds"
           },
           "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
             },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
+            "inspect": false
           },
           "mappings": [],
           "thresholds": {
@@ -86,24 +100,26 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
-        "w": 23,
+        "h": 18,
+        "w": 22,
         "x": 0,
         "y": 0
       },
       "id": 1,
+      "interval": "$VAR_TIME_INTERVAL",
       "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
         },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
+        "showHeader": true
       },
+      "pluginVersion": "9.5.1",
       "targets": [
         {
           "datasource": {
@@ -118,7 +134,7 @@
         }
       ],
       "title": "Regional Services",
-      "type": "timeseries"
+      "type": "table"
     },
     {
       "datasource": {
@@ -141,7 +157,7 @@
           "links": [
             {
               "title": "",
-              "url": "http://localhost:3000/d/a913ad8v/regional-services-1?orgId=1&refresh=10s&var-VAR_REGION_LIST=${__field.displayName}&var-VAR_SERVICE_LIST=${__data.fields[\"service\"]}&var-VAR_VALUE=${__value.text}"
+              "url": "Service ${__data.fields[\"service\"]} Region ${__field.name} Value ${__value.text}"
             }
           ],
           "mappings": [
@@ -222,7 +238,7 @@
         "h": 12,
         "w": 24,
         "x": 0,
-        "y": 7
+        "y": 18
       },
       "id": 3,
       "options": {
@@ -328,36 +344,19 @@
           "options": {
             "excludeByName": {
               "Time": true,
-              "Time 1": true,
-              "Time 2": true,
-              "Time 3": true,
-              "Time 4": true,
-              "Time 5": true,
               "__name__": true,
               "region": true,
-              "region 1": true,
-              "region 2": true,
-              "region 3": true,
-              "region 4": true,
-              "region 5": true,
               "service": false
             },
             "indexByName": {},
             "renameByName": {
-              "Value #AK": "",
-              "Value #AL": "",
-              "Value #AR": "",
-              "Value #AZ": "",
-              "Value #CA": "",
+              "Value #AK": "AK",
+              "Value #AL": "AL",
+              "Value #AR": "AR",
+              "Value #AZ": "AZ",
+              "Value #CA": "CZ",
               "region 4": ""
             }
-          }
-        },
-        {
-          "id": "renameByRegex",
-          "options": {
-            "regex": "Value #(.*)",
-            "renamePattern": "$1"
           }
         }
       ],
@@ -378,7 +377,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -393,7 +393,7 @@
         "h": 15,
         "w": 24,
         "x": 0,
-        "y": 19
+        "y": 30
       },
       "id": 2,
       "options": {
@@ -410,7 +410,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "9.4.7",
+      "pluginVersion": "9.5.1",
       "targets": [
         {
           "datasource": {
@@ -428,7 +428,7 @@
       "type": "stat"
     }
   ],
-  "refresh": "10s",
+  "refresh": "1m",
   "revision": 1,
   "schemaVersion": 38,
   "style": "dark",
@@ -439,10 +439,10 @@
         "current": {
           "selected": false,
           "text": [
-            "AR"
+            "All"
           ],
           "value": [
-            "AR"
+            "$__all"
           ]
         },
         "hide": 0,
@@ -451,7 +451,7 @@
         "name": "VAR_REGION_LIST",
         "options": [
           {
-            "selected": false,
+            "selected": true,
             "text": "All",
             "value": "$__all"
           },
@@ -471,7 +471,7 @@
             "value": "AZ"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "AR",
             "value": "AR"
           },
@@ -715,10 +715,10 @@
         "current": {
           "selected": false,
           "text": [
-            "storage"
+            "compute"
           ],
           "value": [
-            "storage"
+            "compute"
           ]
         },
         "hide": 0,
@@ -732,7 +732,7 @@
             "value": "$__all"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "compute",
             "value": "compute"
           },
@@ -742,7 +742,7 @@
             "value": "database"
           },
           {
-            "selected": true,
+            "selected": false,
             "text": "storage",
             "value": "storage"
           },
@@ -807,17 +807,81 @@
         "name": "Filters",
         "skipUrlSync": false,
         "type": "adhoc"
+      },
+      {
+        "auto": false,
+        "auto_count": 30,
+        "auto_min": "10s",
+        "current": {
+          "selected": false,
+          "text": "30s",
+          "value": "30s"
+        },
+        "hide": 0,
+        "name": "VAR_TIME_INTERVAL",
+        "options": [
+          {
+            "selected": false,
+            "text": "1s",
+            "value": "1s"
+          },
+          {
+            "selected": false,
+            "text": "2s",
+            "value": "2s"
+          },
+          {
+            "selected": false,
+            "text": "3s",
+            "value": "3s"
+          },
+          {
+            "selected": false,
+            "text": "4s",
+            "value": "4s"
+          },
+          {
+            "selected": false,
+            "text": "5s",
+            "value": "5s"
+          },
+          {
+            "selected": false,
+            "text": "10s",
+            "value": "10s"
+          },
+          {
+            "selected": false,
+            "text": "15s",
+            "value": "15s"
+          },
+          {
+            "selected": true,
+            "text": "30s",
+            "value": "30s"
+          },
+          {
+            "selected": false,
+            "text": "1m",
+            "value": "1m"
+          }
+        ],
+        "query": "1s,2s,3s,4s,5s,10s,15s,30s,1m",
+        "queryValue": "",
+        "refresh": 2,
+        "skipUrlSync": false,
+        "type": "interval"
       }
     ]
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Regional Services 1",
-  "uid": "a913ad8v",
+  "title": "Regional Services 4",
+  "uid": "a413ad8v",
   "version": 1,
   "weekStart": ""
 }

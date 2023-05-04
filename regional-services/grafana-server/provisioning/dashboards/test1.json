@@ -24,119 +24,32 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 2,
+  "id": 6,
   "links": [],
   "liveNow": false,
   "panels": [
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Mimir"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
+      "collapsed": false,
       "gridPos": {
-        "h": 7,
-        "w": 23,
+        "h": 1,
+        "w": 24,
         "x": 0,
         "y": 0
       },
-      "id": 1,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "Mimir"
-          },
-          "editorMode": "code",
-          "expr": "sum without( group, instance, job) (test_service_status{region=~\"$VAR_REGION_LIST\", service=~\"$VAR_SERVICE_LIST\"} )",
-          "legendFormat": "{{region}}-{{service}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Regional Services",
-      "type": "timeseries"
+      "id": 31,
+      "panels": [],
+      "title": "Row title",
+      "type": "row"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "Mimir"
+        "uid": "mimir"
       },
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "thresholds"
-          },
-          "custom": {
-            "align": "center",
-            "cellOptions": {
-              "mode": "basic",
-              "type": "color-background"
-            },
-            "inspect": false
           },
           "links": [
             {
@@ -190,54 +103,37 @@
             ]
           }
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "service"
-            },
-            "properties": [
-              {
-                "id": "custom.align",
-                "value": "left"
-              },
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "purple",
-                  "mode": "fixed"
-                }
-              },
-              {
-                "id": "custom.cellOptions",
-                "value": {
-                  "type": "color-text"
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
-        "h": 12,
-        "w": 24,
+        "h": 4,
+        "w": 12,
         "x": 0,
-        "y": 7
+        "y": 1
       },
-      "id": 3,
+      "id": 21,
+      "maxPerRow": 2,
       "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
           ],
-          "show": false
+          "fields": "",
+          "values": false
         },
-        "showHeader": true
+        "text": {
+          "titleSize": 22,
+          "valueSize": 18
+        },
+        "textMode": "auto"
       },
       "pluginVersion": "9.5.1",
+      "repeat": "VAR_SERVICE_LIST",
+      "repeatDirection": "h",
       "targets": [
         {
           "datasource": {
@@ -246,7 +142,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum without( group, instance, job) ( test_service_status{region=~\"AL\", service=~\".+\"})",
+          "expr": "sum without( group, instance, job) ( test_service_status{region=~\"AL\", service=~\"$VAR_SERVICE_LIST\"})",
           "format": "table",
           "instant": true,
           "legendFormat": "{{service}}",
@@ -260,7 +156,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum without( group, instance, job) ( test_service_status{region=~\"AK\", service=~\".+\"} )",
+          "expr": "sum without( group, instance, job) ( test_service_status{region=~\"AK\", service=~\"$VAR_SERVICE_LIST\"} )",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -275,7 +171,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum without( group, instance, job) ( test_service_status{region=~\"AZ\", service=~\".+\"} )",
+          "expr": "sum without( group, instance, job) ( test_service_status{region=~\"AZ\", service=~\"$VAR_SERVICE_LIST\"} )",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -290,7 +186,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum without( group, instance, job) ( test_service_status{region=~\"AR\", service=~\".+\"} )",
+          "expr": "sum without( group, instance, job) ( test_service_status{region=~\"AR\", service=~\"$VAR_SERVICE_LIST\"} )",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -305,7 +201,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum without( group, instance, job) ( test_service_status{region=~\"CA\", service=~\".+\"} )",
+          "expr": "sum without( group, instance, job) ( test_service_status{region=~\"CA\", service=~\"$VAR_SERVICE_LIST\"} )",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -314,45 +210,8 @@
           "refId": "CA"
         }
       ],
-      "title": "Regional Services",
+      "title": "$VAR_SERVICE_LIST",
       "transformations": [
-        {
-          "id": "joinByField",
-          "options": {
-            "byField": "service",
-            "mode": "outer"
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "Time": true,
-              "Time 1": true,
-              "Time 2": true,
-              "Time 3": true,
-              "Time 4": true,
-              "Time 5": true,
-              "__name__": true,
-              "region": true,
-              "region 1": true,
-              "region 2": true,
-              "region 3": true,
-              "region 4": true,
-              "region 5": true,
-              "service": false
-            },
-            "indexByName": {},
-            "renameByName": {
-              "Value #AK": "",
-              "Value #AL": "",
-              "Value #AR": "",
-              "Value #AZ": "",
-              "Value #CA": "",
-              "region 4": ""
-            }
-          }
-        },
         {
           "id": "renameByRegex",
           "options": {
@@ -361,71 +220,380 @@
           }
         }
       ],
-      "type": "table"
+      "transparent": true,
+      "type": "stat"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "Mimir"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
+      "collapsed": false,
       "gridPos": {
-        "h": 15,
+        "h": 1,
         "w": 24,
         "x": 0,
-        "y": 19
+        "y": 13
       },
-      "id": 2,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
+      "id": 14,
+      "panels": [],
+      "title": "Row title",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 14
+      },
+      "id": 9,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mimir"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "links": [
+                {
+                  "title": "",
+                  "url": "http://localhost:3000/d/a913ad8v/regional-services-1?orgId=1&refresh=10s&var-VAR_REGION_LIST=${__field.displayName}&var-VAR_SERVICE_LIST=${__data.fields[\"service\"]}&var-VAR_VALUE=${__value.text}"
+                }
+              ],
+              "mappings": [
+                {
+                  "options": {
+                    "0": {
+                      "color": "red",
+                      "index": 0,
+                      "text": "Error"
+                    },
+                    "1": {
+                      "color": "orange",
+                      "index": 1,
+                      "text": "Offline"
+                    },
+                    "2": {
+                      "color": "yellow",
+                      "index": 2,
+                      "text": "Starting"
+                    },
+                    "3": {
+                      "color": "blue",
+                      "index": 3,
+                      "text": "Pending"
+                    },
+                    "4": {
+                      "color": "green",
+                      "index": 4,
+                      "text": "Running"
+                    }
+                  },
+                  "type": "value"
+                }
+              ],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 3,
+            "w": 12,
+            "x": 0,
+            "y": 24
+          },
+          "id": 3,
+          "maxPerRow": 2,
+          "options": {
+            "colorMode": "background",
+            "graphMode": "area",
+            "justifyMode": "center",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "9.5.1",
+          "repeat": "VAR_SERVICE_LIST",
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "Mimir"
+              },
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "sum without( group, instance, job) ( test_service_status{region=~\"AL\", service=~\"$VAR_SERVICE_LIST\"})",
+              "format": "table",
+              "instant": true,
+              "legendFormat": "{{service}}",
+              "range": false,
+              "refId": "AL"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "Mimir"
+              },
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "sum without( group, instance, job) ( test_service_status{region=~\"AK\", service=~\"$VAR_SERVICE_LIST\"} )",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "legendFormat": "{{service}}",
+              "range": false,
+              "refId": "AK"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "Mimir"
+              },
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "sum without( group, instance, job) ( test_service_status{region=~\"AZ\", service=~\"$VAR_SERVICE_LIST\"} )",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "legendFormat": "{{service}}",
+              "range": false,
+              "refId": "AZ"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "Mimir"
+              },
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "sum without( group, instance, job) ( test_service_status{region=~\"AR\", service=~\"$VAR_SERVICE_LIST\"} )",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "legendFormat": "{{service}}",
+              "range": false,
+              "refId": "AR"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "Mimir"
+              },
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "sum without( group, instance, job) ( test_service_status{region=~\"CA\", service=~\"$VAR_SERVICE_LIST\"} )",
+              "format": "table",
+              "hide": false,
+              "instant": true,
+              "legendFormat": "{{service}}",
+              "range": false,
+              "refId": "CA"
+            }
           ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
+          "title": "$VAR_SERVICE_LIST",
+          "transformations": [
+            {
+              "id": "renameByRegex",
+              "options": {
+                "regex": "Value #(.*)",
+                "renamePattern": "$1"
+              }
+            }
+          ],
+          "type": "stat"
+        }
+      ],
+      "title": "Row title",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 15
       },
-      "pluginVersion": "9.4.7",
-      "targets": [
+      "id": 8,
+      "panels": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "Mimir"
           },
-          "editorMode": "code",
-          "expr": "test_service_status{}",
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A"
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 7,
+            "w": 23,
+            "x": 0,
+            "y": 26
+          },
+          "id": 1,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "Mimir"
+              },
+              "editorMode": "code",
+              "expr": "sum without( group, instance, job) (test_service_status{region=~\"$VAR_REGION_LIST\", service=~\"$VAR_SERVICE_LIST\"} )",
+              "legendFormat": "{{region}}-{{service}}",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Regional Services",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "Mimir"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 15,
+            "w": 24,
+            "x": 0,
+            "y": 33
+          },
+          "id": 2,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "9.5.1",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "Mimir"
+              },
+              "editorMode": "code",
+              "expr": "test_service_status{}",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Regional Services",
+          "type": "stat"
         }
       ],
-      "title": "Regional Services",
-      "type": "stat"
+      "title": "Row title",
+      "type": "row"
     }
   ],
   "refresh": "10s",
@@ -713,12 +881,20 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": [
-            "storage"
+            "storage",
+            "compute",
+            "database",
+            "network",
+            "security"
           ],
           "value": [
-            "storage"
+            "storage",
+            "compute",
+            "database",
+            "network",
+            "security"
           ]
         },
         "hide": 0,
@@ -732,12 +908,12 @@
             "value": "$__all"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "compute",
             "value": "compute"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "database",
             "value": "database"
           },
@@ -747,12 +923,12 @@
             "value": "storage"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "network",
             "value": "network"
           },
           {
-            "selected": false,
+            "selected": true,
             "text": "security",
             "value": "security"
           },
@@ -816,8 +992,8 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Regional Services 1",
-  "uid": "a913ad8v",
-  "version": 1,
+  "title": "TEST1",
+  "uid": "ba288337-ea81-4fa5-86ed-0b298e53c3c2",
+  "version": 25,
   "weekStart": ""
 }
