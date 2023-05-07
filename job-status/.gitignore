@@ -1,0 +1,4 @@
+unconfigure.sh
+configured*
+**/configured*
+grafana-cloud.env
