@@ -1,0 +1,46 @@
+version: "3.8"
+volumes:
+  grafana:
+  postgres:
+
+services:
+
+  # Log Generator
+  # https://github.com/prometheus/client_python
+  log-generator:
+    image: log-generator/log-generator
+    build: ./log-generator
+    environment:
+      - GRAFANA_LOGS_PROTOCOL=http
+      - GRAFANA_LOGS_USERNAME=
+      - GRAFANA_LOGS_API_KEY=
+      - GRAFANA_LOGS_HOST=log-stream-processor
+      - GRAFANA_LOGS_PORT=5000
+
+  # Metrics Generator
+  # https://github.com/prometheus/client_python
+  log-stream-processor:
+    image: log-stream-processor/log-stream-processor
+    build: ./log-stream-processor
+    environment:
+      - PROMTHEUS_HTTP_PORT=8001
+      - FLASK_RUN_PORT=5000
+    env_file:
+      - grafana-cloud.env
+    ports:
+      - "8001:8001"
+      - "5000:5000"
+
+  # Grafana Agent
+  # https://grafana.com/docs/agent/latest/
+  grafana-agent:
+    image: grafana/agent:latest
+    ports:
+      - "12347:12345"
+      - "12348:12348"
+      - "16685:16685"
+      - "16831:16831"
+      - "55679:55679"
+    volumes:
+      - "./grafana-agent/configured-grafana-agent-config.yaml:/etc/agent/agent.yaml"
+    command: [ "-config.file=/etc/agent/agent.yaml" ]

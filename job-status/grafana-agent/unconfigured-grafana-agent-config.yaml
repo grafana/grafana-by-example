@@ -1,0 +1,23 @@
+server:
+  log_level: debug
+
+# Configures metrics job to scrape from the ClickHouse server
+metrics:
+  wal_directory: /tmp/grafana-agent/wal
+  configs:
+    - name: agent
+      scrape_configs:
+        - job_name: regional-services
+          scrape_interval: 15s
+          static_configs:
+            - targets: ['log-stream-processor:8001']
+              labels:
+                group: 'test-metrics'
+        - job_name: agent
+          static_configs:
+            - targets: ["127.0.0.1:12345"]
+      remote_write:
+        - url: ${GRAFANA_METRICS_WRITE_URL}
+          basic_auth:
+            username: ${GRAFANA_METRICS_USERNAME}
+            password: ${GRAFANA_METRICS_API_KEY}
