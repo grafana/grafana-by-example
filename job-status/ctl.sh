@@ -33,7 +33,7 @@ case "$CMD" in
   ;;
   build)
     docker build -t log-stream-processor/log-stream-processor log-stream-processor
-    docker build -t log-genertor/log-generator log-generator
+    docker build -t log-generator/log-generator log-generator
     docker pull grafana/agent:latest
   ;;
   run)
@@ -68,6 +68,9 @@ case "$CMD" in
   ;;
   build) # pull | all | <image-name>
     docker-compose build
+  ;;
+  run-flask)
+    flask --app log-stream-processor run
   ;;
   test)
     echo "test"

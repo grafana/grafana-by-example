@@ -5,17 +5,32 @@ volumes:
 
 services:
 
-  # Log Generator
-  # https://github.com/prometheus/client_python
-  log-generator:
+  # Log Generator: 1,2,...
+  log-generator1:
     image: log-generator/log-generator
     build: ./log-generator
     environment:
+      - JOB_NAME=jobA
       - GRAFANA_LOGS_PROTOCOL=http
       - GRAFANA_LOGS_USERNAME=
       - GRAFANA_LOGS_API_KEY=
       - GRAFANA_LOGS_HOST=log-stream-processor
       - GRAFANA_LOGS_PORT=5000
+    command:
+      [ "service-status", "420", "4", "60" ]
+
+  log-generator2:
+    image: log-generator/log-generator
+    build: ./log-generator
+    environment:
+      - JOB_NAME=jobB
+      - GRAFANA_LOGS_PROTOCOL=http
+      - GRAFANA_LOGS_USERNAME=
+      - GRAFANA_LOGS_API_KEY=
+      - GRAFANA_LOGS_HOST=log-stream-processor
+      - GRAFANA_LOGS_PORT=5000
+    command:
+      [ "service-status", "420", "4", "60" ]
 
   # Metrics Generator
   # https://github.com/prometheus/client_python
@@ -42,5 +57,5 @@ services:
       - "16831:16831"
       - "55679:55679"
     volumes:
-      - "./grafana-agent/configured-grafana-agent-config.yaml:/etc/agent/agent.yaml"
+      - "./configured/configured-grafana-agent-config.yaml:/etc/agent/agent.yaml"
     command: [ "-config.file=/etc/agent/agent.yaml" ]

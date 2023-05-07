@@ -4,6 +4,7 @@ import json
 import pprint
 import requests
 import time
+from datetime import datetime, timedelta
 
 # Flask
 from flask import Flask
@@ -70,6 +71,17 @@ prometheusHttpPort = int( os.environ.get('PROMTHEUS_HTTP_PORT', 9001) )
 
 # Hashmap of metrics
 jobList = {}
+statusList = [ 'success', 'failure', 'unknown' ]
+
+# Prometheues metrics
+pm = {
+    "event_counter": pclient.Counter("job_event_counter", "Total state events", ["name", "state"]),
+    "stateTimeSec":  pclient.Counter("job_state_time_total", "Total time in state", ["name", "state"] ),
+    "timeInState":   pclient.Gauge("job_time_in_state" , "Time in state", ["name", "state"] ),
+    "job_state":     pclient.Info("job_state", "state",  ["name"]),
+    "job_state_num": pclient.Gauge("job_state_num", "State number", ["name"] ),
+    "stateChangeTs": pclient.Gauge("job_state_change_ts", "Time of state change", ["name", "state"] ),
+}
 
 # Log stream processor
 def handleLogStream(streams):
@@ -84,23 +96,26 @@ def handleLogStream(streams):
             metricNameKey = "{}-{}".format( metricNameBase, metricLabels )
             metricNameKey = "{}".format( jlm["name"] )
             if metricNameKey in jobList.keys(): # Update Metrics
+                print( "Updating metric: {}".format(metricNameKey))
                 mlm =  jobList[metricNameKey]["metrics"]
-                mlm["total_state_counter"].labels(name=jlm["name"],state=jlm["state"]).inc()
-                mlm["timeInState"].labels(name=jlm["name"],state=jlm["state"]).set(jlm["ts"] - mlm["lastStateTs"])
+                mlm["events"] += 1
+                pm["event_counter"].labels(name=jlm["name"],state=jlm["state"]).inc() # Events
+                pm["timeInState"].labels(name=jlm["name"],state=jlm["state"]).set(jlm["ts"] - mlm["lastStateTs"])
+                pm["job_state_num"].labels(name=jlm["name"]).set(
+                        statusList.index(jlm["state"]) + 1 if jlm["state"] in statusList else 0 )
                 if mlm["lastState"] != jlm["state"]:  # Update metrics  on state change
-                    mlm["stateTimeSec"].labels(name=jlm["name"], state=jlm["state"] ).inc(jlm["ts"] - mlm["lastStateTs"] )
                     mlm["lastState"] = jlm["state"] # Change state
                     mlm["lastStateTs"] = jlm["ts"] # Time entering this state
-                    mlm["job_state"].labels(name=jlm["name"] ).info( { "state": jlm["state"] } ) # Current state
+                    pm["stateTimeSec"].labels(name=jlm["name"], state=jlm["state"] ).inc(jlm["ts"] - mlm["lastStateTs"] )
+                    pm["job_state"].labels(name=jlm["name"] ).info( { "state": jlm["state"] } ) # Current state
+                    pm["stateChangeTs"].labels(name=jlm["name"],state=jlm["state"]).set(jlm["ts"])
 
-            else: # Create Metrics
+            else: # Create Metrics for this job
+                print( "New metric: {}".format(metricNameKey))
                 jobList[metricNameKey] = { "metrics": {
-                    "total_state_counter": pclient.Counter( "job_total_state_counter", "help", ["name", "state"]),
-                    "stateTimeSec":        pclient.Counter( "job_state_time_total", "help", ["name", "state"] ),
-                    "timeInState":         pclient.Gauge( "job_time_in_state".format("") , "help", ["name", "state"] ),
-                    "job_state":           pclient.Info("job_state", "state",  ["name"]),
                     "lastState": jlm["state"],
-                    "lastStateTs": jlm["ts"] }
+                    "lastStateTs": jlm["ts"],
+                    "events": 0 }
                 }
         print( ts, lm, metricNameBase )
         metric2.inc()
@@ -112,7 +127,8 @@ app = Flask(__name__)
 def metrics():
     #return "<p>{}</p>".format( json.dumps(json.loads( jobList ), indent=2) ) 
     #return "<p>{}</p>".format( jobList )
-    return "<p>{}</p>".format( pprint.pformat( jobList, indent=2 ))
+    return "<p>{}</p><p>Now: {}</p>".format( 
+            pprint.pformat( jobList, indent=2 ), int( datetime.now().timestamp() ))
 
 @app.route('/loki/api/v1/push', methods=['GET', 'POST'])
 def push():
@@ -129,7 +145,7 @@ def push():
     
 @app.route("/status")
 def status():
-    return "<p>ok</p>"
+    return "<p>ok: {}</p>".format(int( datetime.now().timestamp() ))
 
 # Prometheus Client
 pclient.start_http_server(prometheusHttpPort)

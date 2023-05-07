@@ -7,6 +7,7 @@ import requests
 import json
 import random
 
+jobName = os.environ.get('JOB_NAME', "jobA")
 
 lokiWriteURL = "{a}://{u}:{k}@{h}:{p}{x}".format(
                     a=os.environ["GRAFANA_LOGS_PROTOCOL"],
@@ -17,8 +18,6 @@ lokiWriteURL = "{a}://{u}:{k}@{h}:{p}{x}".format(
                     x="/loki/api/v1/push")
 
 print(lokiWriteURL )
-
-#exit()
 
 # https://grafana.com/docs/loki/latest/api/#push-log-entries-to-loki
 
@@ -114,8 +113,8 @@ elif cmd == "service-status":
             nowdt = datetime.utcnow()
             nowSec = int( datetime.now().timestamp() )
             serviceStatus = random.choices(population=statusList, weights=statusFrequencyList)[0]
-            logLine = { "name": jobNames[0], "state": serviceStatus, "ts": nowSec }
-            logLabels = { "job": "test2", "state": serviceStatus }
+            logLine = { "name": jobName, "state": serviceStatus, "ts": nowSec }
+            logLabels = { "job": "job-status", "state": serviceStatus }
             writeLoki2( logLabels, json.dumps( logLine ))
             print( logLabels, logLine )
             # Update sample values
@@ -126,68 +125,6 @@ elif cmd == "service-status":
             runTimeMinutes = runTimeSeconds / 60
             samplesPerMinute = samplesSent /  runTimeSeconds * 60.0
             print( "{} {:.2f} {} {:.2f} {:.2f} {}".format(now, runTimeMinutes, samplesSent, samplesPerMinute, delaySec, runTimeRemaining))
-
-elif cmd == "streams": # durationMinutes ratePerMinute nStreams
-    durationMinutes = int(sys.argv[2])if len(sys.argv) > 2 else 1
-    ratePerMinute = float(sys.argv[3])if len(sys.argv) > 3 else 1
-    nStreams = int(sys.argv[4])if len(sys.argv) > 4 else 1
-    delaySec = 60.0 / ratePerMinute
-    timeoutSec = durationMinutes * 60
-    timeoutTime = datetime.now() + timedelta(seconds=timeoutSec)
-    reportTime = datetime.now() + timedelta(seconds=60)
-    startTime = datetime.now()
-    hostNames = ["host1", "host2", "host3", "host4"]
-    serviceNames = ["config", "input", "output", "writer"]
-    logLevels = ["info", "error", "warning", "debug"]
-    print( "delaySec: {}".format(delaySec))
-    while datetime.now() < timeoutTime:
-        nowNs = int(time.time() * 1000000000)
-        jobName = "streams"
-        streamId = 1
-        lokiData = {"streams": []}  # no streams
-        for streamId in range(nStreams):
-            logMessage = {"host":       random.choices(hostNames)[0],
-                          "service":    random.choices(serviceNames)[0],
-                          "level":      random.choices(logLevels)[0],
-                          "value1":     streamId,  # random.randint(1,100),
-                          "value2":     random.randint(1, 100)}
-            #logMessageStr = "{msg}".format(msg=json.dumps(logMessage))
-            streamData = {"stream": {"job": jobName, "id": streamId},
-                          "values": [[str(nowNs), json.dumps(logMessage)]]}
-            lokiData["streams"].append(streamData)
-        #print(json.dumps(lokiData))
-        #postLokiData( json.dumps( lokiData )  )
-        postLokiData(lokiData)
-        if delaySec > 0:
-            time.sleep(delaySec)
-
-elif cmd == "text1file":
-    durationMinutes = int(sys.argv[2])if len(sys.argv) > 2 else 1
-    ratePerMinute = int(sys.argv[3])if len(sys.argv) > 3 else 1
-    delaySec = 60.0 / ratePerMinute
-    timeoutSec = durationMinutes * 60
-    timeoutTime = datetime.now() + timedelta(seconds=timeoutSec)
-    reportTime = datetime.now() + timedelta(seconds=60)
-    startTime = datetime.now()
-    hostNames = ["host1", "host2", "host3", "host4"]
-    serviceNames = ["config", "input", "output", "writer"]
-    logLevels = ["info", "error", "warning", "debug"]
-    #print( "rate: delaySec: {}".format(delaySec))
-    f1 = open("log1.txt", "a")
-    while datetime.now() < timeoutTime:
-        logMessageStr = "{tsNs} {hostName} {serviceName} {value1} [{logLevel}] {value2}".format(
-                        tsNs=time.time_ns(),
-                        hostName=random.choices(hostNames)[0],
-                        serviceName=random.choices(serviceNames)[0],
-                        value1=random.randrange(1, 100),
-                        logLevel=random.choices(logLevels)[0],
-                        value2=random.randrange(1, 100))
-        print(logMessageStr)
-        f1.write(logMessageStr + "\n")
-        f1.flush()
-        if delaySec > 0:
-            time.sleep(delaySec)  # writeLoki("text1", logMessageStr)
-    f1.close()
 
 else:
     print("Command unknown: {}".format(cmd))
