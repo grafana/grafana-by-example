@@ -2,6 +2,8 @@
 
 Provides an example log-stream processor that generates metrics and logs from a log stream. Useful for deriving metrics and logs from events with state transitions.
 
+![Architecture](https://github.com/grafana/grafana-by-example-configuration/blob/main/job-status/images/architecture1.png)
+
 # Requirements
 Requires Docker, Docker Compose and a Grafana Free Tier Cloud Account
 
