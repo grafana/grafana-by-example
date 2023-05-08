@@ -42,17 +42,9 @@ except Exception as e:
 def lokiWriteStreams(logStreams):
     if lokiWriteURL != "":
         try:
-            #nowNs = int(time.time() * 1000000000)
-            #stream = {
-            #    "stream": logLabels,
-            #    "values": [
-            #        [str(nowNs), logMessageStr]
-            #    ]
-            #}
-            #print( "stream < {} >".format( stream ) )
-            #lokiData = { "streams": stream }
             headers = { "Content-Type": "application/json" }
             data = json.JSONEncoder().encode(logStreams)
+            #print( "L", data )
             s = requests.session()
             r = s.post(lokiWriteURL, headers=headers, data=data)
             if not r.ok:
@@ -62,6 +54,12 @@ def lokiWriteStreams(logStreams):
                 print(r.status_code)
         except Exception as e:
             print(e)
+
+def lokiCreateStream(logLabels, logMessage):
+    stream = {
+        "stream": logLabels,
+        "values": [ [str( int(time.time() * 1000000000) ), json.dumps( logMessage ) ] ] }
+    return { "streams": [ stream ] }
 
 # Ports
 prometheusHttpPort = int( os.environ.get('PROMTHEUS_HTTP_PORT', 9001) )
@@ -73,14 +71,14 @@ prometheusHttpPort = int( os.environ.get('PROMTHEUS_HTTP_PORT', 9001) )
 jobList = {}
 statusList = [ 'success', 'failure', 'unknown' ]
 
-# Prometheues metrics
+# Define the Prometheues metrics
 pm = {
-    "event_counter": pclient.Counter("job_event_counter", "Total state events", ["name", "state"]),
-    "stateTimeSec":  pclient.Counter("job_state_time_total", "Total time in state", ["name", "state"] ),
-    "timeInState":   pclient.Gauge("job_time_in_state" , "Time in state", ["name", "state"] ),
-    "job_state":     pclient.Info("job_state", "state",  ["name"]),
-    "job_state_num": pclient.Gauge("job_state_num", "State number", ["name"] ),
-    "stateChangeTs": pclient.Gauge("job_state_change_ts", "Time of state change", ["name", "state"] ),
+    "event_counter": pclient.Counter(   "job_event_counter",        "Total state events", ["name", "state"]),
+    "stateTimeSec":  pclient.Counter(   "job_state_time",           "Total time in state", ["name", "state"] ),
+    "timeInState":   pclient.Gauge(     "job_time_in_state" ,       "Time in state", ["name", "state"] ),
+    "job_state":     pclient.Info(      "job_state",                "state",  ["name"]),
+    "job_state_num": pclient.Gauge(     "job_state_num",            "State number", ["name"] ),
+    "stateChangeTs": pclient.Gauge(     "job_state_change_ts",      "Time of state change", ["name", "state"] ),
 }
 
 # Log stream processor
@@ -91,33 +89,53 @@ def handleLogStream(streams):
         for m in stream["values"]:
             ts, lm = m # time stamp, log messages
             jlm = json.loads( lm )
-            metricNameBase = "job{}".format(jlm["state"])
-            metricLabels = "{}-{}".format( jlm["name"], jlm["state"] )
-            metricNameKey = "{}-{}".format( metricNameBase, metricLabels )
             metricNameKey = "{}".format( jlm["name"] )
+            print( ts, lm, metricNameKey )
             if metricNameKey in jobList.keys(): # Update Metrics
                 print( "Updating metric: {}".format(metricNameKey))
                 mlm =  jobList[metricNameKey]["metrics"]
                 mlm["events"] += 1
-                pm["event_counter"].labels(name=jlm["name"],state=jlm["state"]).inc() # Events
-                pm["timeInState"].labels(name=jlm["name"],state=jlm["state"]).set(jlm["ts"] - mlm["lastStateTs"])
-                pm["job_state_num"].labels(name=jlm["name"]).set(
-                        statusList.index(jlm["state"]) + 1 if jlm["state"] in statusList else 0 )
+                pm["event_counter"].labels(name=jlm["name"],state=jlm["state"]).inc() # Count Events
+                #pm["job_state_num"].labels(name=jlm["name"]).set(statusList.index(jlm["state"]) + 1 if jlm["state"] in statusList else 0 )
+                
+                print("State: {} to {}".format( mlm["lastState"], jlm["state"]) )
+                # Success to Failed: Generate a success event withing timing
+                if mlm["lastState"] == "success" and jlm["state"] == "failure":
+                    print( "S->F")
+                    timeInState = jlm["ts"] - mlm["successTs"]
+                    pm["stateTimeSec"].labels(name=jlm["name"], state=jlm["state"] ).inc( timeInState )
+                    pm["timeInState"].labels(name=jlm["name"], state="success").set( timeInState )
+                    pm["job_state_num"].labels(name=jlm["name"]).set( 2 ) # Current State is Failed
+                    lokiWriteStreams(lokiCreateStream( { "job": "job-event", "state": "success", "name": jlm["name"]  }, { "time_in_state": timeInState} ) )
+                    mlm["failedTs"] = jlm["ts"]
+
+                # Failed to Success: Generate a failure event withing timing
+                if mlm["lastState"] == "failure" and jlm["state"] == "success":
+                    print( "F->S")
+                    timeInState = jlm["ts"] - mlm["failedTs"]
+                    pm["stateTimeSec"].labels(name=jlm["name"], state=jlm["state"] ).inc( timeInState )
+                    pm["timeInState"].labels(name=jlm["name"], state="failure").set( timeInState )
+                    pm["job_state_num"].labels(name=jlm["name"]).set( 1 ) # Current State is Success
+                    lokiWriteStreams(lokiCreateStream( { "job": "job-event", "state": "failure", "name": jlm["name"]  }, { "time_in_state": timeInState} ) )
+                    mlm["successTs"] = jlm["ts"]
+
+                # Any state change
                 if mlm["lastState"] != jlm["state"]:  # Update metrics  on state change
-                    mlm["lastState"] = jlm["state"] # Change state
-                    mlm["lastStateTs"] = jlm["ts"] # Time entering this state
-                    pm["stateTimeSec"].labels(name=jlm["name"], state=jlm["state"] ).inc(jlm["ts"] - mlm["lastStateTs"] )
                     pm["job_state"].labels(name=jlm["name"] ).info( { "state": jlm["state"] } ) # Current state
                     pm["stateChangeTs"].labels(name=jlm["name"],state=jlm["state"]).set(jlm["ts"])
+                    mlm["lastState"] = jlm["state"] # Change state
+                    mlm["lastStateTs"] = jlm["ts"] # Time entering this state
 
             else: # Create Metrics for this job
                 print( "New metric: {}".format(metricNameKey))
                 jobList[metricNameKey] = { "metrics": {
                     "lastState": jlm["state"],
                     "lastStateTs": jlm["ts"],
+                    "failedTs": jlm["ts"],
+                    "successTs": jlm["ts"],
                     "events": 0 }
                 }
-        print( ts, lm, metricNameBase )
+
         metric2.inc()
 
 # Flask Application
