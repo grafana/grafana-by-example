@@ -39,7 +39,9 @@ except Exception as e:
     print( "Remote write to loki not configured")
 
 # https://grafana.com/docs/loki/latest/api/#push-log-entries-to-loki
-def lokiWriteStreams(logStreams):
+def lokiWriteStreams(logStreams, debug=False):
+    if debug:
+        print( "stream: {}".format(logStreams) )
     if lokiWriteURL != "":
         try:
             headers = { "Content-Type": "application/json" }
@@ -55,10 +57,10 @@ def lokiWriteStreams(logStreams):
         except Exception as e:
             print(e)
 
-def lokiCreateStream(logLabels, logMessage):
+def lokiCreateStream(labels, message):
     stream = {
-        "stream": logLabels,
-        "values": [ [str( int(time.time() * 1000000000) ), json.dumps( logMessage ) ] ] }
+        "stream": labels,
+        "values": [ [str( int(time.time() * 1000000000) ), json.dumps( message ) ] ] }
     return { "streams": [ stream ] }
 
 # Ports

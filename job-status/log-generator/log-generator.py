@@ -21,48 +21,29 @@ print(lokiWriteURL )
 
 # https://grafana.com/docs/loki/latest/api/#push-log-entries-to-loki
 
-def writeLoki2(logLabels, logMessageStr):
-    try:
-        nowNs = int(time.time() * 1000000000)
-        stream = {
-            "stream": logLabels,
-            "values": [
-                [str(nowNs), logMessageStr]
-            ]
-        }
-        #print( "stream < {} >".format( stream ) )
-        lokiData = { "streams": [ stream ] }
-        headers = { "Content-Type": "application/json" }
-        data = json.JSONEncoder().encode(lokiData)
-        s = requests.session()
-        r = s.post(lokiWriteURL, headers=headers, data=data)
-        if not r.ok:
-            print(data)
-            print(r.ok)
-            print(r.text)
-            print(r.status_code)
-    except Exception as e:
-        print(e)
-        
-def writeLoki(jobName, logMessageStr):
-    nowNs = int(time.time() * 1000000000)
-    stream = {
-        "stream": {"job": jobName},
-        "values": [
-            [str(nowNs), logMessageStr]
-        ]
-    }
-    lokiData = { "streams": [ stream ] }
-    headers = { "Content-Type": "application/json" }
-    data = json.JSONEncoder().encode(lokiData)
-    s = requests.session()
-    r = s.post(lokiWriteURL, headers=headers, data=data)
-    if not r.ok:
-        print(data)
-        print(r.ok)
-        print(r.text)
-        print(r.status_code)
+def lokiWriteStreams(logStreams, debug=False):
+    if debug:
+        print( "stream: {}".format(logStreams) )
+    if lokiWriteURL != "":
+        try:
+            headers = { "Content-Type": "application/json" }
+            data = json.JSONEncoder().encode(logStreams)
+            #print( "L", data )
+            s = requests.session()
+            r = s.post(lokiWriteURL, headers=headers, data=data)
+            if not r.ok:
+                print(data)
+                print(r.ok)
+                print(r.text)
+                print(r.status_code)
+        except Exception as e:
+            print(e)
 
+def lokiCreateStream(labels, message):
+    stream = {
+        "stream": labels,
+        "values": [ [str( int(time.time() * 1000000000) ), json.dumps( message ) ] ] }
+    return { "streams": [ stream ] }
 
 def postLokiData(logMessageStr):
     headers = {"Content-Type": "application/json"}
@@ -114,10 +95,9 @@ elif cmd == "service-status":
             nowdt = datetime.utcnow()
             nowSec = int( datetime.now().timestamp() )
             serviceStatus = random.choices(population=statusList, weights=statusFrequencyList)[0]
-            logLine = { "name": jobName, "state": serviceStatus, "ts": nowSec, "v1": v1Counter }
-            logLabels = { "job": "job-status", "name": jobName, "state": serviceStatus }
-            writeLoki2( logLabels, json.dumps( logLine ))
-            print( logLabels, logLine )
+            lokiWriteStreams(lokiCreateStream( labels = { "job": "job-status", "name": jobName, "state": serviceStatus },
+                                               message =  { "name": jobName, "state": serviceStatus, "ts": nowSec, "v1": v1Counter } ) )
+
             # Update sample values
             v1Counter += 1
         if now > reportTime:
