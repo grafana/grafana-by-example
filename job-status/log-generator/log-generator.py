@@ -104,6 +104,7 @@ elif cmd == "service-status":
     statusList = [ 'success', 'failure', 'unknown' ]
     statusFrequencyList = [ 8, 2, 0 ]
     jobNames = [ 'jobA', "jobB", "jobC" ]
+    v1Counter = 0
      
     # Run
     while datetime.now() < timeoutTime:
@@ -113,11 +114,12 @@ elif cmd == "service-status":
             nowdt = datetime.utcnow()
             nowSec = int( datetime.now().timestamp() )
             serviceStatus = random.choices(population=statusList, weights=statusFrequencyList)[0]
-            logLine = { "name": jobName, "state": serviceStatus, "ts": nowSec }
-            logLabels = { "job": "job-status", "state": serviceStatus }
+            logLine = { "name": jobName, "state": serviceStatus, "ts": nowSec, "v1": v1Counter }
+            logLabels = { "job": "job-status", "name": jobName, "state": serviceStatus }
             writeLoki2( logLabels, json.dumps( logLine ))
             print( logLabels, logLine )
             # Update sample values
+            v1Counter += 1
         if now > reportTime:
             reportTime = now + timedelta(seconds=60)
             runTimeRemaining = (timeoutTime - now).seconds
