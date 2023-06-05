@@ -1,0 +1,44 @@
+server:
+  log_level: debug
+
+
+metrics:
+  wal_directory: /tmp/grafana-agent/wal
+  global:
+    scrape_interval: 60s
+    # Configure the metrics remote write end point
+    remote_write:
+      - url: ${GRAFANA_METRICS_WRITE_URL}
+        basic_auth:
+          password: ${GRAFANA_METRICS_API_KEY}
+          username: ${GRAFANA_METRICS_USERNAME}
+  # Scrape Jobs
+  configs:
+    - name: agent
+      scrape_configs:
+        # scrape metrics from the metrics-generator end point      
+        - job_name: postgres
+          scrape_interval: 60s
+          static_configs:
+            - targets: ['metrics-generator:8001']
+              labels:
+                group: 'postgres-metrics'
+
+logs:
+  configs:
+  - clients:
+    - basic_auth:
+        password: ${GRAFANA_LOGS_API_KEY}
+        username: ${GRAFANA_LOGS_USERNAME}
+      url: ${GRAFANA_LOGS_WRITE_URL}
+    name: integrations
+    positions:
+      filename: /tmp/positions.yaml
+    scrape_configs:
+      - job_name: varlogs
+        static_configs:
+          - targets: [localhost]
+            labels:
+              job: varlogs
+              user: davidryder
+              __path__: ./logs/*.log

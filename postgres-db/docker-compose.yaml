@@ -1,0 +1,56 @@
+version: "3.8"
+
+services:
+
+  # https://hub.docker.com/_/postgres
+  postgres-server:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=welcome1 
+    volumes:
+      - "./dvdrental.tar:/dvdrental.tar"
+      - "./ctl.sh:/ctl.sh"
+      - "./postgres/postgresql.conf:/postgresql.conf"
+      - "./logs/:/var/log/postgresql/"
+    entrypoint:
+      - "/ctl.sh"
+      - "run"
+
+
+  # https://www.adminer.org/
+  # Login localhost:8080 PostgreSQL / postgres-server / postgres / welcome1
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+  # Generate Prometheues Metrics from PostgresSQL
+  # https://github.com/prometheus/client_python
+  postgres-metrics:
+    image: postgres-metrics/postgres-metrics
+    build: ./postgres-metrics
+    restart: always
+    environment:
+      - PROMTHEUS_HTTP_PORT=8001
+    ports:
+      - "8001:8001"
+    command: [ "7200", "60", "300", "postgres-server" ]
+
+  # Grafana Agent
+  # https://grafana.com/docs/agent/latest/
+  grafana-agent:
+    image: grafana/agent:latest
+    ports:
+      - "12347:12357"
+      - "12348:12348"
+      - "16685:16685"
+      - "16831:16831"
+      - "55679:55679"
+    volumes:
+      - "./configured-config-cloud.yaml:/etc/agent/agent.yaml"
+      - "./logs/:/logs"
+    command: [ "-config.file=/etc/agent/agent.yaml" ]
