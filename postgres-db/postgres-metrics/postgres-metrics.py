@@ -71,7 +71,7 @@ if __name__ == "__main__":
                     "dbName": getArg(7,"dvdrental"),
                     "dbUser": getArg(8,"postgres"),
                     "dbPwd": getArg(9,"welcome1") }
-        print( "DB Config: {}".format(config))
+        print("DB Config: {}".format(config), file=sys.stderr)
         # Configure timing
         delaySec = 3600.0 / ratePerHour
         timeoutSec = durationMinutes * 60
@@ -88,6 +88,7 @@ if __name__ == "__main__":
         try:
             cnx = psycopg2.connect(host=config["dbHost"], port=config["dbPort"], dbname=config["dbName"], user=config["dbUser"], password=config["dbPwd"])
             cr = cnx.cursor()
+            print( "db connection succeed", file=sys.stderr)
         except Exception as e:
             print( "db connection failed: {}".format(e))
             exit()
@@ -118,7 +119,7 @@ if __name__ == "__main__":
                 runTimeSeconds = (now - startTime).seconds
                 runTimeMinutes = runTimeSeconds / 60
                 samplesPerMinute = samplesSent /  runTimeSeconds * 60.0
-                print( "{} {:.2f} {} ss: {:.2f} {:.2f} {}".format(now, runTimeMinutes, samplesSent, samplesPerMinute, delaySec, runTimeRemaining))
+                print( "{} {:.2f} {} ss: {:.2f} {:.2f} {}".format(now, runTimeMinutes, samplesSent, samplesPerMinute, delaySec, runTimeRemaining),file=sys.stderr)
                 reportTime = now + timedelta(seconds=60)
             time.sleep((sendMetricTime - now).seconds) # Sleep until next send metric time
         cr.close()
