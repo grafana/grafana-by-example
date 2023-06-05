@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3.9"
 
 services:
 
@@ -18,6 +18,7 @@ services:
     entrypoint:
       - "/ctl.sh"
       - "run"
+      #- "sleep"
 
 
   # https://www.adminer.org/
@@ -33,7 +34,12 @@ services:
   postgres-metrics:
     image: postgres-metrics/postgres-metrics
     build: ./postgres-metrics
-    restart: always
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 15s
+        max_attempts: 3600
+        window: 30s
     environment:
       - PROMTHEUS_HTTP_PORT=8001
     ports:

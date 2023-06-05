@@ -19,10 +19,12 @@ _getContainerIdFromName() {
 }
 
 _waitDbStart() {
+  #psql -U postgres -c "ALTER DATABASE db WITH ALLOW_CONNECTIONS false;"
   DB_STATUS=-1
   while [ $DB_STATUS -ne 0 ]; do
-    sleep 10
-    psql -U postgres -c "SELECT version();"
+    sleep 2
+    #psql -U postgres -c "SELECT version();"
+    pg_isready
     DB_STATUS=$?
     echo "DB Status $DB_STATUS"
   done
@@ -46,6 +48,7 @@ case "$CMD" in
   create-db)
     psql -U postgres -c "CREATE DATABASE dvdrental;"
     pg_restore -U postgres -d dvdrental dvdrental.tar
+    #psql -U postgres -c "ALTER DATABASE db WITH ALLOW_CONNECTIONS true;"
     ;;
   download)
     curl -L -O https://www.postgresqltutorial.com/wp-content/uploads/2019/05/dvdrental.zip
@@ -86,6 +89,9 @@ case "$CMD" in
   ;;
   build) # pull | all | <image-name>
     docker-compose build
+    docker pull postgres:latest
+    docker pull adminer
+    docker pull grafana/agent:latest
   ;;
   logs-d)
     docker-compose logs -f

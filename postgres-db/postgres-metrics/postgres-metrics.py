@@ -91,7 +91,7 @@ if __name__ == "__main__":
             print( "db connection succeed", file=sys.stderr)
         except Exception as e:
             print( "db connection failed: {}".format(e))
-            exit()
+            exit(1)
 
         # Create the Promethues Metrics
         metric_dvd_payments = Gauge("dvd_payments", "dvd_payment amount by customer_id", ["host", "customer_id"])
