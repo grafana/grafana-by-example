@@ -20,7 +20,7 @@ metrics:
         - job_name: postgres
           scrape_interval: 60s
           static_configs:
-            - targets: ['metrics-generator:8001']
+            - targets: ['postgres-metrics:8001']
               labels:
                 group: 'postgres-metrics'
 

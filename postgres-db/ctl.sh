@@ -21,10 +21,10 @@ _getContainerIdFromName() {
 _waitDbStart() {
   DB_STATUS=-1
   while [ $DB_STATUS -ne 0 ]; do
+    sleep 10
     psql -U postgres -c "SELECT version();"
     DB_STATUS=$?
     echo "DB Status $DB_STATUS"
-    sleep 10
   done
   echo "DB Started ---------------------------"
 }
