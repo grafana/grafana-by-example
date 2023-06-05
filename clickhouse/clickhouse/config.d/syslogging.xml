@@ -1,0 +1,15 @@
+<clickhouse>
+    <logger replace="replace">
+        <level>information</level>
+        <!-- <level>warning</level>
+        <level>error</level>
+        <log>/var/log/clickhouse-server/test.log</log> -->
+        <use_syslog>true</use_syslog>
+        <syslog>
+            <address>syslog-ng-server:5514</address>
+            <hostname>clickhouse-server</hostname>
+            <facility>LOG_LOCAL6</facility>
+            <format>syslog</format>
+        </syslog>
+    </logger>
+</clickhouse>

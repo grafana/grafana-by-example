@@ -1,0 +1,133 @@
+version: "3.8"
+volumes:
+  grafana:
+  postgres:
+
+services:
+
+  # Clickhouse database
+  clickhouse-server:
+    image: clickhouse-server
+    restart: always
+    ports:
+      - "9000:9000"
+      - "8123:8123"
+      - "8001:8001"
+    volumes:
+      - ./clickhouse-data:/var/lib/clickhouse
+      - ./clickhouse/config.d/syslogging.xml:/etc/clickhouse-server/config.d/syslogging.xml
+      - ./clickhouse/config.d/prometheus.xml:/etc/clickhouse-server/config.d/prometheus.xml
+      - ./clickhouse:/clickhouse
+      - ./ctl.sh:/ctl.sh
+      #- type: bind
+      #  source: /tmp/container-tmp
+      #  target: /tmp/container-tmp
+    entrypoint: [ "./ctl.sh",  "clickhouse", "entrypoint" ]
+
+  # Grafana for exploring and visualizing data
+  grafana-server:
+    image: grafana/grafana-enterprise:latest-ubuntu
+    #image: grafana-enterprise:main-ubuntu
+    #image: grafana/grafana:9.0.6-ubuntu
+    #image: grafana/grafana:latest
+    #image: grafana/grafana:8.2.1
+    #image: grafana/grafana:8.5.6
+    depends_on:
+      - clickhouse-server
+    #restart: always
+    volumes:
+      - "./grafana/grafana.ini:/etc/grafana/grafana.ini"
+      - "./grafana/provisioning:/etc/grafana/provisioning"
+      - "./grafana/provisioning/dashboards:/var/lib/grafana/dashboards"
+      - "/tmp/container-tmp:/tmp/container-tmp"
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_FEATURE_TOGGLES_ENABLE=tempoSearch,tempoServiceGraph
+      - GF_INSTALL_PLUGINS=grafana-clickhouse-datasource
+
+  # Grafana Metrics
+  mimir:
+    image: grafana/mimir:latest
+    depends_on:
+      - grafana-server
+    volumes:
+      - "./mimir/config-single.yaml:/etc/mimir/config.yaml"
+    ports:
+      - "9009:9009"
+    command: [
+      "-config.file=/etc/mimir/config.yaml"
+    ]
+
+  # Grafana logs
+  loki:
+    image: grafana/loki:latest
+    depends_on:
+      - grafana-server
+    ports:
+      - "3100:3100"
+    volumes:
+      - "./loki/config.yaml:/etc/loki/local-config.yaml"
+
+  # Grafana promtail
+  promtail:
+    #image: grafana/promtail:main-0e28452
+    image: grafana/promtail:latest
+    depends_on:
+      - loki
+    ports:
+      - "3501:3501"
+      - "16601:16601/udp"
+      - "16602:16602/tcp"
+    volumes:
+      - "./promtail/config.yaml:/etc/promtail/config.yml"
+
+  # Syslog-ng Forwarder built on Ubuntu
+  syslog-ng-server:
+    image: syslog-ng-server:latest
+    volumes:
+      - "./syslog-ng/syslog-ng.conf:/etc/syslog-ng/syslog-ng.conf"
+    environment:
+      - TZ=America/Los_Angeles
+    ports:
+      - "5514:5514/udp"
+      - "6601:6601/tcp"
+
+   # General purpose server
+  ubuntu-server:
+    image: ubuntu-server:latest
+    volumes:
+      - ./clickhouse:/home/test/clickhouse
+      - "./ctl.sh:/home/test/ctl.sh"
+    environment:
+      - TZ=America/Los_Angeles
+    entrypoint: [ "sleep", "1209600" ]
+
+  # Grafana Agent
+  grafana-agent:
+    image: grafana/agent:latest
+    depends_on:
+      - grafana-server
+    ports:
+      - "12345:12345"
+      - "3500:3500"
+      - "16603:16603"
+    volumes:
+      - "./grafana-agent/config.yaml:/etc/agent/agent.yaml"
+    command: [
+      "-config.file=/etc/agent/agent.yaml",
+      "-server.http.address=0.0.0.0:12345",
+    ]
+
+  # Experimental
+  # syslog-client:
+  #   image: linuxserver/syslog-ng
+  #   volumes:
+  #     - "./syslog-ng/syslog-ng.conf:/config/syslog-ng.conf"
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - TZ=America/Los_Angeles
+  #   ports:
+  #     - "15514:5514/udp"
+  #     - "16601:6601/tcp"

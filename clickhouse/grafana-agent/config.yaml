@@ -1,0 +1,70 @@
+server:
+  log_level: debug
+
+# Configures metrics job to scrape from the ClickHouse server
+metrics:
+  wal_directory: /tmp/grafana-agent/wal
+  configs:
+    - name: agent
+      scrape_configs:
+        - job_name: clickhouse
+          scrape_interval: 15s
+          static_configs:
+            - targets: ['clickhouse-server:8001']
+              labels:
+                group: 'database'
+        - job_name: agent
+          static_configs:
+            - targets: ["127.0.0.1:12345"]
+      remote_write:
+        - url: http://mimir:9009/api/v1/push
+
+# Configures log http listner, and syslog listener
+logs:
+    configs:
+      - name: loki
+        positions:
+          filename: /tmp/positions.yaml
+          sync_period: 15s
+        clients:
+          - url: http://loki:3100/loki/api/v1/push
+            external_labels:
+              job: grafana_agent
+        scrape_configs:
+          - job_name: system
+            static_configs:
+            - targets:
+                - localhost
+              labels:
+                job: varlogs
+                source: grafana_agent
+                __path__: /var/log/*log
+          - job_name: pushapi
+            loki_push_api:
+              server:
+                http_listen_port: 3500
+                grpc_listen_port: 3600
+              labels:
+                pushserver: pushapi
+          - job_name: syslog
+            syslog:
+              listen_address: 0.0.0.0:16603
+              idle_timeout: 60s
+              label_structured_data: yes
+              labels:
+                job: "syslog2"
+            relabel_configs:
+              - source_labels: ['__syslog_message_hostname']
+                target_label: 'host'
+              - source_labels: ['__syslog_message_severity']
+                target_label: level
+              - source_labels: ['__syslog_message_app_name']
+                target_label: app_name
+              - source_labels: [__syslog_message_facility]
+                target_label: facility
+                
+integrations:
+  agent:
+    enabled: true
+  node_exporter:
+    enabled: true

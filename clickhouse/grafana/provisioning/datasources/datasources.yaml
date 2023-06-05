@@ -1,0 +1,53 @@
+apiVersion: 1
+
+datasources:
+  - name: ClickHouse
+    type: grafana-clickhouse-datasource
+    isDefault: true
+    jsonData:
+      defaultDatabase: ""
+      protocol: "native"
+      port: 9000
+      server: clickhouse-server
+      username: default
+      tlsSkipVerify: true
+  
+  - name: ClickHouse-Play
+    type: grafana-clickhouse-datasource
+    isDefault: false
+    jsonData:
+      defaultDatabase: ""
+      protocol: "native"
+      port: 9440
+      secure: true
+      server: play.clickhouse.com
+      username: explorer
+      tlsSkipVerify: false
+      secureJsonData:
+        password: ""
+
+  - name: Loki
+    type: loki
+    isDefault: false
+    access: proxy
+    uid: loki
+    url: http://loki:3100
+    jsonData:
+      derivedFields:
+        - datasourceUid: tempo
+          matcherRegex: "^.*?traceI[d|D]=(\\w+).*$"
+          name: traceId
+          url: '$${__value.raw}'
+ 
+  - name: Mimir
+    type: prometheus
+    access: proxy
+    isDefault: false
+    uid: mimir
+    url: http://mimir:9009/prometheus
+    jsonData:
+      exemplarTraceIdDestinations:
+        - datasourceUid: mimir
+          name: traceId
+      httpMethod: POST
+      timeInterval: "2s"

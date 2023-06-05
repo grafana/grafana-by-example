@@ -1,0 +1,249 @@
+{
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "target": {
+            "limit": 100,
+            "matchAny": false,
+            "tags": [],
+            "type": "dashboard"
+          },
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "links": [],
+    "liveNow": false,
+    "panels": [
+      {
+        "datasource": {
+          "type": "grafana-clickhouse-datasource",
+          "uid": "${VAR_CS_DATASOURCE}"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "align": "auto",
+              "displayMode": "auto",
+              "inspect": false
+            },
+            "links": [
+              {
+                "title": "Select table to show row count",
+                "url": "http://localhost:3000/d/EcVWrZabc/clickhouse-cell-towers?var-VAR_CS_DATASOURCE=$VAR_CS_DATASOURCE&var-VAR_TABLE_NAME=${__data.fields[\"Table Name\"]}&from=now-1h&to=now"
+              }
+            ],
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 17,
+          "w": 11,
+          "x": 0,
+          "y": 0
+        },
+        "id": 7,
+        "options": {
+          "footer": {
+            "fields": "",
+            "reducer": [
+              "sum"
+            ],
+            "show": false
+          },
+          "showHeader": true
+        },
+        "pluginVersion": "9.0.6",
+        "targets": [
+          {
+            "datasource": {
+              "type": "grafana-clickhouse-datasource",
+              "uid": "${VAR_CS_DATASOURCE}"
+            },
+            "format": 1,
+            "meta": {
+              "builderOptions": {
+                "fields": [],
+                "limit": 100,
+                "mode": "list"
+              }
+            },
+            "queryType": "sql",
+            "rawSql": "show tables",
+            "refId": "A"
+          }
+        ],
+        "title": "Tables",
+        "transformations": [
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {},
+              "indexByName": {},
+              "renameByName": {
+                "name": "Table Name"
+              }
+            }
+          }
+        ],
+        "type": "table"
+      },
+      {
+        "datasource": {
+          "type": "grafana-clickhouse-datasource",
+          "uid": "${VAR_CS_DATASOURCE}"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 11,
+          "y": 0
+        },
+        "id": 9,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto"
+        },
+        "pluginVersion": "9.0.6",
+        "targets": [
+          {
+            "datasource": {
+              "type": "grafana-clickhouse-datasource",
+              "uid": "${VAR_CS_DATASOURCE}"
+            },
+            "format": 1,
+            "meta": {
+              "builderOptions": {
+                "fields": [],
+                "limit": 100,
+                "mode": "list"
+              }
+            },
+            "queryType": "sql",
+            "rawSql": "SELECT count(*) from ${VAR_TABLE_NAME}",
+            "refId": "A"
+          }
+        ],
+        "title": "Row Count for Table: ${VAR_CS_DATASOURCE} : ${VAR_TABLE_NAME}",
+        "type": "stat"
+      }
+    ],
+    "refresh": "",
+    "schemaVersion": 36,
+    "style": "dark",
+    "tags": [],
+    "templating": {
+      "list": [
+        {
+          "current": {
+            "selected": true,
+            "text": "ClickHouse-Play",
+            "value": "ClickHouse-Play"
+          },
+          "hide": 0,
+          "includeAll": false,
+          "label": "Clickhouse Datasource",
+          "multi": false,
+          "name": "VAR_CS_DATASOURCE",
+          "options": [],
+          "query": "grafana-clickhouse-datasource",
+          "queryValue": "",
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "type": "datasource"
+        },
+        {
+          "current": {
+            "selected": false,
+            "text": "dns2",
+            "value": "dns2"
+          },
+          "hide": 0,
+          "label": "Table Name",
+          "name": "VAR_TABLE_NAME",
+          "options": [
+            {
+              "selected": false,
+              "text": "stocks",
+              "value": "stocks"
+            }
+          ],
+          "query": "dns2",
+          "skipUrlSync": false,
+          "type": "textbox"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "Clickhouse - Row Counts",
+    "uid": "EcVWrZabc",
+    "version": 1,
+    "weekStart": ""
+  }
