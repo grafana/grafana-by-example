@@ -105,6 +105,9 @@ case "$CMD" in
     echo "Conencting $1 to container: $2 id: $CONTAINER_ID"
     docker exec -it $CONTAINER_ID $1
   ;;
+  db-test)
+    ./postgres-metrics/postgres-metrics.py db-test
+    ;;
   test)
     echo "test"
     ;;
