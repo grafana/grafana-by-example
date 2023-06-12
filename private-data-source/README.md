@@ -2,6 +2,9 @@
 
 Configures the [Grafana PDC](https://grafana.com/docs/grafana-cloud/data-configuration/configure-private-datasource-connect/) to connect to a local PostgreSQL database
 
+## Architecture
+![Architecture](https://github.com/grafana/grafana-by-example-configuration/blob/main/private-data-source/images/Grafana-PDC-Architecture-1.png)
+
 ## PDC Environment Variables
 A PDC must be configured first in Grafana Cloud. These environment variables are derived from the Grafana Cloud PDC Configuration Details
 
