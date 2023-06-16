@@ -63,7 +63,20 @@ if __name__ == "__main__":
         # Service ${__data.fields["service"]} Region ${__field.name} Value ${__value.text} Grafana Dashboard datalink
 
         # Precalculate Initial values
-        statusData = [ [ [ random.choices(statusList)[0] for i in range(numberOfRegions) ] for ii in range(numberOfServices) ] for ii in range(numberOfHosts) ]
+        #statusData = [ [ [ random.choices(statusList)[0] for i in range(numberOfRegions) ] for ii in range(numberOfServices) ] for iii in range(numberOfHosts) ]
+        #statusData = [ [ [ i * ii * iii for i in range(numberOfRegions) ] for ii in range(numberOfServices) ] for iii in range(numberOfHosts) ]
+        statusDataRange = numberOfRegions * numberOfServices * numberOfHosts
+        statusDataBase = [ [ [ 0 for i in range(numberOfRegions) ] for ii in range(numberOfServices) ] for iii in range(numberOfHosts) ]
+        v = 1
+        for r in range( numberOfRegions ):
+            for s in range( numberOfServices ):
+                for h in range( numberOfHosts ):
+                    statusDataBase[r][s][h] = v
+                    v += statusDataRange
+        print( "statusDataRange: {}".format(statusDataRange))
+        print( "statusData: {}".format(statusDataBase))
+        #statusData = statusDataBase
+        statusDataOffset = 0
         # Create the Promethues Metrics
         metric1 = Gauge("{}_service_status".format(metricPrefix), "Regional Services Test Metric", ["region", "service", "host"] )
         metric2 = Counter("{}_service_samples".format(metricPrefix), "Regional Services Test Metric Samples Sent" )
@@ -80,6 +93,7 @@ if __name__ == "__main__":
         while datetime.now() < timeoutTime:
             now = datetime.now()
             if now > sendMetricTime:
+                print("Now: {} statusDataBase: {} Offset: {}".format(now, statusDataBase, statusDataOffset))
                 sendMetricTime = now + timedelta(seconds=delaySec)
                 nowdt = datetime.utcnow()
                 for region in range( numberOfRegions ):
@@ -87,17 +101,20 @@ if __name__ == "__main__":
                         for host in range( numberOfHosts ):
                             # Set a metric sample value: set the label values and the sample value
                             #print( region, service, host, statusData[region][service][host] )
-                            metric1.labels(region=regionList[ region ], service=serviceList[ service ], host=hostList[ host ]).set( statusData[region][service][host] )
+                            metric1.labels(region=regionList[ region ],
+                                            service=serviceList[ service ], 
+                                            host=hostList[ host ]).set( statusDataBase[region][service][host] + statusDataOffset)
+
+                # Increment samples counter
+                metric2.inc()
                 samplesSent += 1
 
-                # Increment a Counter metric
-                metric2.inc()
-
                 # Update sample values
-                statusData = [ [ [ ((statusData[r][s][h] + 1) % len( statusList )) 
-                                for r in range(numberOfRegions) ] 
-                                    for s in range(numberOfServices) ]
-                                        for h in range(numberOfHosts) ]
+                statusDataOffset = (statusDataOffset + 1 ) % statusDataRange
+                #statusData = [ [ [ ((statusData[r][s][h] + 1) % statusDataRange) 
+                #                for r in range(numberOfRegions) ] 
+                #                    for s in range(numberOfServices) ]
+                #                        for h in range(numberOfHosts) ]
                 #print("Post ", statusData )
             if now > reportTime:
                 reportTime = now + timedelta(seconds=60)
