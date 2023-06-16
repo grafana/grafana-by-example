@@ -106,7 +106,8 @@ if __name__ == "__main__":
                 runTimeMinutes = runTimeSeconds / 60
                 samplesPerMinute = samplesSent /  runTimeSeconds * 60.0
                 print( "{} {:.2f} {} {:.2f} {:.2f} {}".format(now, runTimeMinutes, samplesSent, samplesPerMinute, delaySec, runTimeRemaining))
-        
+            time.sleep((sendMetricTime - now).seconds) # Sleep until next send metric time
+            
     elif cmd == "test":
         print("test")
     else:
