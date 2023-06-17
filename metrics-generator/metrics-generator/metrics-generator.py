@@ -5,9 +5,8 @@ from prometheus_client import Gauge
 from prometheus_client import Histogram
 from prometheus_client import Info
 import prometheus_client
-import random
-import time
-import sys, os
+
+import sys, os, math, time, random
 from datetime import datetime, timedelta
 import platform
 
@@ -21,6 +20,10 @@ prometheus_client.REGISTRY.unregister(prometheus_client.PLATFORM_COLLECTOR)
 prometheus_client.REGISTRY.unregister(prometheus_client.PROCESS_COLLECTOR)
 
 prometheusHttpPort = int( os.environ.get('PROMTHEUS_HTTP_PORT', 8001) )
+
+def roundDatetimeUp(dt, delta):
+    return datetime.min + math.ceil((dt - datetime.min) / delta) * delta
+
 
 def getArg(n, default="NONE"):
     # Use type of default set result type
@@ -44,14 +47,15 @@ if __name__ == "__main__":
         numberOfServices =  getArg(4, 5) 
         numberOfHosts =     getArg(5, 5)
         durationMinutes =   getArg(6, 60) 
-        ratePerMinute =     getArg(7, 1.0)  # Produce 1 sample per minute
-        reportIntervalSec = getArg(8, 60.0) 
+        produceIntervalSec = getArg(7, 60)  # Produce metrics every nn seconds
+        reportIntervalSec = getArg(8, 300.0) 
 
-        delaySec = 60.0 / ratePerMinute
+        #delaySec = 60.0 / ratePerMinute
         timeoutSec = durationMinutes * 60
         timeoutTime = datetime.now() + timedelta(seconds=timeoutSec)
         startTime = datetime.now()
-        sendMetricTime = datetime.now() + timedelta(seconds=delaySec)
+        #sendMetricTime = datetime.now() + timedelta(seconds=delaySec)
+        sendMetricTime = roundDatetimeUp(datetime.now(), timedelta(seconds=produceIntervalSec))
         reportTime = datetime.now() + timedelta(seconds=reportIntervalSec)
         samplesSent = 0
 
@@ -91,10 +95,9 @@ if __name__ == "__main__":
 
         # Run
         while datetime.now() < timeoutTime:
-            now = datetime.now()
-            if now > sendMetricTime:
-                print("Now: {} statusDataBase: {} Offset: {}".format(now, statusDataBase, statusDataOffset))
-                sendMetricTime = now + timedelta(seconds=delaySec)
+            if datetime.now() > sendMetricTime:
+                print("Now: {} statusDataOffset: {}".format(datetime.now(), statusDataOffset))
+                #sendMetricTime = now + timedelta(seconds=delaySec)
                 nowdt = datetime.utcnow()
                 for region in range( numberOfRegions ):
                     for service in range( numberOfServices ):
@@ -105,25 +108,27 @@ if __name__ == "__main__":
                                             service=serviceList[ service ], 
                                             host=hostList[ host ]).set( statusDataBase[region][service][host] + statusDataOffset)
 
-                # Increment samples counter
+                # Increment samples counter and update sample values
                 metric2.inc()
                 samplesSent += 1
-
-                # Update sample values
                 statusDataOffset = (statusDataOffset + 1 ) % statusDataRange
-                #statusData = [ [ [ ((statusData[r][s][h] + 1) % statusDataRange) 
-                #                for r in range(numberOfRegions) ] 
-                #                    for s in range(numberOfServices) ]
-                #                        for h in range(numberOfHosts) ]
-                #print("Post ", statusData )
-            if now > reportTime:
-                reportTime = now + timedelta(seconds=60)
-                runTimeRemaining = (timeoutTime - now).seconds
-                runTimeSeconds = (now - startTime).seconds
+
+                # Sechedule next send metrics
+                sendMetricTime = roundDatetimeUp(datetime.now(), timedelta(seconds=produceIntervalSec))
+                waitFor  = (sendMetricTime - datetime.now()).seconds
+                #print( sendMetricTime, waitFor )
+                if waitFor > 0:
+                    time.sleep(waitFor) # Sleep until next send metric time
+
+            if datetime.now() > reportTime:
+                reportTime = datetime.now() + timedelta(seconds=reportIntervalSec)
+                runTimeRemaining = (timeoutTime - datetime.now()).seconds
+                runTimeSeconds = (datetime.now() - startTime).seconds
                 runTimeMinutes = runTimeSeconds / 60
                 samplesPerMinute = samplesSent /  runTimeSeconds * 60.0
-                print( "{} {:.2f} {} {:.2f} {:.2f} {}".format(now, runTimeMinutes, samplesSent, samplesPerMinute, delaySec, runTimeRemaining))
-            time.sleep((sendMetricTime - now).seconds) # Sleep until next send metric time
+                print( "{} {:.2f} {} {:.2f} {:.2f} {}".format(datetime.now(), runTimeMinutes, samplesSent, samplesPerMinute, produceIntervalSec, runTimeRemaining))
+            
+            
             
     elif cmd == "test":
         print("test")
