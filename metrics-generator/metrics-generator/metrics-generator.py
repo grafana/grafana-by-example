@@ -38,10 +38,69 @@ def getArg(n, default="NONE"):
         v = str(v)
     return v
 
+class Regions():
+    def __init__(self, metricPrefix,r, s, h, intevalSec, durationSeconds):
+        self.regions = r
+        self.services = s
+        self.hosts = h
+        self.intervalSec = intevalSec
+        self.endTime = endTime = datetime.now() + timedelta(seconds=durationSeconds)
+        self.metricPrefix = metricPrefix
+        # Data set
+        self.regionList =    [ "region{}".format(i) for i in range(self.regions) ]
+        self.serviceList =   [ "service{}".format(i) for i in range(self.services) ]
+        self.hostList =      [ "host{}".format(i) for i in range(self.hosts) ]
+        self.statusDataRange = self.regions * self.services * self.hosts
+        self.statusDataBase = [ [ [ 0 for i in range(self.regions) ] for ii in range(self.services) ] for iii in range(self.hosts) ]
+        v = 1
+        for r in range( self.regions ):
+            for s in range( self.services ):
+                for h in range( self.hosts ):
+                    self.statusDataBase[r][s][h] = v
+                    v += self.statusDataRange
+        print( "statusDataRange: {}".format(self.statusDataRange))
+        print( "statusData: {}".format(self.statusDataBase))
+        self.offset = 0
+  
+    def start(self): 
+        # Create the Promethues Metricsç
+        metric1 = Gauge("{}_service_status".format(self.metricPrefix), "Regional Services Test Metric", ["region", "service", "host"] )
+        metric2 = Counter("{}_service_samples".format(self.metricPrefix), "Regional Services Test Metric Samples Sent" )
+        metric3 = Info("{}_service_version".format(self.metricPrefix), "Version Information")
+        metric4 = Gauge("{}_uptime".format(self.metricPrefix), "Regional Services Uptime" )
+
+        #METRIC_GENERATION_TIME = Summary('test_service_metric_generation_seconds', 'Time spent generating metrics')
+        metric3.info( { "version": "1.0.0", "buildInfo": "{}".format(self.metricPrefix) } )
+   
+        n = 0
+        statusDataOffset = 0
+        startTime = datetime.now()
+        while (datetime.now() < self.endTime):
+            metric4.set((datetime.now() - startTime).total_seconds())
+            sendMetricTime = roundDatetimeUp(datetime.now(), timedelta(seconds=self.intervalSec))
+            waitForSec = (sendMetricTime - datetime.now()).total_seconds()
+            print( "{} now: {} next: {} waitSec: {} ".format(n, datetime.now(), sendMetricTime, waitForSec ))
+            time.sleep(waitForSec) # Sleep until next send metric time
+            n = n + 1
+            for region in range( self.regions ):
+                for service in range( self.services ):
+                    for host in range( self.hosts ):
+                        metric1.labels(region=self.regionList[ region ],
+                                        service=self.serviceList[ service ], 
+                                        host=self.hostList[ host ]).set(self.statusDataBase[region][service][host] + statusDataOffset)
+            metric2.inc()
+            #samplesSent += 1
+            statusDataOffset = (statusDataOffset + 1 ) % self.statusDataRange
+
 if __name__ == "__main__":
     cmd = sys.argv[1] if len(sys.argv) > 1 else "unknown command"
 
-    if cmd == "regions":
+    if cmd == "test1":
+        r = Regions( "test1", 2, 2, 2, 2, 120 )
+        start_http_server(prometheusHttpPort)
+        r.start()
+
+    elif cmd == "regions":
         metricPrefix =      getArg(2, "test") 
         numberOfRegions =   getArg(3, 5) 
         numberOfServices =  getArg(4, 5) 
