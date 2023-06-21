@@ -6,11 +6,26 @@ Implements a Prometheus metrics generator client paired with a Grafana Agent to 
 - Requires docker-compose
 
 ### Usage
-```./metrics-generator regions <metric-prefix> <regions> <services> <hosts> <duration-minutes> <rate-per-minute> <report-interval-sec>```
+
+Configure the environment variables for the Grafana Cloud instance in the file: ```unconfigured-grafana-cloud.env ```
+
+### Configure the environment
+```
+source unconfigured-grafana-cloud.env
+./ctl.sh configure
+```
 
 ### Start the containers using Docker Compose
-```./ctl.sh start```
+```
+./ctl.sh start
+```
+
+### Validate the Promtheues metrics are being produced
+
+The metrics ```test1_service_status``` and ```test2_service_status``` should be visible in the Grafana Cloud instance
 
 ### Stop the local containers
-```./ctl.sh stop```
+```
+./ctl.sh stop
+```
 
