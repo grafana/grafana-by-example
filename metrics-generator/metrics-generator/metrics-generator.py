@@ -39,12 +39,12 @@ def getArg(n, default="NONE"):
     return v
 
 class Regions():
-    def __init__(self, metricPrefix,r, s, h, intevalSec, durationSeconds):
+    def __init__(self, metricPrefix, r, s, h, intevalSec, durationMinutes):
         self.regions = r
         self.services = s
         self.hosts = h
         self.intervalSec = intevalSec
-        self.endTime = endTime = datetime.now() + timedelta(seconds=durationSeconds)
+        self.endTime = endTime = datetime.now() + timedelta(minutes=durationMinutes)
         self.metricPrefix = metricPrefix
         # Data set
         self.regionList =    [ "region{}".format(i) for i in range(self.regions) ]
@@ -95,12 +95,19 @@ class Regions():
 if __name__ == "__main__":
     cmd = sys.argv[1] if len(sys.argv) > 1 else "unknown command"
 
-    if cmd == "test1":
-        r = Regions( "test1", 2, 2, 2, 2, 120 )
+    if cmd == "regions":
+        metricPrefix =      getArg(2, "test1") 
+        numberOfRegions =   getArg(3, 3) 
+        numberOfServices =  getArg(4, 3) 
+        numberOfHosts =     getArg(5, 3)
+        durationMinutes =   getArg(6, 60) 
+        produceIntervalSec = getArg(7, 60)  # Produce metrics every nn seconds
+        reportIntervalSec = getArg(8, 300.0) 
+        r = Regions( metricPrefix, numberOfRegions, numberOfServices, numberOfHosts, produceIntervalSec, durationMinutes)
         start_http_server(prometheusHttpPort)
         r.start()
 
-    elif cmd == "regions":
+    elif cmd == "regions1":
         metricPrefix =      getArg(2, "test") 
         numberOfRegions =   getArg(3, 5) 
         numberOfServices =  getArg(4, 5) 
