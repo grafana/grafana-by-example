@@ -9,7 +9,9 @@ import prometheus_client
 import sys, os, math, time, random
 from datetime import datetime, timedelta
 import platform
+import logging
 
+logging.getLogger().setLevel(logging.INFO)
 
 # References
 # https://github.com/prometheus/client_python
@@ -60,6 +62,7 @@ class Regions():
                     v += self.statusDataRange
         print( "statusDataRange: {}".format(self.statusDataRange))
         print( "statusData: {}".format(self.statusDataBase))
+        logging.info( "Endtime: {}".format(self.endTime))
         self.offset = 0
   
     def start(self): 
@@ -79,7 +82,7 @@ class Regions():
             metric4.set((datetime.now() - startTime).total_seconds())
             sendMetricTime = roundDatetimeUp(datetime.now(), timedelta(seconds=self.intervalSec))
             waitForSec = (sendMetricTime - datetime.now()).total_seconds()
-            print( "{} now: {} next: {} waitSec: {} ".format(n, datetime.now(), sendMetricTime, waitForSec ))
+            logging.info( "{} now: {} next: {} waitSec: {} end: {}".format(n, datetime.now(), sendMetricTime, waitForSec, self.endTime ))
             time.sleep(waitForSec) # Sleep until next send metric time
             n = n + 1
             for region in range( self.regions ):

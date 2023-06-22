@@ -47,6 +47,7 @@ case "$CMD" in
   ;;
   logs)
     CONTAINER_ID=$(_getContainerIdFromName $2)
+    echo $CONTAINER_ID
     docker logs $CONTAINER_ID -f
     ;;
   ps)
