@@ -3,7 +3,7 @@
 [Documentation: Interact with Adaptive Metrics](https://grafana.com/docs/grafana-cloud/data-configuration/metrics/interact-with-adaptive-metrics/)
 
 ### Configure the required environment variables
-source envvars-empty.sh
+source envvars-unconfigured.sh
 
 ### Show the top 20 recomendations
 ./am-demo.sh recommendations-show-top
@@ -14,6 +14,10 @@ source envvars-empty.sh
 METRIC_NAME="pilot_proxy_convergence_time_bucket"
 RULES_FILE="admin-rules-all.json"
 ```
+
+### Use the helper script am-demo.sh
+
+The helper script ```am-demo.sh``` will create a project directory using the value specified by the environment variable ```GRAFANA_PROJECT_NAME``` to store temporay files, the current set of applied rules, and individual rules
 
 ### Pull the current set of aggregation rules
 ```./am-demo.sh recommendations-create-all > $RULES_FILE```
