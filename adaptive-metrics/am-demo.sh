@@ -41,6 +41,11 @@ _metricLabels() {
         -d "$DATA1"
 }
 
+_help() {
+    echo "aggregations-rules-get"
+    echo "aggregations-rules-post <rules-file.json"
+}
+
 HTTP_OPTIONS="-s"
 COLLISION_TMP_FILE="collision-tmp.txt" 
 GRAFANA_PROJECT_DIR="project-$GRAFANA_PROJECT_NAME"
