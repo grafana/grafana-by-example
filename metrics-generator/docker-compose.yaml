@@ -14,7 +14,7 @@ services:
       - PROMTHEUS_HTTP_PORT=8001
     ports:
       - "8001:8001"
-    command: [ "test1", "5", "5", "5", "360", "300" ]
+    command: [ "test1", "5", "5", "5", "360", "60" ]
 
   metrics-generator2:
     image: metrics-generator/metrics-generator
@@ -23,7 +23,16 @@ services:
       - PROMTHEUS_HTTP_PORT=8002
     ports:
       - "8002:8002"
-    command: [ "test2", "5", "5", "5", "360", "300" ]
+    command: [ "test2", "5", "5", "5", "360", "60" ]
+
+  metrics-generator3:
+    image: metrics-generator/metrics-generator
+    build: ./metrics-generator
+    environment:
+      - PROMTHEUS_HTTP_PORT=8003
+    ports:
+      - "8003:8003"
+    command: [ "test3", "5", "5", "5", "360", "60" ]
 
   # Grafana Agent
   # https://grafana.com/docs/agent/latest/

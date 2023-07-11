@@ -60,8 +60,8 @@ class Regions():
                 for h in range( self.hosts ):
                     self.statusDataBase[r][s][h] = v
                     v += self.statusDataRange
-        print( "statusDataRange: {}".format(self.statusDataRange))
-        print( "statusData: {}".format(self.statusDataBase))
+        logging.info( "statusDataRange: {}".format(self.statusDataRange))
+        logging.info( "statusData: {}".format(self.statusDataBase))
         logging.info( "Endtime: {}".format(self.endTime))
         self.offset = 0
   
