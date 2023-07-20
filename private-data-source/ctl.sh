@@ -105,9 +105,7 @@ case "$CMD" in
     tar -xvf pdc-agent_Darwin_x86_64.tar.gz
     ;;
   configure)
-    # Requires
-    # export GRAFANA_FARO_KEY=
-    cat grafana-agent/unconfigured-config-cloud.yaml | envsubst > configured-config-cloud.yaml
+    #cat grafana-agent/unconfigured-config-cloud.yaml | envsubst > configured-config-cloud.yaml
   ;;
   run)
     docker run -i -t $CMD_ARG1
