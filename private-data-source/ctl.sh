@@ -37,7 +37,7 @@ case "$CMD" in
   sleep)
     sleep 86400
     ;;
-  start)
+  start|up)
     clear
     if [[ -z "${GRAFANA_CLOUD_PDC_TOKEN}" ]]; then
       echo "Error: Environment variable is not set: GRAFANA_CLOUD_PDC_TOKEN"
@@ -62,7 +62,7 @@ case "$CMD" in
     docker exec -it $CONTAINER_ID psql -U postgres -d dvdrental -f sql-test1.sql
     echo "https://davidryder1.grafana-dev.net/goto/TvnUuAl4g?orgId=1"
     ;;
-  stop)
+  stop|down)
     pkill -f "pdc -token" 
     ./ctl.sh local down
     ;;
@@ -147,7 +147,7 @@ case "$CMD" in
     ;;
   logs-c)
     CONTAINER_ID=$(_getContainerIdFromName $2)
-    docker logs $CONTAINER_ID
+    docker logs -f $CONTAINER_ID
     ;;
   bash|sh)
     CONTAINER_ID=$(_getContainerIdFromName $2)

@@ -7,8 +7,9 @@ services:
     #entrypoint: [ /usr/bin/pdc  ]
     command: [ -token, $GRAFANA_CLOUD_PDC_TOKEN,
                -cluster, $GRAFANA_CLOUD_PDC_CLUSTER,
-               -gcloud-hosted-grafana-id, $GRAFANA_CLOUD_PDC_ID,
-               -domain, $GRAFANA_CLOUD_PDC_DOMAIN ]
+               -gcloud-hosted-grafana-id, $GRAFANA_CLOUD_PDC_ID ]
+
+    #           -domain, $GRAFANA_CLOUD_PDC_DOMAIN ]
 
   # https://hub.docker.com/_/postgres
   postgres-server:
@@ -59,5 +60,12 @@ services:
       "-server.http.address=0.0.0.0:12345",
     ]
 
+  ubuntu:
+    image: ubuntu/ubuntu
+    build: ./ubuntu
+    volumes:
+      - "./ctl.sh:/ctl.sh"
+    entrypoint: [ ./ctl.sh ]
+    command: [ sleep ]
 
       
