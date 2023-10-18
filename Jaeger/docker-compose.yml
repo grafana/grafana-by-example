@@ -3,7 +3,7 @@ services:
 
   # https://medium.com/opentracing/take-opentracing-for-a-hotrod-ride-f6e3141f7941
   hotrod:
-    image: jaegertracing/example-hotrod:latest
+    image: jaegertracing/example-hotrod:1.28
     ports:
       - 8080-8083:8080-8083
     environment:
@@ -11,8 +11,11 @@ services:
       - JAEGER_AGENT_PORT=16831
       #- JAEGER_AGENT_HOST=jaeger
       #- JAEGER_AGENT_PORT=6831
+      #- JAEGER_SAMPLER_TYPE=remote
+      #- JAEGER_SAMPLING_ENDPOINT=http://jaeger:6381/sampling
       #- JAEGER_AGENT_HOST=otel-collector
       #- JAEGER_AGENT_PORT=36831
+    #command: ["--agent.tags=span_type=grafana", --reporter.grpc.host-port=grafana-agent:16831"]
 
   # https://grafana.com/docs/agent/latest/configuration/traces-config/
   grafana-agent:
