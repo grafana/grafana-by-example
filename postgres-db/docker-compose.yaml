@@ -51,11 +51,8 @@ services:
   grafana-agent:
     image: grafana/agent:latest
     ports:
-      - "12347:12357"
-      - "12348:12348"
-      - "16685:16685"
-      - "16831:16831"
-      - "55679:55679"
+      - "12345:12345"
+      - "12346:12346"
     volumes:
       - "./configured-config-cloud.yaml:/etc/agent/agent.yaml"
       - "./logs/:/logs"

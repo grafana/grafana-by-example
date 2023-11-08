@@ -54,6 +54,10 @@ case "$CMD" in
     curl -L -O https://www.postgresqltutorial.com/wp-content/uploads/2019/05/dvdrental.zip
     tar xf dvdrental.zip
     ;;
+  build)
+    docker-compose build
+    docker pull grafana/agent:latest
+  ;;
   configure)
     # Requires
     # export GRAFANA_FARO_KEY=
