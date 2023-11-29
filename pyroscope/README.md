@@ -1,0 +1,19 @@
+## Grafana Pyroscope
+
+This example Docker Compose deployment brings together Pyroscope, Mimir, Grafana Agent using Flow, the HotROD application and sample Go application instrumented with pprof wrappers to produce profiles.
+
+Please note that some of content in this repository has been sourced from the original Grafana Pyroscope [GitHub Project](https://github.com/grafana/pyroscope) which does contain extensive working examples for Pyroscope.
+
+Please see the [Pyroscope Documentation](https://grafana.com/docs/pyroscope/latest/?pg=oss-pyroscope&plcmt=hero-btn-3) for further information.
+
+### Starting the services
+```docker-compose up```
+
+### Navigation
+Once the services are started navigate to the Grafana instance at [Grafana](http://localhost:3000) and login using ```admin/welcome1```
+
+The folder Grafana ```Pyroscope``` contains a ```Navigation``` dashboard and a ```Pyroscope Usage``` dashboard which shows the volume of data ingested into the Pyroscope TSDB
+
+### Stopping the services
+```docker-compose down``
+
