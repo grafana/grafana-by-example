@@ -1,0 +1,7 @@
+server:
+  http_listen_port: 4040
+
+self_profiling:
+  # When running in single binary (--target=all) Pyroscope will push (Go SDK)
+  # profiles to itself. Set to true to disable self-profiling.
+  disable_push: true

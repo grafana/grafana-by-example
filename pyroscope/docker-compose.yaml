@@ -1,0 +1,83 @@
+version: "3.8"
+volumes:
+  grafana:
+  postgres:
+
+services:
+
+  # Grafana for exploring and visualizing data
+  grafana-server-1:
+    image: grafana/grafana:latest
+    #restart: always
+    volumes:
+      - "./grafana/grafana.ini:/etc/grafana/grafana.ini"
+      - "./grafana/provisioning:/etc/grafana/provisioning"
+      - "./grafana/provisioning/dashboards:/var/lib/grafana/dashboards"
+      # Persist the Grafana instance
+      # - "./grafana/etc/1:/var/lib/grafana"
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_FEATURE_TOGGLES_ENABLE=flameGraph
+  
+  # Pyroscope
+  pyroscope:
+    image: grafana/pyroscope:latest
+    depends_on:
+      - grafana-server-1
+    volumes:
+      - "./pyroscope/config.yaml:/etc/pyroscope/config.yaml"
+    ports:
+      - "4040:4040"
+    command: [ "-config.file=/etc/pyroscope/config.yaml" ]
+
+   # Grafana Metrics
+  mimir:
+    image: grafana/mimir:latest
+    depends_on:
+      - grafana-server-1
+      #- grafana-server-2
+      #- grafana-server-3
+    volumes:
+      - "./mimir/config-single.yaml:/etc/mimir/config.yaml"
+    ports:
+      - "9009:9009"
+    command: [
+      "-config.file=/etc/mimir/config.yaml"
+    ]
+
+  # Grafana Agent
+  grafana-agent:
+    image: grafana/agent:latest
+    depends_on:
+      - mimir
+    ports:
+      - "12345:12345"
+      - "3500:3500"
+      - "16603:16603"
+    volumes:
+      - "./grafana-agent/config.yaml:/etc/agent/agent.yaml"
+      - "./grafana-agent/config.river:/etc/agent/agent.river"
+    environment:
+      HOSTNAME: grafana-agent
+      AGENT_MODE: flow
+    #command: [ "-config.file=/etc/agent/agent.yaml", "-server.http.address=0.0.0.0:12345", ]
+    command: [ "run", "/etc/agent/agent.river", "--server.http.listen-addr=0.0.0.0:12345", ]
+
+  hotrod:
+    image: 'pyroscope/hotrod-golang:latest'
+    ports:
+      - 8080:8080
+      - 6060:6060
+    environment:
+      JAEGER_AGENT_HOST: jaeger
+      JAEGER_AGENT_PORT: '6831'
+    command:
+      - all
+
+  # Required for hotrod.
+  jaeger:
+    image: 'jaegertracing/all-in-one:1.11'
+    ports:
+      - '6831:6831/udp'
+      - '16686:16686'

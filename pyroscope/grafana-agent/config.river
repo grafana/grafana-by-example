@@ -1,0 +1,47 @@
+logging {
+  level = "debug"
+  format = "logfmt"
+}
+
+prometheus.remote_write "prom" {
+    endpoint {
+        url = "http://mimir:9009/api/v1/push"
+    }
+}
+
+// prometheus.scrape is the name of the component and "default" is its label.
+// https://grafana.com/docs/agent/latest/flow/reference/components/prometheus.scrape/
+prometheus.scrape "default" {
+    // Tell the scraper to scrape at http://pyroscope:4040/metrics.
+    // The http:// and metrics are implied but able to be overwritten.
+    targets = [{"__address__" = "pyroscope:4040"}]
+    // Forward the scrape results to the receiver. In general,
+    // Flow uses forward_to to tell which receiver to send results to.
+    // The forward_to is an argument of prometheus.scrape.default and
+    // the receiver is an exported field of prometheus.remote_write.prom.
+    forward_to = [prometheus.remote_write.prom.receiver]
+}
+
+pyroscope.write "example" {
+  // Send metrics to a locally running Pyroscope instance.
+  endpoint {
+    url = "http://pyroscope:4040"
+
+    // To send data to Grafana Cloud you'll need to provide username and password.
+    // basic_auth {
+    //   username = "myuser"
+    //   password = "mypassword"
+    // }
+  }
+  external_labels = {
+    "env" = "example",
+  }
+}
+
+pyroscope.scrape "default" {
+  targets = [
+    {"__address__" = "hotrod:6060", "service_name"="hotrod"},
+    {"__address__" = "app:6060", "service_name"="app"},
+  ]
+  forward_to = [pyroscope.write.example.receiver]
+}

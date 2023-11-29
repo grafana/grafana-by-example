@@ -1,0 +1,16 @@
+apiVersion: 1
+
+datasources:
+  - name: Mimir1
+    type: prometheus
+    access: proxy
+    isDefault: false
+    uid: mimir
+    url: http://mimir:9009/prometheus
+  
+  - name: Pyroscope1
+    type: grafana-pyroscope-datasource
+    url: http://pyroscope:4040/
+    basicAuth: false
+    basicAuthUser: ""
+    database: ""

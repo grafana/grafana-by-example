@@ -1,0 +1,25 @@
+server:
+  log_level: debug
+
+# Configures metrics job to scrape from the ClickHouse server
+metrics:
+  wal_directory: /tmp/grafana-agent/wal
+  global:
+    scrape_interval: 60s
+    remote_write:
+      - url: http://mimir:9009/api/v1/push
+
+  configs:
+    - name: agent
+      scrape_configs:
+        - job_name: pyroscope
+          scrape_interval: 15s
+          static_configs:
+            - targets: [ 'pyroscope:4040']
+
+integrations:
+  agent:
+    enabled: true
+  node_exporter:
+    enabled: true
+

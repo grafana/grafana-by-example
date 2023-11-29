@@ -1,0 +1,67 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 4,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "grafana"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "# Navigation\n\n<ul>\n\n<li style=\"padding-bottom: 2px; align-items: left; font-size: 12px\">\n  <a style=\"color:#5081e2\";href=\"http://localhost:12345/\" target=\"_blank\">\n  Grafana Agent Flow Configuration</a></li>\n\n<li style=\"padding-bottom: 2px; align-items: left; font-size: 12px\">\n  <a style=\"color:#5081e2\";href=\"http://localhost:4040/metrics\" target=\"_blank\">\n  Pyroscope Prometheues Metrics</a></li>\n\n<li style=\"padding-bottom: 2px; align-items: left; font-size: 12px\">\n  <a style=\"color:#5081e2\";href=\"https://play.grafana.org/a/grafana-pyroscope-app\" target=\"_blank\">\n  Play Grafana Pyroscope</a></li>\n\n<li style=\"padding-bottom: 2px; align-items: left; font-size: 12px\">\n  <a style=\"color:#5081e2\";href=\"http://localhost:8080/\" target=\"_blank\">\n  Hot Rod Application</a></li>\n\n</ul>\n",
+        "mode": "html"
+      },
+      "pluginVersion": "10.2.0",
+      "title": "Navigation",
+      "type": "text"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 38,
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Navigation",
+  "uid": "b884b8b5-4b93-4b90-88ac-fb78a7f9d243",
+  "version": 2,
+  "weekStart": ""
+}
