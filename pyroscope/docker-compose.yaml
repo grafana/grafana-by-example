@@ -82,8 +82,22 @@ services:
       - '6831:6831/udp'
       - '16686:16686'
 
-  # Test Application 
-  app:
+  # Test Application in Go
+  app_go:
     build: testapp/.
     ports:
       - 6061:6060
+
+  # Test Application in Go
+  app_ebpf:
+    image: 'grafana/agent:latest'
+    user: root
+    privileged: true
+    pid: 'host'
+    environment:
+      - AGENT_MODE=flow
+    volumes:
+      - "./grafana-agent/ebpf_config.river:/etc/agent/agent.river"
+    ports:
+      - '12346:12345'
+    command: [ "run", "/etc/agent/agent.river", "--storage.path=/tmp/agent", "--server.http.listen-addr=0.0.0.0:12345", ]

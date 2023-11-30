@@ -1,0 +1,13 @@
+// https://grafana.com/docs/agent/latest/flow/reference/components/pyroscope.ebpf/
+
+pyroscope.ebpf "instance" {
+  forward_to = [pyroscope.write.endpoint.receiver]
+  targets_only = false
+  default_target = { "service_name" = "app_ebpf" }
+  sample_rate = 10
+}
+pyroscope.write "endpoint" {
+  endpoint {
+    url = "http://pyroscope:4040"
+  }
+}

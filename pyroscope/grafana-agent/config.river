@@ -9,21 +9,14 @@ prometheus.remote_write "prom" {
     }
 }
 
-// prometheus.scrape is the name of the component and "default" is its label.
 // https://grafana.com/docs/agent/latest/flow/reference/components/prometheus.scrape/
 prometheus.scrape "default" {
-    // Tell the scraper to scrape at http://pyroscope:4040/metrics.
-    // The http:// and metrics are implied but able to be overwritten.
-    targets = [{"__address__" = "pyroscope:4040"}]
-    // Forward the scrape results to the receiver. In general,
-    // Flow uses forward_to to tell which receiver to send results to.
-    // The forward_to is an argument of prometheus.scrape.default and
-    // the receiver is an exported field of prometheus.remote_write.prom.
+    targets = [{"__address__" = "pyroscope:4040"}] // The http:// and metrics are implied but able to be overwritten.
     forward_to = [prometheus.remote_write.prom.receiver]
 }
 
+// https://grafana.com/docs/agent/latest/flow/reference/components/pyroscope.write/
 pyroscope.write "example" {
-  // Send metrics to a locally running Pyroscope instance.
   endpoint {
     url = "http://pyroscope:4040"
 
@@ -38,10 +31,55 @@ pyroscope.write "example" {
   }
 }
 
+// https://grafana.com/docs/agent/latest/flow/reference/components/pyroscope.scrape/
 pyroscope.scrape "default" {
   targets = [
-    {"__address__" = "hotrod:6060", "service_name"="hotrod"},
-    {"__address__" = "app:6060", "service_name"="app"},
+    { "__address__" = "hotrod:6061", "service_name" = "hotrod" },
+    { "__address__" = "app_go:6060", "service_name" = "app_go" },
   ]
+  //     { "__address__" = "app_ebpf:6060", "service_name" = "app_ebpf" },
   forward_to = [pyroscope.write.example.receiver]
+  scrape_interval = "60s"
+  scrape_timeout = "90s"
+  job_name = "test1"
+
+  profiling_config {
+    profile.goroutine {
+      enabled = true
+      path = "/debug/pprof/goroutine"
+      delta = false
+    }
+    profile.process_cpu {
+      enabled = true
+      path = "/debug/pprof/profile"
+      delta = true
+    }
+    profile.godeltaprof_memory {
+      enabled = true
+      path = "/debug/pprof/delta_heap"
+    }
+    profile.memory {
+      enabled = false
+      path = "/debug/pprof/heap"
+      delta = false
+    }
+    profile.godeltaprof_mutex {
+      enabled = true
+      path = "/debug/pprof/delta_mutex"
+    }
+    profile.mutex {
+      enabled = false
+      path = "/debug/pprof/mutex"
+      delta = false
+    }
+    profile.godeltaprof_block {
+      enabled = true
+      path = "/debug/pprof/delta_block"
+    }
+    profile.block {
+      enabled = false
+      path = "/debug/pprof/block"
+      delta = false
+    }
+  }
 }
