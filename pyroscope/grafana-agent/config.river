@@ -3,6 +3,8 @@ logging {
   format = "logfmt"
 }
 
+//
+
 prometheus.remote_write "prom" {
     endpoint {
         url = "http://mimir:9009/api/v1/push"
@@ -31,6 +33,10 @@ pyroscope.write "example" {
   }
 }
 
+local.file "scrape" {
+  filename = "/etc/agent/dynamic.json"
+}
+
 // https://grafana.com/docs/agent/latest/flow/reference/components/pyroscope.scrape/
 pyroscope.scrape "default" {
   targets = [
@@ -39,8 +45,10 @@ pyroscope.scrape "default" {
   ]
   //     { "__address__" = "app_ebpf:6060", "service_name" = "app_ebpf" },
   forward_to = [pyroscope.write.example.receiver]
-  scrape_interval = "60s"
-  scrape_timeout = "90s"
+  //scrape_interval = "60s"
+  //scrape_timeout = "90s"
+  scrape_interval = json_path( local.file.scrape.content, ".scrape_interval" )[0]
+  scrape_timeout = json_path( local.file.scrape.content, ".scrape_timeout" )[0]
   job_name = "test1"
 
   profiling_config {

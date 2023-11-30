@@ -58,6 +58,7 @@ services:
     volumes:
       - "./grafana-agent/config.yaml:/etc/agent/agent.yaml"
       - "./grafana-agent/config.river:/etc/agent/agent.river"
+      - "./grafana-agent/dynamic.json:/etc/agent/dynamic.json"
     environment:
       HOSTNAME: grafana-agent
       AGENT_MODE: flow
