@@ -14,6 +14,9 @@ Once the services are started navigate to the local Grafana instance at [Grafana
 
 The folder Grafana ```Pyroscope``` contains a ```Navigation``` dashboard and a ```Pyroscope Usage``` dashboard which shows the volume of data ingested into the Pyroscope TSDB
 
+### Dynamically Change the Pyroscope scrape interval
+The Grafana Agent in [Flow](https://grafana.com/docs/agent/latest/flow/) mode is used to scrape profiles from the test Go application, the scrape interval is dependent on the contents of the file [dynamic.json](https://github.com/grafana/grafana-by-example-configuration/blob/main/pyroscope/grafana-agent/dynamic.json) and can be changed dynamically at run time by modifying the contents of this file.
+
 ### Stopping the services
 ```docker-compose down```
 
