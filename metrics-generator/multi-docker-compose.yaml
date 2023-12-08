@@ -1,0 +1,64 @@
+version: "3.8"
+volumes:
+  grafana:
+  postgres:
+
+services:
+
+  # Metrics Generator
+  # https://github.com/prometheus/client_python
+  metrics-generator1:
+    image: metrics-generator/metrics-generator
+    build: ./metrics-generator
+    environment:
+      - PROMTHEUS_HTTP_PORT=8001
+    ports:
+      - "8001:8001"
+    command: [ "test1", "2", "2", "2", "30", "60" ]
+
+  metrics-generator2:
+    image: metrics-generator/metrics-generator
+    build: ./metrics-generator
+    environment:
+      - PROMTHEUS_HTTP_PORT=8002
+    ports:
+      - "8002:8002"
+    command: [ "test2", "2", "2", "2", "30", "60" ]
+
+  metrics-generator3:
+    image: metrics-generator/metrics-generator
+    build: ./metrics-generator
+    environment:
+      - PROMTHEUS_HTTP_PORT=8003
+    ports:
+      - "8003:8003"
+    command: [ "test3", "2", "2", "2", "30", "60" ]
+
+  # Grafana Agent
+  # https://grafana.com/docs/agent/latest/
+  grafana-agent1:
+    image: grafana/agent:latest
+    ports:
+      - "12347:12345"
+
+    volumes:
+      - "./configured-config-cloud-1.yaml:/etc/agent/agent.yaml"
+    command: [ "-config.file=/etc/agent/agent.yaml" ]
+
+  grafana-agent2:
+    image: grafana/agent:latest
+    ports:
+      - "12348:12345"
+
+    volumes:
+      - "./configured-config-cloud-2.yaml:/etc/agent/agent.yaml"
+    command: [ "-config.file=/etc/agent/agent.yaml" ]
+
+  grafana-agent3:
+    image: grafana/agent:latest
+    ports:
+      - "12349:12345"
+ 
+    volumes:
+      - "./configured-config-cloud-3.yaml:/etc/agent/agent.yaml"
+    command: [ "-config.file=/etc/agent/agent.yaml" ]

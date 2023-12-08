@@ -24,6 +24,12 @@ _getContainerIdFromName() {
 
 case "$CMD" in
  configure)
+    CONFIG_DIR="./grafana-agent"
+    for f in $CONFIG_DIR//unconfigured-*.yaml; do
+      n=$(basename ${f} | sed -E "s/^unconfigured-(.+)\.yaml/\1/g")
+      cat $CONFIG_DIR/unconfigured-$n.yaml | envsubst > configured-$n.yaml
+    done
+    exit 0
     cat grafana-agent/unconfigured-config-cloud.yaml | envsubst > configured-grafana-agent-config-cloud.yaml
     echo "Created: configured-grafana-agent-config-cloud.yaml"
   ;;
