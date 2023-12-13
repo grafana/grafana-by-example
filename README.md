@@ -1,31 +1,18 @@
 # grafana-by-example-configuration
-Grafana Configuration Examples
+This repository provides a set of configration examples for Grafana and associated techologies. Most are full working examples that require Docker and Docker Compose, or a Grafana Cloud account
 
-Requires Docker and Docker Compose
+# Examples include
+- Jaeger and the Grafana Agent
+- Grafana Cloud Adaptive Metrics
+- Carbon Relay for Graphite metrics
+- Faro for front end monitoring
+- Grafana Agent Vsphere Integration
+- Grafana for Visualization
+- Job-Status - Log processing pipeline for a custom use case
+- Metric Generator for syntheticlly generating Prometheus metrics
+- Prometheus exporter for Postgres database
+- Grafana Private Data Source connector
+- Pyroscope example with data volume dashboards
+- Regional Services - Prometheues Metrics generator and region service dashboard
 
-# Grafana Agent and Jaeger Traces
-
-## Configure the environment variables
-
-Configure the environment variables below from your Grafana Cloud Account:
-
-1. Log into your [Grafana Cloud account](https://grafana.com/auth/sign-in) to access the Cloud Portal
-2. Edit the file: ```envvars-grafana-cloud-unconfigured.sh```
-3. Configure the _USERNAME, _API_KEY and _HOST environment variables from the Metrics, Logs and Traces sections of Grafana Cloud
-
-## Configure
-```
-source envvars-grafana-cloud-unconfigured.s
-./ctl.sh configure
-```
-## Start the containers using Docker Compose
-```
-./ctl.sh up
-```
-
-## Generate Traces
-Browse to: http://127.0.0.1:8080/
-
-## Explore Grafana Cloud Traces
-Browse to your Grafana Cloud account and explore traces from the tempo datasource
 
