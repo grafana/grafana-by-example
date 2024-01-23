@@ -18,7 +18,7 @@ Configure the environment variables below from your Grafana Cloud Account:
 
 ## Configure
 ```
-source envvars-grafana-cloud-unconfigured.s
+source envvars-grafana-cloud-unconfigured.sh
 ./ctl.sh configure
 ```
 The above generates the Grafana Agent configuration file and the docker-compose.yaml file in the directory ```./configure``` These configuration files can be edited manually if required.
