@@ -66,8 +66,9 @@ class Regions():
         self.offset = 0
   
     def start(self): 
+        print( self.metricPrefix )
         # Create the Promethues Metricsç
-        metric1 = Gauge("{}_service_status".format(self.metricPrefix), "Regional Services Test Metric", ["region", "service", "host"] )
+        metric1 = Gauge("{}_service_status".format(self.metricPrefix), "Regional Services Test Metric", ["region", "service", "host", "id"] )
         metric2 = Counter("{}_service_samples".format(self.metricPrefix), "Regional Services Test Metric Samples Sent" )
         metric3 = Info("{}_service_version".format(self.metricPrefix), "Version Information")
         metric4 = Gauge("{}_uptime".format(self.metricPrefix), "Regional Services Uptime" )
@@ -90,7 +91,9 @@ class Regions():
                     for host in range( self.hosts ):
                         metric1.labels(region=self.regionList[ region ],
                                         service=self.serviceList[ service ], 
-                                        host=self.hostList[ host ]).set(self.statusDataBase[region][service][host] + statusDataOffset)
+                                        host=self.hostList[ host ],
+                                        id=random.randint(1,10) ).set(self.statusDataBase[region][service][host] + statusDataOffset)
+                                        
             metric2.inc()
             #samplesSent += 1
             statusDataOffset = (statusDataOffset + 1 ) % self.statusDataRange
@@ -99,7 +102,7 @@ if __name__ == "__main__":
     cmd = sys.argv[1] if len(sys.argv) > 1 else "unknown command"
 
     if cmd == "regions":
-        metricPrefix =      getArg(2, "test1") 
+        metricPrefix =      getArg(2, "abc") 
         numberOfRegions =   getArg(3, 3) 
         numberOfServices =  getArg(4, 3) 
         numberOfHosts =     getArg(5, 3)
@@ -110,6 +113,57 @@ if __name__ == "__main__":
         start_http_server(prometheusHttpPort)
         r.start()
 
+    elif cmd == "histogram1":
+        metricPrefix =      getArg(2, "test") 
+        numberOfHosts =     getArg(3, 1)
+        durationMinutes =   getArg(4, 60) 
+        produceIntervalSec = getArg(5, 60)  # Produce metrics every nn seconds
+        reportIntervalSec = getArg(6, 300.0) 
+        timeoutSec = durationMinutes * 60
+        startTime = datetime.now()
+        timeoutTime = datetime.now() + timedelta(seconds=timeoutSec)
+        sendMetricTime = roundDatetimeUp(datetime.now(), timedelta(seconds=produceIntervalSec))
+        reportTime = datetime.now() + timedelta(seconds=reportIntervalSec)
+        samplesSent = 0
+        hostList =      [ "host{}".format(i) for i in range(numberOfHosts) ]
+
+        metric1 = Histogram("{}_service_status".format(metricPrefix), "Regional service request latncy", [ "host" ] )
+        #metric1.observe(4.7)    # Observe 4.7 (seconds in this case)
+
+        # Start the Prometheus HTTP Server               
+        start_http_server(prometheusHttpPort)
+
+        # Run
+        while datetime.now() < timeoutTime:
+            if datetime.now() > sendMetricTime:
+                print("Now: {} samplesSent: {}".format(datetime.now(), samplesSent))
+                #sendMetricTime = now + timedelta(seconds=delaySec)
+                nowdt = datetime.utcnow()
+                hostValues = [ random.random() for host in range( numberOfHosts ) ]
+                for host in range( numberOfHosts ):
+                    # The default buckets are intended to cover a typical web/rpc request from milliseconds to seconds.
+                    # They can be overridden by passing buckets keyword argument to Histogram.
+                    metric1.labels(host=hostList[ host ]).observe( hostValues[  host ] )
+                samplesSent += 1
+                print( "hostValues {}".format( hostValues ) )
+
+                # Sechedule next send metrics
+                sendMetricTime = roundDatetimeUp(datetime.now(), timedelta(seconds=produceIntervalSec))
+                waitFor  = (sendMetricTime - datetime.now()).seconds
+                #print( sendMetricTime, waitFor )
+                if waitFor > 0:
+                    time.sleep(waitFor) # Sleep until next send metric time
+
+            if datetime.now() > reportTime:
+                reportTime = datetime.now() + timedelta(seconds=reportIntervalSec)
+                runTimeRemaining = (timeoutTime - datetime.now()).seconds
+                runTimeSeconds = (datetime.now() - startTime).seconds
+                runTimeMinutes = runTimeSeconds / 60
+                samplesPerMinute = samplesSent /  runTimeSeconds * 60.0
+                print( "{} {:.2f} {} {:.2f} {:.2f} {}".format(datetime.now(), runTimeMinutes, samplesSent, samplesPerMinute, produceIntervalSec, runTimeRemaining))
+            
+      
+
     elif cmd == "regions1":
         metricPrefix =      getArg(2, "test") 
         numberOfRegions =   getArg(3, 5) 
@@ -118,6 +172,7 @@ if __name__ == "__main__":
         durationMinutes =   getArg(6, 60) 
         produceIntervalSec = getArg(7, 60)  # Produce metrics every nn seconds
         reportIntervalSec = getArg(8, 300.0) 
+        hostList =      [ "host{}".format(i) for i in range(numberOfHosts) ]
 
         #delaySec = 60.0 / ratePerMinute
         timeoutSec = durationMinutes * 60
@@ -205,6 +260,6 @@ if __name__ == "__main__":
         print("Unknown Commands: [{}]\n".format(cmd))
         print( "Commands are:")
         print("  regionalServices <number of regions> <number of services> <run time seconds> <rate per minute> [debug]")
-        print("  test")
+        print("  histogram1 - generate a classic histogram")
 
     exit()
