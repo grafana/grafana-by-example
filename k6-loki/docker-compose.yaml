@@ -1,0 +1,58 @@
+version: "3.8"
+volumes:
+  grafana:
+  postgres:
+
+services:
+
+  # Grafana for exploring and visualizing data
+  grafana-server:
+    image: grafana/grafana-enterprise:latest-ubuntu
+    #image: grafana-enterprise:main-ubuntu
+    #image: grafana/grafana:9.0.6-ubuntu
+    #image: grafana/grafana:latest
+    #image: grafana/grafana:8.2.1
+    #image: grafana/grafana:8.5.6
+    #restart: always
+    volumes:
+      - "./grafana/grafana.ini:/etc/grafana/grafana.ini"
+      - "./grafana/provisioning:/etc/grafana/provisioning"
+      - "/tmp/container-tmp:/tmp/container-tmp"
+    ports:
+      - "3000:3000"
+
+  # Grafana Metrics
+  mimir:
+    image: grafana/mimir:latest
+    depends_on:
+      - grafana-server
+    volumes:
+      - "./mimir/config-single.yaml:/etc/mimir/config.yaml"
+    ports:
+      - "9009:9009"
+    command: [
+      "-config.file=/etc/mimir/config.yaml"
+    ]
+
+  # Grafana logs
+  loki:
+    image: grafana/loki:latest
+    depends_on:
+      - grafana-server
+    ports:
+      - "3100:3100"
+    volumes:
+      - "./loki/config.yaml:/etc/loki/local-config.yaml"
+  
+  # GoLang K6 Container with xk6-loki client
+  # https://grafana.com/docs/loki/latest/send-data/k6/
+  go-k6:
+    image: go-k6:latest
+    build: ./go-k6
+    environment:
+      - TZ=America/Los_Angeles
+    volumes:
+      - "./k6-scripts/loki1.js:/home/test/loki1.js"
+    entrypoint: [ "sleep", "1209600" ]
+
+ 

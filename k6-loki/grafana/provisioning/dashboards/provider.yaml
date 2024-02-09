@@ -1,0 +1,12 @@
+apiVersion: 1
+
+providers:
+- name: 'Loki K6 Demo'
+  folder: 'Loki-K6-Demo'
+  orgId: 1
+  type: file
+  disableDeletion: false
+  editable: false
+  updateIntervalSeconds: 30
+  options:
+    path: /var/lib/grafana/dashboards/
