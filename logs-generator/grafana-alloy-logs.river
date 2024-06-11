@@ -1,0 +1,49 @@
+local.file_match "localhost_output_log_file" {
+	path_targets = [ {
+		__address__ = "localhost", __path__    = "./output.log",
+		job         = "test1",
+	},
+	{
+		__address__ = "localhost", __path__    = "./output.log",
+		job         = "test2",
+	}, ]
+}
+
+loki.process "add_labels" {
+	forward_to = [loki.write.logs_integrations.receiver]
+
+	stage.match {
+		selector = `{job="test1"} |= "app=" |= "segment="`
+
+		// Parse app and segment
+		stage.regex {
+			expression ="^.+\\|app=(?P<app_extracted>.*?)\\|.*\\|segment=(?P<segment_extracted>.*?)\\|.*$"
+		}
+
+		// Added app and layer as labels
+		stage.labels {
+			values = { "app" = "app_extracted",
+					   "segment" = "segment_extracted" }
+		}
+
+		stage.label_drop {
+			values = [ "filename" ]
+		}
+
+		stage.output {
+			source = "output"
+		}
+	}
+}
+
+loki.source.file "logs_scrape_local_files" {
+	targets               = local.file_match.localhost_output_log_file.targets
+	forward_to            = [ loki.process.add_labels.receiver ]
+}
+
+loki.write "logs_integrations" {
+	endpoint {
+		url = "http://grafana1.local:3100/loki/api/v1/push"
+	}
+	external_labels = {}
+}
