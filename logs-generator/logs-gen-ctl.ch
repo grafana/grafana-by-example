@@ -42,9 +42,9 @@ case "$CMD" in
             L1=$(_replace_word "$TEST_LOG_LINE" "YYYY MMM DD HH:MM:SS" "$TS")
             L2=$( _randomizeLogLine "$L1" "APPLICATION_NAME" "$LIST_1" )
             L3=$( _randomizeLogLine "$L2" "SEGMENT_N" "$LIST_2" )
-            L3=$( _replace_word "$L3" "SEQ_NUMBER" "$N" )
-            echo $L3
-            echo $L3 >> $OUTPUT_FILE
+            L4=$( _replace_word "$L3" "SEQ_NUMBER" "$N" )
+            echo $L4
+            echo $L4 >> $OUTPUT_FILE
             sleep $LOG_INTERVAL_SEC
             N=$(( N + 1 ))
         done
