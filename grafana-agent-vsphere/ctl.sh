@@ -47,6 +47,7 @@ case "$CMD" in
   configure)
     _configureFromEnvvars docker-compose-cloud.yaml
     _configureFromEnvvars grafana-agent-config.yaml
+    _configureFromEnvvars grafana-alloy.river
   ;;
   configure-previous)
     # Configure Docker Compose config

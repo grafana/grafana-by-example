@@ -2,22 +2,37 @@ version: "2.1"
 
 services:
   # Grafana agent
-  grafana-agent:
-    image: grafana/agent:latest
-    hostname: grafana-agent
+  # grafana-agent:
+  #   image: grafana/agent:latest
+  #   hostname: grafana-agent
+  #   ports:
+  #     - "12347:12345"
+  #     - "12348:12348"
+  #     - "6832:6832"
+  #     - "55679:55679"
+  #   volumes:
+  #     - "${PWD}/configured/grafana-agent-config.yaml:/etc/agent/agent.yaml"
+  #   command: [
+  #     "-config.file=/etc/agent/agent.yaml",
+  #     "-enable-features=integrations-next",
+  #     "-server.http.address=0.0.0.0:12345",
+  #   ]
+
+  grafana-alloy:
+    image: grafana/alloy:latest
     ports:
       - "12347:12345"
       - "12348:12348"
       - "6832:6832"
       - "55679:55679"
     volumes:
-      - "${PWD}/configured/grafana-agent-config.yaml:/etc/agent/agent.yaml"
+      - "${PWD}/configured/grafana-alloy.river:/etc/alloy/config.alloy"
     command: [
-      "-config.file=/etc/agent/agent.yaml",
-      "-enable-features=integrations-next",
-      "-server.http.address=0.0.0.0:12345",
-    ]
-
+        "run",
+        "--server.http.listen-addr=0.0.0.0:12345",
+        "--stability.level=experimental",
+        "/etc/alloy/config.alloy",
+              ]   
   # vsphere Simulator  
   # docker run --rm -d -p 443:443/tcp nimmis/vcsim:latest
   vcsimulator:
