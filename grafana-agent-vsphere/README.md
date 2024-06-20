@@ -5,6 +5,9 @@ Configures the [Grafana Agent](https://grafana.com/docs/agent/latest/set-up/) vs
 ## Grafana Agent
 The grafana Agent [vsphere_config](https://grafana.com/docs/agent/latest/configuration/integrations/integrations-next/vsphere-config/) block configures the vmware_exporter integration, an embedded version of vmware_exporter, configured to collect vSphere metrics
 
+## Grafana Alloy
+This example now includes the use of [Grafana Alloy](https://grafana.com/docs/alloy/latest/#grafana-alloy) and the [otelcol.receiver.vcenter](https://grafana.com/docs/alloy/latest/reference/components/otelcol.receiver.vcenter/#otelcolreceivervcenter) as the default configuration to accept metrics from a vCenter or ESXi host running VMware vSphere APIs and forward them to other otelcol.* components
+
 ## Usage
 
 Requires Docker, docker-compose, and Linux envsubst and jq
