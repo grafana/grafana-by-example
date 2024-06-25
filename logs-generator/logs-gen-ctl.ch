@@ -3,7 +3,10 @@
 #
 
 # Example Log Lines
-TEST_LOG_LINE='YYYY MMM DD HH:MM:SS |app=APPLICATION_NAME|domain=local_host|sequence=SEQ_NUMBER|uuid=15F8E71E-A469-42C0-A9FC-45AF19439260|segment=SEGMENT_N|msg=MESSAGE_1'
+TEST1_LOG_LINE='YYYY MMM DD HH:MM:SS |app=APPLICATION_NAME|domain=local_host|sequence=SEQ_NUMBER|uuid=15F8E71E-A469-42C0-A9FC-45AF19439260|segment=SEGMENT_N|seq=SEQ_N|msg=MESSAGE_1'
+JSON_LOG_LINE='{"http_code":"200","http_method":"GET","http_route":"/view","level":"info","memory_usage":44444,"msg":"","response_time":0.9263,"server_hostname":"node1","server_pid":123,"service_time":"1719267518216383068","time":"2024-06-24T22:18:38Z"}'
+
+TEST_LOG_LINE=$JSON_LOG_LINE
 
 # Example LogQL regex to extract field values
 # expression ="^.+\\|app=(?P<app_extracted>.*?)\\|.*\\|segment=(?P<segment_extracted>.*?)\\|.*$"
@@ -26,6 +29,7 @@ _randomizeLogLine() {
 
 LIST_1="Application_1 Application_2 Application_3"
 LIST_2="Segment_1 Segment_2 Segment_3"
+LIST_3="1.05 2.16 3.41 9.12 10.1 10.2 10.3"
 OUTPUT_FILE=output.log
 rm $OUTPUT_FILE
 touch $OUTPUT_FILE
@@ -40,11 +44,12 @@ case "$CMD" in
         do
             TS=$(date '+%Y %b %d %H:%M:%S');
             L1=$(_replace_word "$TEST_LOG_LINE" "YYYY MMM DD HH:MM:SS" "$TS")
-            L2=$( _randomizeLogLine "$L1" "APPLICATION_NAME" "$LIST_1" )
-            L3=$( _randomizeLogLine "$L2" "SEGMENT_N" "$LIST_2" )
-            L4=$( _replace_word "$L3" "SEQ_NUMBER" "$N" )
-            echo $L4
-            echo $L4 >> $OUTPUT_FILE
+            L1=$( _randomizeLogLine "$L1" "APPLICATION_NAME" "$LIST_1" )
+            L1=$( _randomizeLogLine "$L1" "SEGMENT_N" "$LIST_2" )
+            L1=$( _randomizeLogLine "$L1" "0.9263" "$LIST_3" )
+            L1=$( _replace_word "$L1" "SEQ_NUMBER" "$N" )
+            echo $L1
+            echo $L1 >> $OUTPUT_FILE
             sleep $LOG_INTERVAL_SEC
             N=$(( N + 1 ))
         done
