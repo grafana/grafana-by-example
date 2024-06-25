@@ -40,7 +40,7 @@ _queryAnnotations() {
     #OUTPUT_TYPE=" | jq  -c '.[] | {title, uid}'"
     # Empty search "%" return all dashboards
     DATA="limit=100"
-    _configureForStack
+    #_configureForStack
     curl $HTTP_SILENT -G "$GRAFANA_CLOUD_PROTOCOL://$GRAFANA_CLOUD_STACK_HOST/api/annotations"  \
             -H "Accept: application/json"          \
             -H "Content-Type: application/json"    \
