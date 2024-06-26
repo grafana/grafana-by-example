@@ -1,0 +1,36 @@
+local.file_match "localhost_output_log_file" {
+	path_targets = [ {
+		__address__ = "localhost", __path__    = "./output.log",
+		job         = "test1",
+	}, ]
+}
+
+loki.process "add_labels" {
+	forward_to = [loki.write.logs_integrations.receiver]
+
+	stage.drop {
+			older_than = "1h"
+			drop_counter_reason = "older than 1h"
+	}
+
+	stage.match {
+		selector = `{job="test1"} != "Application_2"` // Does not contain, Drop these lines
+		stage.drop {
+			expression = ".*"
+			drop_counter_reason = "drop"
+		}
+	}
+
+}
+
+loki.source.file "logs_scrape_local_files" {
+	targets               = local.file_match.localhost_output_log_file.targets
+	forward_to            = [ loki.process.add_labels.receiver ]
+}
+
+loki.write "logs_integrations" {
+	endpoint {
+		url = "http://grafana1.local:3100/loki/api/v1/push"
+	}
+	external_labels = {}
+}
