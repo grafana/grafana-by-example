@@ -4,12 +4,17 @@
 
 # Example Log Lines
 TEST1_LOG_LINE='YYYY MMM DD HH:MM:SS |app=APPLICATION_NAME|domain=local_host|sequence=SEQ_NUMBER|uuid=15F8E71E-A469-42C0-A9FC-45AF19439260|segment=SEGMENT_N|seq=SEQ_N|msg=MESSAGE_1'
-JSON_LOG_LINE='{"http_code":"200","http_method":"GET","http_route":"/view","level":"info","memory_usage":44444,"msg":"","response_time":0.9263,"server_hostname":"node1","server_pid":123,"service_time":"1719267518216383068","time":"2024-06-24T22:18:38Z"}'
+JSON_LOG_LINE_1='{"http_code":"200","http_method":"GET","http_route":"/view","level":"info","memory_usage":44444,"msg":"","response_time":0.9263,"server_hostname":"node1","server_pid":123,"service_time":"1719267518216383068","time":"2024-06-24T22:18:38Z"}'
+JSON_LOG_LINE_2='variable text - <code> 400 - {"http_code":"200","http_method":"GET","http_route":"/view1"} variable text'
 
-TEST_LOG_LINE=$JSON_LOG_LINE
+
+TEST_LOG_LINE=$TEST1_LOG_LINE
+TEST_LOG_LINE=$JSON_LOG_LINE_2
 
 # Example LogQL regex to extract field values
 # expression ="^.+\\|app=(?P<app_extracted>.*?)\\|.*\\|segment=(?P<segment_extracted>.*?)\\|.*$"
+# {job="test1"} | pattern "<_>{<json_extracted>}<_>" | line_format " { {{.json_extracted}} }" | json | line_format "http_code: {{.http_code}}"
+
 
 _replace_word() {
     LOG_LINE=$1
@@ -26,6 +31,26 @@ _randomizeLogLine() {
     TGT_WORD="${WORD_LIST[RND_N]}"
     echo $(_replace_word "$LOG_LINE" "$SRC_WORD" "$TGT_WORD")
 }
+
+_lokiPost() {
+  LOKI_URL=${GRAFANA_LOGS_WRITE_URL/\/\////$GRAFANA_LOGS_USERNAME:$GRAFANA_LOGS_API_KEY@}""
+  LABELS=$1
+  MSG_STR=$2
+  NOW_NS=$( date +%s%N );
+  if [[ $NOW_NS == *"N"* ]]; then
+    NOW_NS=$( date +%s%0000000000 ); # macos
+  fi
+  curl -H "Content-Type: application/json"  \
+        -X POST """$LOKI_URL""" \
+        -d "{\"streams\": [ { \"stream\": { $LABELS }, \"values\": [ [ \"$NOW_NS\", \"$MSG_STR\" ] ] } ] } "
+}
+
+export GRAFANA_LOGS_PROTOCOL="http"
+export GRAFANA_LOGS_HOST="grafana1.local:3100"
+export GRAFANA_LOGS_USERNAME=""
+export GRAFANA_LOGS_API_KEY=""
+export GRAFANA_LOGS_QUERY_URL="$GRAFANA_LOGS_PROTOCOL//$GRAFANA_LOGS_HOST/loki/api/v1"
+export GRAFANA_LOGS_WRITE_URL="$GRAFANA_LOGS_PROTOCOL://$GRAFANA_LOGS_HOST/loki/api/v1/push"
 
 LIST_1="Application_1 Application_2 Application_3"
 LIST_2="Segment_1 Segment_2 Segment_3"
@@ -56,6 +81,11 @@ case "$CMD" in
         ;;
     start-alloy-darwin)
         ./alloy-darwin-amd64 run grafana-alloy-logs.river
+    ;;
+    post-local)
+      JOB="j1"
+      APP="a10"
+      _lokiPost "\"job\": \"$JOB\", \"app\": \"$APP\"" "v1=$(( RANDOM % 10 )) v2=$(( RANDOM % 10 ))"
     ;;
     *)
         echo "Command not recognized [$@]"
