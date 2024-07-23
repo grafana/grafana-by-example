@@ -1,0 +1,38 @@
+version: "3.8"
+volumes:
+  grafana:
+
+services:
+
+  # Grafana for exploring and visualizing data
+  grafana-server:
+    image: grafana/grafana-enterprise
+    container_name: grafana-server
+    environment:
+      - GF_INSTALL_PLUGINS=grafana-splunk-datasource
+    volumes:
+      - "./grafana/grafana.ini:/etc/grafana/grafana.ini"
+      #- "./grafana/provisioning:/etc/grafana/provisioning"
+      - "./ge-license.jwt:/var/lib/grafana/license.jwt"
+    ports:
+      - "3000:3000"
+
+   # Grafana for exploring and visualizing data
+  splunk-enterprise:
+    image: splunk/splunk:latest
+    container_name: splunk-enterprise
+    environment:
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_PASSWORD=welcome1
+    ports:
+      - "8000:8000"
+      - "8065:8065"
+      - "8088-8089:8088-8089"
+      - "8191:8191"
+      - "9887:9887"
+      - "9997:9997"
+
+
+
+
+ 

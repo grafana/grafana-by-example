@@ -1,0 +1,16 @@
+apiVersion: 1
+
+datasources:
+  - name: Splunk1
+    type: grafana-splunk-datasource
+    access: proxy
+    isDefault: false
+    uid: splunk1
+    url: https://splunk-enterprise:8089
+    basicAuth: false
+    jsonData:
+      authType: custom-splunk 
+      tlsSkipVerify: true
+    secureJsonFields:
+      token: fake-token
+    

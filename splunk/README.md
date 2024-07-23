@@ -39,7 +39,7 @@ Save and Test, the data source should now be connected to the local Splunk insta
 ## Explore the Splunk data
 Using Grafana [Explore](http://localhost:3000/explore) explore the data in Splunk using the Splunk Query language. For example:
 
-Show all Splunk index:
+Show all Splunk indexes:
 ```
 | eventcount summarize=false index=* | dedup index | fields index
 ```
