@@ -14,5 +14,6 @@ This repository provides a set of configration examples for Grafana and associat
 - Grafana Private Data Source connector
 - Pyroscope example with data volume dashboards
 - Regional Services - Prometheues Metrics generator and region service dashboard
+- Grafana Enterprise and Splunk Enterprise
 
 
