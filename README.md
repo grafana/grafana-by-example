@@ -2,6 +2,7 @@
 This repository provides a set of configration examples for Grafana and associated techologies. Most are full working examples that require Docker and Docker Compose, or a Grafana Cloud account
 
 # Examples include
+- Grafana Enterprise and Splunk Enterprise
 - Jaeger and the Grafana Agent
 - Grafana Cloud Adaptive Metrics
 - Carbon Relay for Graphite metrics
@@ -14,6 +15,5 @@ This repository provides a set of configration examples for Grafana and associat
 - Grafana Private Data Source connector
 - Pyroscope example with data volume dashboards
 - Regional Services - Prometheues Metrics generator and region service dashboard
-- Grafana Enterprise and Splunk Enterprise
 
 
