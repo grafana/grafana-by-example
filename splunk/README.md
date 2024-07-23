@@ -1,6 +1,6 @@
 # Grafana Enterprise and Splunk Enterprise
 
-Provides a docker-compose deployment for Grafana Enterprise and Splunk Enterprsie allow for the demonstration of the [Grafana Splunk Datasource Plugin](https://grafana.com/grafana/plugins/grafana-splunk-datasource/)
+Provides a docker-compose deployment for Grafana Enterprise and Splunk Enterprise allowing for the demonstration of the [Grafana Splunk Datasource Plugin](https://grafana.com/grafana/plugins/grafana-splunk-datasource/)
 
 A Grafana Enterprise License is required to test the Grafana Enterprise Plugins, available here: [Grafana Enterprise Trial](https://grafana.com/signup/grafana-enterprise/trial/connect-account)
 
@@ -10,7 +10,6 @@ git clone https://github.com/grafana/grafana-by-example-configuration.git
 cd splunk
 # copy a valid enterprise license to the file ge-license.jwt
 ```
-
 
 ## Start the containers
 ```
