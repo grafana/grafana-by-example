@@ -8,8 +8,12 @@ A Grafana Enterprise License is required to test the Grafana Enterprise Plugins,
 ```
 git clone https://github.com/grafana/grafana-by-example-configuration.git
 cd splunk
-# copy a valid enterprise license to the file ge-license.jwt
 ```
+Copy a valid Grafana Enterprise license to the file ge-license.jwt. For example:
+```
+cp ~/Downloads/license.jwt ge-license.jwt
+```
+
 
 ## Start the containers
 ```
