@@ -23,7 +23,6 @@ docker-compose up
 ## Test Splunk Enterprise is acessible using:
 ```
 curl -k -u admin:welcome1 "https://localhost:8089/services/server/info?output_mode=json"
-curl -k -u admin:welcome1 "https://splunk-enterprise:8089/services/server/info?output_mode=json"
 ```
 ## Login to Splunk Enterprise
 Login to the local [Splunk Enterpise](http://localhost:8000/) using (admin/welcome1) and create a new Token for the admin user
