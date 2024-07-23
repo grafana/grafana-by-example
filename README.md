@@ -3,6 +3,7 @@ This repository provides a set of configration examples for Grafana and associat
 
 # Examples include
 - Grafana Enterprise and Splunk Enterprise
+- Logs generator for testing Grafana LogQL queries
 - Jaeger and the Grafana Agent
 - Grafana Cloud Adaptive Metrics
 - Carbon Relay for Graphite metrics
