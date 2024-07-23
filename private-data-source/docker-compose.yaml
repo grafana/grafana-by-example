@@ -60,12 +60,5 @@ services:
       "-server.http.address=0.0.0.0:12345",
     ]
 
-  ubuntu:
-    image: ubuntu/ubuntu
-    build: ./ubuntu
-    volumes:
-      - "./ctl.sh:/ctl.sh"
-    entrypoint: [ ./ctl.sh ]
-    command: [ sleep ]
 
       
