@@ -5,6 +5,7 @@ This repository provides a set of configration examples for Grafana and associat
 - Grafana Enterprise and Splunk Enterprise
 - Logs generator for testing Grafana LogQL queries
 - Cloud Helper - various scipts for using Grafana APIs
+- Postgres-metrics - Custom Prometheus exporter for SQL tables stored in Postgres
 - Jaeger and the Grafana Agent
 - Grafana Cloud Adaptive Metrics
 - Carbon Relay for Graphite metrics
