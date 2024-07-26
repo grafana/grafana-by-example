@@ -29,6 +29,11 @@ ingester:
     kvstore:
       store: memberlist
     replication_factor: 1
+  # These are enabled by default
+  # Browser to http://localhost:9009 to review
+  #active_series_metrics_enabled: true
+  #active_series_metrics_update_period: 1m
+  #active_series_metrics_idle_timeout: 10m
 
 ruler_storage:
   backend: local
