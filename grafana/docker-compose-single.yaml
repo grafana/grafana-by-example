@@ -1,0 +1,43 @@
+version: "3.8"
+volumes:
+  grafana:
+
+services:
+
+  # Grafana for exploring and visualizing data
+  grafana-server-1:
+    image: grafana/grafana:latest
+    volumes:
+      - "./grafana/grafana.ini:/etc/grafana/grafana.ini"
+      - "./grafana/provisioning:/etc/grafana/provisioning"
+    ports:
+      - "3001:3000"
+
+   # Grafana Metrics
+  mimir:
+    image: grafana/mimir:latest
+    depends_on:
+      - grafana-server-1
+    volumes:
+      - "./mimir/config-single.yaml:/etc/mimir/config.yaml"
+    ports:
+      - "9009:9009"
+    command: [
+      "-config.file=/etc/mimir/config.yaml"
+    ]
+
+  # Grafana Agent
+  grafana-agent:
+    image: grafana/agent:latest
+    depends_on:
+      - mimir
+    ports:
+      - "12345:12345"
+      - "3500:3500"
+      - "16603:16603"
+    volumes:
+      - "./grafana-agent/config.yaml:/etc/agent/agent.yaml"
+    command: [
+      "-config.file=/etc/agent/agent.yaml",
+      "-server.http.address=0.0.0.0:12345",
+    ]
