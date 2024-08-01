@@ -1,0 +1,18 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+        endpoint: "localhost:14318"
+
+service:
+  pipelines:
+    logs:
+      receivers: [otlp]
+      exporters: [file]
+      processors: []
+
+exporters:
+  debug:
+  file:
+    path: p1.txt

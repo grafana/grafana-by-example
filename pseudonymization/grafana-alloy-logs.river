@@ -1,0 +1,87 @@
+// Grafana Cloud Authentication
+local.file "GRAFANA_CLOUD_AUTH" {
+  filename = "grafana-cloud-authentication.json"
+}
+
+
+// Source log fro files
+local.file_match "LOCAL_LOG_FILE" {
+	path_targets = [ {
+		__address__ = "localhost", __path__    = "./output.log",
+		job         = "test1",
+	}, ]
+}
+
+//
+loki.source.file "logs_scrape_local_files" {
+	targets               = local.file_match.LOCAL_LOG_FILE.targets
+	forward_to            = [ otelcol.receiver.loki.OTEL.receiver,
+							  loki.write.LOKI_CLOUD.receiver ]
+}
+
+// Receiver otel loki logs forward as otel logs
+otelcol.receiver.loki "OTEL" {
+  output {
+    logs = [ otelcol.processor.transform.RELABEL.input ]
+  }
+}
+
+// Receive otel log and relabel
+otelcol.processor.transform "RELABEL" {
+  error_mode = "ignore"
+
+  log_statements {
+    context = "log"
+    statements = [
+      `set( body, ParseJSON( body ) )`,
+	  `set( body["original"], body["name"] )`,
+	  `set( body["name"], SHA256(body["name"] ) )`,
+    ]
+   }
+
+  output {
+    logs    = [ otelcol.exporter.loki.TO_LOKI.input,
+				otelcol.exporter.otlphttp.OTLP_HTTP.input ]
+  }
+}
+
+//
+otelcol.exporter.loki "TO_LOKI" {
+  forward_to = [ loki.write.LOKI_CLOUD.receiver ]
+}
+
+//otelcol.exporter.file "TO_FILE" {
+//	path = "tmp.txt"
+//}
+
+//
+loki.write "LOKI_CLOUD" {
+	endpoint {
+		url = json_path( local.file.GRAFANA_CLOUD_AUTH.content, ".url" )[0]
+		basic_auth { 
+			username = json_path( local.file.GRAFANA_CLOUD_AUTH.content, ".username" )[0]
+			password = json_path( local.file.GRAFANA_CLOUD_AUTH.content, ".password" )[0]
+		}
+	}
+}
+
+//
+loki.write "LOKI_LOCAL" {
+	endpoint {
+		url = "http://grafana1.local:3100/loki/api/v1/push"
+		basic_auth { 
+			username = ""
+			password = ""
+		}
+	}
+}	
+
+otelcol.exporter.otlphttp "OTLP_HTTP" {
+  client {
+    endpoint = "http://localhost:14318"
+	tls {
+            insecure             = true
+            insecure_skip_verify = true
+        }
+  }
+}
