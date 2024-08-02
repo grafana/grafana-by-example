@@ -1,0 +1,41 @@
+version: "2.29"
+
+volumes:
+  test1:
+
+services:
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.103.0
+    container_name: otel-collector
+    ports:
+      - "12347:12345"
+      - "12348:12348"
+      #- "6832:6832"
+      #- "55679:55679"
+      - "14318:14318" # ingest OTLP
+    volumes:
+      - ./otel-config.yaml:/etc/otel-config.yaml
+      - ./otel-data:/otel-data
+    environment:
+      - GRAFANA_CLOUD_OTLP_INSTANCE_ID=${GRAFANA_CLOUD_OTLP_INSTANCE_ID}
+      - GRAFANA_CLOUD_OTLP_PASSWORD=${GRAFANA_CLOUD_OTLP_PASSWORD}
+      - GRAFANA_CLOUD_OTLP_HTTP_ENDPOINT=${GRAFANA_CLOUD_OTLP_HTTP_ENDPOINT}
+    command: [ "--config=/etc/otel-config.yaml" ]
+ 
+  alloy-collector:
+    image: grafana/alloy:latest
+    container_name: alloy-collector
+    ports:
+      #- "12347:12345"
+      #- "12348:12348"
+      - "6832:6832"
+      - "55679:55679"
+      - "3100:3100"
+    volumes:
+      - ./grafana-alloy-logs.river:/etc/alloy/config.alloy
+      - ./grafana-cloud-authentication.json:/grafana-cloud-authentication.json
+      - ./output.log:/output/log
+    command: [  "run",
+                "--server.http.listen-addr=0.0.0.0:12345",
+                "--stability.level=experimental",
+                "/etc/alloy/config.alloy", ]   

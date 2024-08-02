@@ -10,7 +10,7 @@ receivers:
     protocols:
       grpc:
       http:
-        endpoint: "localhost:14318"
+        endpoint: "0.0.0.0:14318"
 
 processors:
   attributes/ADD_ATTRIBUTE:
@@ -43,7 +43,7 @@ exporters:
   debug:
     verbosity: detailed
   file:
-    path: p1.txt
+    path: /otel-data/p1.txt
   otlphttp:
     auth:
       authenticator: basicauth/GRAFANA_CLOUD_OTLP
