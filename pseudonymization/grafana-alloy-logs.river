@@ -3,7 +3,6 @@ local.file "GRAFANA_CLOUD_AUTH" {
   filename = "./grafana-cloud-authentication.json"
 }
 
-
 // Source logs from files
 local.file_match "LOCAL_LOG_FILE" {
 	path_targets = [ {
@@ -12,6 +11,13 @@ local.file_match "LOCAL_LOG_FILE" {
 		job         = "test1",
 		type 		= "file",
 	}, ]
+}
+
+//
+loki.source.file "LOGS_FROM_FILES" {
+	targets = local.file_match.LOCAL_LOG_FILE.targets
+	forward_to = [ otelcol.receiver.loki.OTEL.receiver ]
+	//loki.write.LOKI_CLOUD.receiver
 }
 
 // Source logs from HTTP 
@@ -27,20 +33,12 @@ loki.source.api "LOGS_FROM_HTTP" {
     forward_to = [ otelcol.receiver.loki.OTEL.receiver ]
 }
 
-//
-loki.source.file "LOGS_FROM_FILES" {
-	targets = local.file_match.LOCAL_LOG_FILE.targets
-	forward_to = [ otelcol.receiver.loki.OTEL.receiver ]
-	//loki.write.LOKI_CLOUD.receiver
-}
-
 // Receiver otel loki logs forward as otel logs
 otelcol.receiver.loki "OTEL" {
 	output {
     	logs = [ otelcol.processor.transform.ANONYMIZE.input ]
 	}
 }
-
 
 // Receive otel logs and anonymize
 otelcol.processor.transform "ANONYMIZE" {
@@ -58,7 +56,6 @@ otelcol.processor.transform "ANONYMIZE" {
 				otelcol.processor.transform.SENSITIVE.input ]
 	}
 } // otelcol.exporter.otlphttp.LOCAL_OTLP_HTTP.input
-
 
 // Receive otel logs and ready them for production destination
 otelcol.processor.transform "PRODUCTION" {
