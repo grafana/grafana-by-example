@@ -48,8 +48,9 @@ otelcol.processor.transform "ANONYMIZE" {
     statements = [
 		`set( body, ParseJSON( body ) )`,
 		`set( body["original"], body["ip"] )`,
-		`set( body["ip"], SHA256(body["ip"] ) )` ]
-	} // where IsMatch( body["name"], "Charles"
+		`set( body["ip"], SHA256( body["ip"] ) )`,
+		`set( body["ip"], Substring( body["ip"], 0, 16 ) )` ]
+	}
 
 	output {
     	logs = [ otelcol.processor.transform.PRODUCTION.input,
