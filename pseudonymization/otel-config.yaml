@@ -13,6 +13,7 @@ receivers:
         endpoint: "0.0.0.0:14318"
 
 processors:
+  # Experimental
   attributes/ADD_ATTRIBUTE:
     actions:
       - key: otel
@@ -34,7 +35,7 @@ service:
     logs:
       receivers: [otlp]
       processors: [attributes/ADD_ATTRIBUTE]
-      exporters: [file] # otlphttp
+      exporters: [file/SENSITIVE] # otlphttp
 
 
 exporters:
@@ -42,7 +43,7 @@ exporters:
     loglevel: debug
   debug:
     verbosity: detailed
-  file:
+  file/SENSITIVE:
     path: /otel-data/sensitive-data.txt
   otlphttp:
     auth:

@@ -49,8 +49,8 @@ otelcol.processor.transform "ANONYMIZE" {
     context = "log"
     statements = [
 		`set( body, ParseJSON( body ) )`,
-		`set( body["original"], body["id"] )`,
-		`set( body["id"], SHA256(body["id"] ) )` ]
+		`set( body["original"], body["ip"] )`,
+		`set( body["ip"], SHA256(body["ip"] ) )` ]
 	} // where IsMatch( body["name"], "Charles"
 
 	output {
@@ -66,7 +66,7 @@ otelcol.processor.transform "PRODUCTION" {
 	log_statements {
     	context = "log"
     	statements = [
-	  		`keep_keys( body, [ "cnt", "name", "id" ] )`, ]
+	  		`keep_keys( body, [ "cnt", "name", "ip" ] )`, ]
 	}
 	output {
     	logs = [ otelcol.exporter.loki.TO_LOKI.input ]
@@ -79,7 +79,7 @@ otelcol.processor.transform "SENSITIVE" {
   	log_statements {
     	context = "log"
     	statements = [
-	  		`keep_keys( body, [ "id", "original" ] )`, ] }	
+	  		`keep_keys( body, [ "ip", "original" ] )`, ] }	
   	output {
     	logs = [ otelcol.exporter.otlphttp.LOCAL_OTLP_HTTP.input ]
   }
