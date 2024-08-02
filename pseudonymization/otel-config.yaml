@@ -1,3 +1,10 @@
+extensions:
+  basicauth/GRAFANA_CLOUD_OTLP:
+    # Use version 103 of otelcol-contrib_0.103.0
+    client_auth:
+      username: "${env:GRAFANA_CLOUD_OTLP_INSTANCE_ID}"
+      password: "${env:GRAFANA_CLOUD_OTLP_PASSWORD}"
+
 receivers:
   otlp:
     protocols:
@@ -5,14 +12,39 @@ receivers:
       http:
         endpoint: "localhost:14318"
 
+processors:
+  attributes/ADD_ATTRIBUTE:
+    actions:
+      - key: attributes.otel
+        action: upsert
+        value: "OTEL3"
+      - key: body.original
+        action: upsert
+        value: "OTEL4"
+      #- key: body.original
+      #  action: hash
+      - key: log.file.path
+        action: hash
+      #- key: attributes["log.file.path"]
+      #  action: hash
+
 service:
+  extensions: [basicauth/GRAFANA_CLOUD_OTLP]
   pipelines:
     logs:
       receivers: [otlp]
-      exporters: [file]
-      processors: []
+      processors: [attributes/ADD_ATTRIBUTE]
+      exporters: [file, otlphttp]
+
 
 exporters:
+  logging:
+    loglevel: debug
   debug:
+    verbosity: detailed
   file:
     path: p1.txt
+  otlphttp:
+    auth:
+      authenticator: basicauth/GRAFANA_CLOUD_OTLP
+    endpoint: ${env:GRAFANA_CLOUD_OTLP_HTTP_ENDPOINT}
