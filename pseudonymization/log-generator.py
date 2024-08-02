@@ -61,16 +61,18 @@ elif cmd == "send-logs-1":
     samplesSent = 0
 
     # Data set
-    nameList = [ "Edward", "Charles",  "William" ]
-    idList = [ "1111", "2222",  "3333" ]
+    nameList = [ "Edward", "Charles",  "William", "Henry", "George" ]
+    idList = [ "192.168.0.1", "192.168.1.1",  "192.168.1.2",  "192.168.1.3", "192.168.1.4" ]
+    userDataList = list( zip( nameList, idList ) )
     # Run
     while datetime.now() < timeoutTime:
         now = datetime.now()
         if now > sendMetricTime:
             sendMetricTime = now + timedelta(seconds=delaySec)
             samplesSent += 1
+            userData =  random.choices( userDataList )[0]
             lokiWriteStreams( lokiCreateStream( {"job":jobName, "app":"a1"},
-                                    {"name": random.choices(nameList)[0], "id": random.choices(idList)[0], "cnt": samplesSent  } ),
+                                    {"name": userData[0], "id": userData[1], "cnt": samplesSent  } ),
                                       debug=True )
         else:
             pauseSec = sendMetricTime - now

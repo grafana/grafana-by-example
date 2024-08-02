@@ -15,7 +15,7 @@ receivers:
 processors:
   attributes/ADD_ATTRIBUTE:
     actions:
-      - key: attributes.otel
+      - key: otel
         action: upsert
         value: "OTEL3"
       - key: body.original
@@ -34,7 +34,7 @@ service:
     logs:
       receivers: [otlp]
       processors: [attributes/ADD_ATTRIBUTE]
-      exporters: [file, otlphttp]
+      exporters: [file] # otlphttp
 
 
 exporters:
@@ -43,7 +43,7 @@ exporters:
   debug:
     verbosity: detailed
   file:
-    path: /otel-data/p1.txt
+    path: /otel-data/sensitive-data.txt
   otlphttp:
     auth:
       authenticator: basicauth/GRAFANA_CLOUD_OTLP

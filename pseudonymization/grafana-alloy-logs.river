@@ -7,52 +7,81 @@ local.file "GRAFANA_CLOUD_AUTH" {
 // Source logs from files
 local.file_match "LOCAL_LOG_FILE" {
 	path_targets = [ {
-		__address__ = "localhost", __path__    = "./output.log",
+		__address__ = "localhost",
+		__path__    = "./output.log",
 		job         = "test1",
+		type 		= "file",
 	}, ]
 }
 
 // Source logs from HTTP 
-loki.source.api "HTTP_LOGS" {
+loki.source.api "LOGS_FROM_HTTP" {
     http {
         listen_address = "0.0.0.0"
         listen_port = 3100
     }
+	labels = {
+		job = "test1",
+		type = "http",
+	}
     forward_to = [ otelcol.receiver.loki.OTEL.receiver ]
 }
 
 //
-loki.source.file "logs_scrape_local_files" {
-	targets               = local.file_match.LOCAL_LOG_FILE.targets
-	forward_to            = [ otelcol.receiver.loki.OTEL.receiver,
-							   ]
-							   	//loki.write.LOKI_CLOUD.receiver
+loki.source.file "LOGS_FROM_FILES" {
+	targets = local.file_match.LOCAL_LOG_FILE.targets
+	forward_to = [ otelcol.receiver.loki.OTEL.receiver ]
+	//loki.write.LOKI_CLOUD.receiver
 }
 
 // Receiver otel loki logs forward as otel logs
 otelcol.receiver.loki "OTEL" {
-  output {
-    logs = [ otelcol.processor.transform.RELABEL.input ]
-  }
+	output {
+    	logs = [ otelcol.processor.transform.ANONYMIZE.input ]
+	}
 }
 
-// Receive otel log and relabel
-otelcol.processor.transform "RELABEL" {
-  error_mode = "ignore"
 
-  log_statements {
+// Receive otel logs and anonymize
+otelcol.processor.transform "ANONYMIZE" {
+	error_mode = "ignore"
+	log_statements {
     context = "log"
     statements = [
-      `set( body, ParseJSON( body ) )`,
-	  `set( body["original"], body["name"] )`,
-	  `set( body["name"], SHA256(body["name"] ) )`,
-    ]
-   }
+		`set( body, ParseJSON( body ) )`,
+		`set( body["original"], body["id"] )`,
+		`set( body["id"], SHA256(body["id"] ) )` ]
+	} // where IsMatch( body["name"], "Charles"
 
-  output {
-		// otelcol.exporter.loki.TO_LOKI.input,
-    logs    = [ 
-				otelcol.exporter.otlphttp.LOCAL_OTLP_HTTP.input ]
+	output {
+    	logs = [ otelcol.processor.transform.PRODUCTION.input,
+				otelcol.processor.transform.SENSITIVE.input ]
+	}
+} // otelcol.exporter.otlphttp.LOCAL_OTLP_HTTP.input
+
+
+// Receive otel logs and ready them for production destination
+otelcol.processor.transform "PRODUCTION" {
+	error_mode = "ignore"
+	log_statements {
+    	context = "log"
+    	statements = [
+	  		`keep_keys( body, [ "cnt", "name", "id" ] )`, ]
+	}
+	output {
+    	logs = [ otelcol.exporter.loki.TO_LOKI.input ]
+	}
+}
+
+// Receive otel logs and ready them for storing sensitive data
+otelcol.processor.transform "SENSITIVE" {
+  	error_mode = "ignore"
+  	log_statements {
+    	context = "log"
+    	statements = [
+	  		`keep_keys( body, [ "id", "original" ] )`, ] }	
+  	output {
+    	logs = [ otelcol.exporter.otlphttp.LOCAL_OTLP_HTTP.input ]
   }
 }
 
@@ -67,18 +96,19 @@ otelcol.auth.basic "GRAFANA_CLOUD" {
 }
 
 otelcol.auth.headers "OLTP_HEADERS" {
-  header {
-      key = "Authorization"
-      value = json_path( local.file.GRAFANA_CLOUD_AUTH.content, ".otlp.header_auth" )[0]
-  }
+  	header {
+      	key = "Authorization"
+      	value = json_path( local.file.GRAFANA_CLOUD_AUTH.content, ".otlp.header_auth" )[0]
+  	}
 }
 
 otelcol.exporter.otlp "GRAFANA_CLOUD_LOGS_OTLP" {
-  client {
-    endpoint = json_path( local.file.GRAFANA_CLOUD_AUTH.content, ".otlp.otlp_endpoint" )[0]
-	auth = otelcol.auth.basic.GRAFANA_CLOUD.handler
-	//auth = otelcol.auth.headers.OLTP_HEADERS.handler
-  }
+	// Does not work
+  	client {
+    	endpoint = json_path( local.file.GRAFANA_CLOUD_AUTH.content, ".otlp.otlp_endpoint" )[0]
+		auth = otelcol.auth.basic.GRAFANA_CLOUD.handler
+		//auth = otelcol.auth.headers.OLTP_HEADERS.handler
+  	}
 }
 
 //otelcol.exporter.file "TO_FILE" {
