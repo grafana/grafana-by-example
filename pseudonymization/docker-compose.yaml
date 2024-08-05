@@ -26,6 +26,7 @@ services:
     image: grafana/alloy:latest
     container_name: alloy-collector
     ports:
+      - 12345:12345 # Alloy Controller
       #- "12347:12345"
       #- "12348:12348"
       - "6832:6832"
