@@ -1,4 +1,4 @@
-# grafana-by-example-configuration
+# grafana-by-example
 This repository provides a set of configration examples for Grafana and associated techologies. Most are full working examples that require Docker and Docker Compose, or a Grafana Cloud account
 
 # Examples include
