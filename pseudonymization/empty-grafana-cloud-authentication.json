@@ -1,0 +1,13 @@
+{ 
+ "loki": {
+    "username": "REQUIRED",
+    "password": "REQUIRED",
+    "url": "https://logs-REQUIRED.grafana.net/loki/api/v1/push"
+ },
+ "otlp": {
+    "username": "REQUIRED",
+    "otlp_endpoint": "https://otlp-gateway-REQUIRED.grafana.net/otlp/v1/logs",
+    "password": "REQUIRED",
+    "header_auth": "NOT-REQUIRED"
+ }
+} 
