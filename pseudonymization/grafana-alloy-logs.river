@@ -1,3 +1,8 @@
+logging {
+  level  = "debug"
+  format = "logfmt"
+}
+
 // Grafana Cloud Authentication
 local.file "GRAFANA_CLOUD_AUTH" {
   filename = "./grafana-cloud-authentication.json"
@@ -17,10 +22,10 @@ local.file_match "LOCAL_LOG_FILE" {
 loki.source.file "LOGS_FROM_FILES" {
 	targets = local.file_match.LOCAL_LOG_FILE.targets
 	forward_to = [ otelcol.receiver.loki.OTEL.receiver ]
-	//loki.write.LOKI_CLOUD.receiver
+	//loki.write.GRAFANA_CLOUD_LOGS.receiver
 }
 
-// Source logs from HTTP 
+// Source logs from HTTP API
 loki.source.api "LOGS_FROM_HTTP" {
     http {
         listen_address = "0.0.0.0"
@@ -33,14 +38,14 @@ loki.source.api "LOGS_FROM_HTTP" {
     forward_to = [ otelcol.receiver.loki.OTEL.receiver ]
 }
 
-// Receiver otel loki logs forward as otel logs
+// Receive loki logs forward as otel logs
 otelcol.receiver.loki "OTEL" {
 	output {
     	logs = [ otelcol.processor.transform.ANONYMIZE.input ]
 	}
 }
 
-// Receive otel logs and anonymize
+// Receive otel logs and anonymize, forward to Production and Sensitive
 otelcol.processor.transform "ANONYMIZE" {
 	error_mode = "ignore"
 	log_statements {
@@ -51,14 +56,13 @@ otelcol.processor.transform "ANONYMIZE" {
 		`set( body["ip"], SHA256( body["ip"] ) )`,
 		`set( body["ip"], Substring( body["ip"], 0, 16 ) )` ]
 	}
-
 	output {
     	logs = [ otelcol.processor.transform.PRODUCTION.input,
-				otelcol.processor.transform.SENSITIVE.input ]
+				 otelcol.processor.transform.SENSITIVE.input ]
 	}
-} // otelcol.exporter.otlphttp.LOCAL_OTLP_HTTP.input
+}
 
-// Receive otel logs and ready them for production destination
+// Receive otel logs and ready them for production data destination
 otelcol.processor.transform "PRODUCTION" {
 	error_mode = "ignore"
 	log_statements {
@@ -67,11 +71,13 @@ otelcol.processor.transform "PRODUCTION" {
 	  		`keep_keys( body, [ "cnt", "name", "ip" ] )`, ]
 	}
 	output {
-    	logs = [ otelcol.exporter.loki.TO_LOKI.input ]
+    	logs = [ otelcol.exporter.otlphttp.GRAFANA_CLOUD_LOGS_OTLPHTTP.input ]
+		//logs = [ otelcol.exporter.loki.GRAFANA_CLOUD_LOGS.input,
+		//		otelcol.exporter.otlphttp.GRAFANA_CLOUD_LOGS_OTLPHTTP.input ]
 	}
 }
 
-// Receive otel logs and ready them for storing sensitive data
+// Receive otel logs and ready them for sensitive data destination
 otelcol.processor.transform "SENSITIVE" {
   	error_mode = "ignore"
   	log_statements {
@@ -83,27 +89,48 @@ otelcol.processor.transform "SENSITIVE" {
   }
 }
 
+
+otelcol.processor.attributes "LOKI_LOGS" {
+	// Experimental
+	action {
+		key = "loki.attribute.labels"
+		action = "upsert"
+		value = "type, LOKILOGS"
+	}
+  	output {
+    	logs = [ otelcol.exporter.loki.GRAFANA_CLOUD_LOGS.input ]
+  	}
+}
+
 //
-otelcol.exporter.loki "TO_LOKI" {
-  forward_to = [ loki.write.LOKI_CLOUD.receiver ]
+otelcol.exporter.loki "GRAFANA_CLOUD_LOGS" {
+  forward_to = [ loki.write.GRAFANA_CLOUD_LOGS.receiver ]
 }
 
 otelcol.auth.basic "GRAFANA_CLOUD" {
 	username = json_path( local.file.GRAFANA_CLOUD_AUTH.content, ".otlp.username" )[0]
-	password = json_path( local.file.GRAFANA_CLOUD_AUTH.content, ".otlp.header_auth" )[0]
+	password = json_path( local.file.GRAFANA_CLOUD_AUTH.content, ".otlp.password" )[0]
+}
+
+otelcol.exporter.otlphttp "GRAFANA_CLOUD_LOGS_OTLPHTTP" {
+  	client {
+    	endpoint = json_path( local.file.GRAFANA_CLOUD_AUTH.content, ".otlp.otlphttp_endpoint" )[0]
+		auth = otelcol.auth.basic.GRAFANA_CLOUD.handler
+  	}
 }
 
 otelcol.auth.headers "OLTP_HEADERS" {
+	// Experimental
   	header {
       	key = "Authorization"
       	value = json_path( local.file.GRAFANA_CLOUD_AUTH.content, ".otlp.header_auth" )[0]
   	}
 }
 
-otelcol.exporter.otlp "GRAFANA_CLOUD_LOGS_OTLP" {
-	// Does not work
+otelcol.exporter.otlp "GRAFANA_CLOUD_LOGS_OTLPGRPC" {
+	// Experimental
   	client {
-    	endpoint = json_path( local.file.GRAFANA_CLOUD_AUTH.content, ".otlp.otlp_endpoint" )[0]
+    	endpoint = json_path( local.file.GRAFANA_CLOUD_AUTH.content, ".otlp.otlpgrpc_endpoint" )[0]
 		auth = otelcol.auth.basic.GRAFANA_CLOUD.handler
 		//auth = otelcol.auth.headers.OLTP_HEADERS.handler
   	}
@@ -113,8 +140,8 @@ otelcol.exporter.otlp "GRAFANA_CLOUD_LOGS_OTLP" {
 //	path = "tmp.txt"
 //}
 
-//
-loki.write "LOKI_CLOUD" {
+// Send to Grafana Cloud Logs
+loki.write "GRAFANA_CLOUD_LOGS" {
 	endpoint {
 		url = json_path( local.file.GRAFANA_CLOUD_AUTH.content, ".loki.url" )[0]
 		basic_auth { 

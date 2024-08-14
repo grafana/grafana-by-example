@@ -6,8 +6,9 @@
  },
  "otlp": {
     "username": "REQUIRED",
-    "otlp_endpoint": "https://otlp-gateway-REQUIRED.grafana.net/otlp/v1/logs",
     "password": "REQUIRED",
+    "otlphttp_endpoint": "https://otlp-gateway-REQUIRED.grafana.net/otlp",
+    "otlpgrpc_endpoint": "NOT-REQUIRED",
     "header_auth": "NOT-REQUIRED"
  }
 } 
