@@ -1,4 +1,5 @@
 // Example showing use of the Serilog.Sinks.Loki Library with Grafana Cloud
+// Using https://github.com/josephwoodward/Serilog-Sinks-Loki
 
 using Serilog;
 using Serilog.Sinks.Loki;
