@@ -181,3 +181,8 @@ Label filters: Optionally add a filter: name =~ .*-prom
 ![Dashboard Stage 1](https://github.com/grafana/grafana-by-example/blob/main/cost-management/dashboard-stage-1.png)
 
 - Clicking on a row in the Table will select which environment to show in the right hand side time series panel
+
+## Next Steps
+- Configure the units for each panel setting the units to either Misc / Short or Currency / Dollars ($) or Percentage (0.0-1.0). The Table panel will require the use of Field Override for each column to set the unit to the required type
+- Add a machine learning forecast job and for Total Billable Series metric
+- Add a threshold Alert on the Total Billable Series
