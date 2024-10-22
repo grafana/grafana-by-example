@@ -180,4 +180,4 @@ Label filters: Optionally add a filter: name =~ .*-prom
 
 ![Dashboard Stage 1](https://github.com/grafana/grafana-by-example/blob/main/cost-management/dashboard-stage-1.png)
 
-- Clicking on a row in the Tabel will select which environment to show in the right hand side time series panel
+- Clicking on a row in the Table will select which environment to show in the right hand side time series panel
