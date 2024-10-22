@@ -54,7 +54,10 @@ delta( grafanacloud_org_metrics_billable_series{ } [ $__range ] )
 ```
 
 ### Usage Metrics for each environment in the Organization
-Add all of these queries to a Table panel
+- Add all of these queries to a Table panel using the query format option: table
+- Use a Join by field Transformation to join them by the field name
+- Use Organize fields by name to hide the time and id columns, and rename the column headers
+
 #### Calculate the Billable Series Count for each environment
 ```
 # Count
