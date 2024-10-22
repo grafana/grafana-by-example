@@ -18,6 +18,7 @@ grafanacloud_instance_info{}
 ## Queries
 
 ### Usage Metrics for the Organization
+Add these queries as individual Time Series panels
 #### Billable series metrics count for the Organization
 ```
 # Total Billable Series
@@ -53,6 +54,7 @@ delta( grafanacloud_org_metrics_billable_series{ } [ $__range ] )
 ```
 
 ### Usage Metrics for each environment in the Organization
+Add all of these queries to a Table panel
 #### Calculate the Billable Series Count for each environment
 ```
 # Count
