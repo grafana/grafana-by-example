@@ -98,7 +98,7 @@ grafanacloud_org_metrics_billable_series{ }
 sum by ( name ) (
     grafanacloud_instance_billable_usage{}
     * on (id) group_left( name ) grafanacloud_instance_info{ name=~"$VAR_ENV"   }
-  ) > 0
+  )
 ```
 
 
@@ -106,6 +106,7 @@ sum by ( name ) (
 - Add all of these queries to a `Table panel` using the query format option: `Table`
 - Use a Join by field Transformation to join them by the field name
 - Use an Organize fields by name Transformation to hide the time and id columns, and rename the column headers
+- Notice that for the purpose of this example we are filtering these queries using: name=~".*-prom" 
 
 #### Calculate the Billable Series Count for each environment
 ```
@@ -114,17 +115,16 @@ sum by ( name ) (
 sort_desc(
  sum by ( name ) (
    grafanacloud_instance_billable_usage{}
-   * on (id) group_left( name ) grafanacloud_instance_info{ name=~".*prom.*" }
- ) > 0 )
+   * on (id) group_left( name ) grafanacloud_instance_info{ name=~".*-prom" } ) )
  ```
 #### Calculate the Series Cost for each environment: (I / O) * OC
 ```
 # Title: Cost
 # Type: Instant
 sort_desc( ( 
-  ( max( grafanacloud_instance_billable_usage{} ) by (id) > 0 ) # Stacks' Billable Series, where > 0
+  ( max( grafanacloud_instance_billable_usage{} ) by (id) > 0 ) # Stacks' Billable Series
     / ignoring(id) group_left() max( grafanacloud_org_metrics_billable_series{} ) by (id) ) # Divided by Org Billable Series
-  * on (id) group_left(name) max by(id, name) (grafanacloud_instance_info{ name=~".*prom.*" }) # Include only these
+  * on (id) group_left(name) max by(id, name) (grafanacloud_instance_info{ name=~".*-prom" }) # Include only these
 ) * on () group_left() sum (grafanacloud_org_metrics_overage{} ) # Org-wide Metrics bil in USD
 ```
 
@@ -136,7 +136,7 @@ sort_desc(
  sum by ( name ) (
      ((grafanacloud_instance_billable_usage{} @end() > 0) - grafanacloud_instance_billable_usage{} @start())
        / grafanacloud_instance_billable_usage{} @end()
-       * on (id) group_left( name ) grafanacloud_instance_info{ name=~".*prom.*" } ) )
+       * on (id) group_left( name ) grafanacloud_instance_info{ name=~".*-prom" } ) )
 ```
 
 #### Cost impact to individual environment of change in active series
@@ -148,7 +148,7 @@ sort_desc(
     (( grafanacloud_instance_billable_usage{} @end() >0) - grafanacloud_instance_billable_usage{} @start())
        / on (org_id) group_left( name ) grafanacloud_org_metrics_billable_series{}
        * on (org_id) group_left( name ) grafanacloud_org_metrics_overage{}
-       * on (id) group_left( name ) grafanacloud_instance_info{ name=~".*prom.*" } ))
+       * on (id) group_left( name ) grafanacloud_instance_info{ name=~".*-prom" } ))
 ```
 
 #### Add a dashboard variable: VAR_ENV
@@ -160,7 +160,7 @@ Data source: grafanacloud-usage
 Query type: Label values
 Label: name
 Metric: grafanacloud-instance-info
-Label filters: Optionally add a filter: name =~ .*prom.*
+Label filters: Optionally add a filter: name =~ .*-prom
 ```
 
 #### Add data link to the table panel
