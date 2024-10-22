@@ -174,3 +174,11 @@ Label filters: Optionally add a filter: name =~ .*prom.*
 - Save the Dashboard
 - Exit Edit
 - Note the Data link depends on the Table column being named `Environment` and the previously created Dashboard variable `VAR_ENV`
+
+## Dashboard Build Intermediate State
+
+- Ideally at this stage of the dashboard build process the dashboard you have built looks similar to the following:
+
+![Dashboard Stage 1](https://github.com/grafana/grafana-by-example/blob/main/cost-management/dashboard-stage-1.png)
+
+- Clicking on a row in the Tabel will select which environment to show in the right hand side time series panel
