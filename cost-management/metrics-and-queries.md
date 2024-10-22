@@ -37,7 +37,7 @@ delta( grafanacloud_org_metrics_billable_series{ } [ $__range ] )
 / grafanacloud_org_metrics_billable_series{ } @end()
 ```
 
-### Cost impact of change in Billable Series for the Organization
+#### Cost impact of change in Billable Series for the Organization
 ```
 # Cost Impact
 sum( grafanacloud_org_metrics_billable_series{} @end() 
