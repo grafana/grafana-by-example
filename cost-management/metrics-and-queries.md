@@ -93,13 +93,14 @@ grafanacloud_org_metrics_billable_series{ }
 #### Selected Billable Series instance
 ```
 # Filter using a dashboard variable: $VAR_ENV the instance billable usage
-# Title: Environment: $VAR_ENV
+# Title: Total Billable Series, Environment: $VAR_ENV
 # Panel: Time Series
 sum by ( name ) (
     grafanacloud_instance_billable_usage{}
     * on (id) group_left( name ) grafanacloud_instance_info{ name=~"$VAR_ENV"   }
   ) > 0
 ```
+
 
 ### Usage Metrics for each Environment (instance) in the Organization
 - Add all of these queries to a `Table panel` using the query format option: `Table`
@@ -149,3 +150,26 @@ sort_desc(
        * on (org_id) group_left( name ) grafanacloud_org_metrics_overage{}
        * on (id) group_left( name ) grafanacloud_instance_info{ name=~".*prom.*" } ))
 ```
+
+#### Add a dashboard variable: VAR_ENV
+```
+Type: Query
+Name: VAR_ENV
+Label: Environment
+Data source: grafanacloud-usage
+Query type: Label values
+Label: name
+Metric: grafanacloud-instance-info
+Label filters: Optionally add a filter: name =~ .*prom.*
+```
+
+#### Add data link to the table panel
+- Add a Data Link to the table panel
+- Copy the first part of the dashboard URL. It will look similar to the following:
+- `https://<DOMAIN_NAME>/d/<DASHBOARD_UID>/<DASHBOARD_NAME>?`
+- Append to the end: var-VAR_ENV=${__data.fields.Environment}
+- The full Data Link URL should now look like this:
+- `https://<DOMAIN_NAME>/d/<DASHBOARD_UID>/<DASHBOARD_NAME>?var-VAR_ENV=${__data.fields.Environment}`
+- Save the Data Link
+- Save the Dashboard
+- Exit Edit
