@@ -4,7 +4,8 @@
  
 
 ## Usage metrics
-- Review rhe following useage metrics in the grafanacloud-usage data source 
+- Review the following useage metrics in the grafanacloud-usage data source 
+- These will be used for the dashboarrd build
 ```
 grafanacloud_org_metrics_billable_series{}
 grafanacloud_org_metrics_overage{} 
@@ -16,6 +17,12 @@ grafanacloud_instance_billable_usage{}
 grafanacloud_instance_samples_per_second{}
 grafanacloud_instance_info{}
 ```
+
+## Getting Started
+- A Grafana Cloud account is required for this project, a Grafana Cloud Free tier account may be used
+- To get started create a new dash board in the Grafana instance and name it `cost-management`
+- 
+
 ## Queries
 
 - Add the following set of queries to a Grafana Dashboard to start the cost management dashboard build process
@@ -24,7 +31,9 @@ grafanacloud_instance_info{}
 
 ### Usage Metrics for the Organization
 - Add these queries as individual Time Series panels
+- Use the data source: `grafanacloud-usage` for all panels
 #### Billable series metrics count for the Organization
+- Duplicate this panel as a way to add the rest of the Time Series panels
 ```
 # Total Billable Series
 grafanacloud_org_metrics_billable_series{ }
@@ -65,6 +74,8 @@ sum( grafanacloud_org_metrics_billable_series{ } @start() )
 # End
 sum( grafanacloud_org_metrics_billable_series{ } @end() )
 ```
+
+
 
 ### Usage Metrics for each environment in the Organization
 - Add all of these queries to a Table panel using the query format option: table
