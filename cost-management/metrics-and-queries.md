@@ -4,6 +4,7 @@
  
 
 ## Usage metrics
+- Review rhe following useage metrics in the grafanacloud-usage data source 
 ```
 grafanacloud_org_metrics_billable_series{}
 grafanacloud_org_metrics_overage{} 
@@ -11,14 +12,18 @@ grafanacloud_org_metrics_included_dpm_per_series{}
 grafanacloud_org_spend_commit_credit_total{}
 grafanacloud_org_spend_commit_balance_total{} 
 grafanacloud_org_total_overage{} 
-grafanacloud_instance_billable_usage{} > 0
+grafanacloud_instance_billable_usage{}
 grafanacloud_instance_samples_per_second{}
 grafanacloud_instance_info{}
 ```
 ## Queries
 
+- Add the following set of queries to a Grafana Dashboard to start the cost management dashboard build process
+- Utilize the layout desribed in the Conceptual Dashboard design
+![Conceptual Dashboard design](https://github.com/grafana/grafana-by-example/blob/main/cost-management/conceptual-dashboard-design.png)
+
 ### Usage Metrics for the Organization
-Add these queries as individual Time Series panels
+- Add these queries as individual Time Series panels
 #### Billable series metrics count for the Organization
 ```
 # Total Billable Series
@@ -53,14 +58,23 @@ sum( grafanacloud_org_metrics_billable_series{} @end()
 delta( grafanacloud_org_metrics_billable_series{ } [ $__range ] )
 ```
 
+#### Optionally Add the series start and end values
+```
+# Start
+sum( grafanacloud_org_metrics_billable_series{ } @start() )
+# End
+sum( grafanacloud_org_metrics_billable_series{ } @end() )
+```
+
 ### Usage Metrics for each environment in the Organization
 - Add all of these queries to a Table panel using the query format option: table
 - Use a Join by field Transformation to join them by the field name
-- Use Organize fields by name to hide the time and id columns, and rename the column headers
+- Use an Organize fields by name Transformation to hide the time and id columns, and rename the column headers
 
 #### Calculate the Billable Series Count for each environment
 ```
 # Count
+# Type: Instant
 sort_desc(
  sum by ( name ) (
    grafanacloud_instance_billable_usage{}
