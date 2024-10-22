@@ -122,7 +122,7 @@ sort_desc(
 # Title: Cost
 # Type: Instant
 sort_desc( ( 
-  ( max( grafanacloud_instance_billable_usage{} ) by (id) > 0 ) # Stacks' Billable Series
+  ( max( grafanacloud_instance_billable_usage{} ) by (id) ) # Stacks' Billable Series
     / ignoring(id) group_left() max( grafanacloud_org_metrics_billable_series{} ) by (id) ) # Divided by Org Billable Series
   * on (id) group_left(name) max by(id, name) (grafanacloud_instance_info{ name=~".*-prom" }) # Include only these
 ) * on () group_left() sum (grafanacloud_org_metrics_overage{} ) # Org-wide Metrics bil in USD
@@ -134,7 +134,7 @@ sort_desc( (
 # Type: Range
 sort_desc(
  sum by ( name ) (
-     ((grafanacloud_instance_billable_usage{} @end() > 0) - grafanacloud_instance_billable_usage{} @start())
+     ((grafanacloud_instance_billable_usage{} @end()) - grafanacloud_instance_billable_usage{} @start())
        / grafanacloud_instance_billable_usage{} @end()
        * on (id) group_left( name ) grafanacloud_instance_info{ name=~".*-prom" } ) )
 ```
@@ -145,7 +145,7 @@ sort_desc(
 # Type: Range
 sort_desc(
  sum by ( name ) (
-    (( grafanacloud_instance_billable_usage{} @end() >0) - grafanacloud_instance_billable_usage{} @start())
+    (( grafanacloud_instance_billable_usage{} @end()) - grafanacloud_instance_billable_usage{} @start())
        / on (org_id) group_left( name ) grafanacloud_org_metrics_billable_series{}
        * on (org_id) group_left( name ) grafanacloud_org_metrics_overage{}
        * on (id) group_left( name ) grafanacloud_instance_info{ name=~".*-prom" } ))
