@@ -17,36 +17,43 @@ grafanacloud_instance_info{}
 ```
 ## Queries
 
-### Billable series metrics count
+### Usage Metrics for the Organization
+#### Billable series metrics count for the Organization
 ```
+# Total Billable Series
 grafanacloud_org_metrics_billable_series{ }
 ```
 
-### Billable Series Cost
+#### Billable Series Cost for the Organization
 ```
+# Total Billable Series Cost
 sum( grafanacloud_org_metrics_overage{} )
 ```
 
-### Calculate the percentage change across the time range
+#### Calculate the percentage change across the time range for the Organization
 ```
+# Change %
 delta( grafanacloud_org_metrics_billable_series{ } [ $__range ] )
 / grafanacloud_org_metrics_billable_series{ } @end()
 ```
 
 ### Cost impact of change in Billable Series for the Organization
 ```
+# Cost Impact
 sum( grafanacloud_org_metrics_billable_series{} @end() 
      - grafanacloud_org_metrics_billable_series{} @start() )
 / sum( grafanacloud_org_metrics_billable_series{} )
 * sum( grafanacloud_org_metrics_overage{} )
 ```
 
-### Calculate the change across the time range
+#### Calculate the change across the time range for the Organization
 ```
+# Change
 delta( grafanacloud_org_metrics_billable_series{ } [ $__range ] )
 ```
 
-### Calculate the Billable Series Count for each environment
+### Usage Metrics for each environment in the Organization
+#### Calculate the Billable Series Count for each environment
 ```
 # Count
 sort_desc(
@@ -55,7 +62,7 @@ sort_desc(
    * on (id) group_left( name ) grafanacloud_instance_info{ name=~".*prom.*"   }
  ) > 0 )
  ```
-### Calculate the Series Cost for each environment: (I / O) * OC
+#### Calculate the Series Cost for each environment: (I / O) * OC
 ```
 # Cost
 sort_desc( ( 
@@ -65,7 +72,7 @@ sort_desc( (
 ) * on () group_left() sum (grafanacloud_org_metrics_overage{} ) # Org-wide Metrics bil in USD
 ```
 
-### Billable Series Change % for each individual environment
+#### Billable Series Change % for each individual environment
 ```
 # Change %
 sort_desc(
@@ -75,7 +82,7 @@ sort_desc(
        * on (id) group_left( name ) grafanacloud_instance_info{ name=~".*prom.*" } ) )
 ```
 
-### Cost impact to individual environment of change in active series
+#### Cost impact to individual environment of change in active series
 ```
 # Cost Impact
 sort_desc(
