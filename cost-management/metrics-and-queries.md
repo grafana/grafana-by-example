@@ -97,8 +97,7 @@ grafanacloud_org_metrics_billable_series{ }
 # Panel: Time Series
 sum by ( name ) (
     grafanacloud_instance_billable_usage{}
-    * on (id) group_left( name ) grafanacloud_instance_info{ name=~"$VAR_ENV"   }
-  )
+    * on (id) group_left( name ) grafanacloud_instance_info{ name=~"$VAR_ENV"   } )
 ```
 
 
