@@ -48,6 +48,7 @@ delta( grafanacloud_org_metrics_billable_series{ } [ $__range ] )
 
 ### Calculate the Billable Series Count for each environment
 ```
+# Count
 sort_desc(
  sum by ( name ) (
    grafanacloud_instance_billable_usage{}
@@ -56,6 +57,7 @@ sort_desc(
  ```
 ### Calculate the Series Cost for each environment: (I / O) * OC
 ```
+# Cost
 sort_desc( ( 
   ( max( grafanacloud_instance_billable_usage{} ) by (id) > 0 ) # Stacks' Billable Series, where > 0
     / ignoring(id) group_left() max( grafanacloud_org_metrics_billable_series{} ) by (id) ) # Divided by Org Billable Series
@@ -65,6 +67,7 @@ sort_desc( (
 
 ### Billable Series Change % for each individual environment
 ```
+# Change %
 sort_desc(
  sum by ( name ) (
      ((grafanacloud_instance_billable_usage{} @end() > 0) - grafanacloud_instance_billable_usage{} @start())
@@ -74,6 +77,7 @@ sort_desc(
 
 ### Cost impact to individual environment of change in active series
 ```
+# Cost Impact
 sort_desc(
  sum by ( name ) (
     (( grafanacloud_instance_billable_usage{} @end() >0) - grafanacloud_instance_billable_usage{} @start())
