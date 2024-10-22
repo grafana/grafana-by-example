@@ -26,35 +26,40 @@ grafanacloud_instance_info{}
 ## Queries
 
 - Add the following set of queries to a Grafana Dashboard to start the cost management dashboard build process
-- Utilize the layout desribed in the Conceptual Dashboard design
+- Utilize the layout described in the Conceptual Dashboard design
 ![Conceptual Dashboard design](https://github.com/grafana/grafana-by-example/blob/main/cost-management/conceptual-dashboard-design.png)
 
 ### Usage Metrics for the Organization
 - Add these queries as individual Time Series panels
 - Use the data source: `grafanacloud-usage` for all panels
+
 #### Billable series metrics count for the Organization
 - Duplicate this panel as a way to add the rest of the Time Series panels
 ```
-# Total Billable Series
+# Title: Total Billable Series
+# Panel: Stat
 grafanacloud_org_metrics_billable_series{ }
 ```
 
 #### Billable Series Cost for the Organization
 ```
-# Total Billable Series Cost
+# Title: Total Billable Series Cost
+# Panel: Stat
 sum( grafanacloud_org_metrics_overage{} )
 ```
 
 #### Calculate the percentage change across the time range for the Organization
 ```
-# Change %
+# Title: Change %
+# Panel: Stat
 delta( grafanacloud_org_metrics_billable_series{ } [ $__range ] )
 / grafanacloud_org_metrics_billable_series{ } @end()
 ```
 
 #### Cost impact of change in Billable Series for the Organization
 ```
-# Cost Impact
+# Title: Cost Impact
+# Panel: Stat
 sum( grafanacloud_org_metrics_billable_series{} @end() 
      - grafanacloud_org_metrics_billable_series{} @start() )
 / sum( grafanacloud_org_metrics_billable_series{} )
@@ -63,28 +68,46 @@ sum( grafanacloud_org_metrics_billable_series{} @end()
 
 #### Calculate the change across the time range for the Organization
 ```
-# Change
+# Title: Change
+# Panel: Stat
 delta( grafanacloud_org_metrics_billable_series{ } [ $__range ] )
 ```
 
-#### Optionally Add the series start and end values
+#### Optional, Add the series start and end values to the above panel
 ```
-# Start
+# Title: Start
+# Panel: Stat
 sum( grafanacloud_org_metrics_billable_series{ } @start() )
 # End
 sum( grafanacloud_org_metrics_billable_series{ } @end() )
 ```
 
+#### Total Billable Series - create a second instance of this panel
+```
+# Title: Total Billable Series
+# Panel: Time Series
+grafanacloud_org_metrics_billable_series{ }
+```
 
+#### Selected Billable Series instance
+```
+# Filter using a dashboard variable: $VAR_ENV the instance billable usage
+# Title: Environment: $VAR_ENV
+# Panel: Time Series
+sum by ( name ) (
+    grafanacloud_instance_billable_usage{}
+    * on (id) group_left( name ) grafanacloud_instance_info{ name=~"$VAR_ENV"   }
+  ) > 0
+```
 
-### Usage Metrics for each environment in the Organization
-- Add all of these queries to a Table panel using the query format option: table
+### Usage Metrics for each environment (instance) in the Organization
+- Add all of these queries to a `Table panel` using the query format option: `Table`
 - Use a Join by field Transformation to join them by the field name
 - Use an Organize fields by name Transformation to hide the time and id columns, and rename the column headers
 
 #### Calculate the Billable Series Count for each environment
 ```
-# Count
+# Title: Count
 # Type: Instant
 sort_desc(
  sum by ( name ) (
@@ -94,7 +117,8 @@ sort_desc(
  ```
 #### Calculate the Series Cost for each environment: (I / O) * OC
 ```
-# Cost
+# Title: Cost
+# Type: Range
 sort_desc( ( 
   ( max( grafanacloud_instance_billable_usage{} ) by (id) > 0 ) # Stacks' Billable Series, where > 0
     / ignoring(id) group_left() max( grafanacloud_org_metrics_billable_series{} ) by (id) ) # Divided by Org Billable Series
@@ -104,7 +128,8 @@ sort_desc( (
 
 #### Billable Series Change % for each individual environment
 ```
-# Change %
+# Title: Change %
+# Type: Range
 sort_desc(
  sum by ( name ) (
      ((grafanacloud_instance_billable_usage{} @end() > 0) - grafanacloud_instance_billable_usage{} @start())
@@ -114,7 +139,8 @@ sort_desc(
 
 #### Cost impact to individual environment of change in active series
 ```
-# Cost Impact
+# Title: Cost Impact
+# Type: Range
 sort_desc(
  sum by ( name ) (
     (( grafanacloud_instance_billable_usage{} @end() >0) - grafanacloud_instance_billable_usage{} @start())
