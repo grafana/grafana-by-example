@@ -56,13 +56,11 @@ sort_desc(
  ```
 ### Calculate the Series Cost for each environment: (I / O) * OC
 ```
-sort_desc( ( (
-     max( grafanacloud_instance_billable_usage{} ) by (id) > 0 ) # Stacks' Billable Series, where > 0
-     / ignoring(id) group_left() # Divided by Org BillableSeries
-       max( grafanacloud_org_metrics_billable_series{} ) by (id)
- ) * on (id) group_left(name)
-     max by(id, name) (grafanacloud_instance_info{ name=~".*prom.*" }) # Include only these
-) * on () group_left() sum (grafanacloud_org_metrics_overage{} ) # Org-wide Metrics bill, dollars:
+sort_desc( ( 
+  ( max( grafanacloud_instance_billable_usage{} ) by (id) > 0 ) # Stacks' Billable Series, where > 0
+    / ignoring(id) group_left() max( grafanacloud_org_metrics_billable_series{} ) by (id) ) # Divided by Org Billable Series
+  * on (id) group_left(name) max by(id, name) (grafanacloud_instance_info{ name=~".*prom.*" }) # Include only these
+) * on () group_left() sum (grafanacloud_org_metrics_overage{} ) # Org-wide Metrics bil in USD
 ```
 
 ### Billable Series Change % for each individual environment
