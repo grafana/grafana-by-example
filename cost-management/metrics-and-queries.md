@@ -114,7 +114,7 @@ sum by ( name ) (
 sort_desc(
  sum by ( name ) (
    grafanacloud_instance_billable_usage{}
-   * on (id) group_left( name ) grafanacloud_instance_info{ name=~".*prom.*"   }
+   * on (id) group_left( name ) grafanacloud_instance_info{ name=~".*prom.*" }
  ) > 0 )
  ```
 #### Calculate the Series Cost for each environment: (I / O) * OC
@@ -173,3 +173,4 @@ Label filters: Optionally add a filter: name =~ .*prom.*
 - Save the Data Link
 - Save the Dashboard
 - Exit Edit
+- Note the Data link depends on the Table column being named `Environment` and the previously created Dashboard variable `VAR_ENV`
