@@ -101,7 +101,7 @@ sum by ( name ) (
   ) > 0
 ```
 
-### Usage Metrics for each environment (instance) in the Organization
+### Usage Metrics for each Environment (instance) in the Organization
 - Add all of these queries to a `Table panel` using the query format option: `Table`
 - Use a Join by field Transformation to join them by the field name
 - Use an Organize fields by name Transformation to hide the time and id columns, and rename the column headers
@@ -119,7 +119,7 @@ sort_desc(
 #### Calculate the Series Cost for each environment: (I / O) * OC
 ```
 # Title: Cost
-# Type: Range
+# Type: Instant
 sort_desc( ( 
   ( max( grafanacloud_instance_billable_usage{} ) by (id) > 0 ) # Stacks' Billable Series, where > 0
     / ignoring(id) group_left() max( grafanacloud_org_metrics_billable_series{} ) by (id) ) # Divided by Org Billable Series
