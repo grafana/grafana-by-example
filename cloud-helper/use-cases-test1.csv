@@ -1,0 +1,9 @@
+,,,,,,,,,,
+Example workbook showing project use cases,,,,,,,,,,
+,,,,,,,,,,
+Use Case #,Date Added,Raised By,Name,Description,Evaluation Criteria,Value,Status,Resources,Owner,Additional Comments
+0001,29-Mar-2024,David Ryder,Grafana UI,Describe the Grafana UI Offering,Demonstration,Easily visualize data from many data sources,Open,https://grafana.com/,,
+0002,29-Mar-2024,David Ryder,Grafana Metrics,Describe the Grafana Metrics Offering,Please see the documentation,Ingest and query metrics data ,Complete,https://grafana.com/products/cloud/metrics/,,
+0003,29-Mar-2024,David Ryder,Grafana Logs,Describe the Grafana Logs Offering,Please see the documentation,Ingest and query logs data,Complete,https://grafana.com/products/cloud/logs/,,
+0004,29-Mar-2024,David Ryder,Grafana Traces,Describe the Grafana Traces Offering,Please see the documentation,Ingest and query traces data,Review,https://grafana.com/products/cloud/traces/,,
+Use Case #,Date Added,Raised By,Name,Description,Evaluation Criteria,Value,Status,Resources,Owner,Additional Comments
