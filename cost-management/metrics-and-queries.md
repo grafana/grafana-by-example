@@ -269,7 +269,10 @@ Alert instance label: {costmgt="metrics"}
 
 ![Dashboard Stage 1](https://github.com/grafana/grafana-by-example/blob/main/cost-management/dashboard-stage-2.png)
 
-## Thank you for your participation in this project
+## Next Steps
+- Your cost management dashboard for metrics is complete
+- Grafana dashboards provide for a highly customizable and interactive experience to explore your Grafana Cloud usage data and many other types of observability data
+- Thank you for participating in this project
 - Please reachout to Grafana Labs to provide comments and feedback
 
 
