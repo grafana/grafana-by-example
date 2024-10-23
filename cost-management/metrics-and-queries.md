@@ -1,11 +1,11 @@
- # Grafana Cloud Usage Metrics
-
- Use the data source: `grafanacloud-usage`
+ # Building a cost management dashboard in Grafana Cloud
+- This the particpant workbook instructions for building a cost managment dashboard for metrics usage
+- The same concepts could be applied to other telemetry data types including: logs, traces and profiles
  
 
-## Usage metrics
-- Review the following useage metrics in the grafanacloud-usage data source 
-- These will be used for the dashboarrd build
+## Grafana Cloud Usage Metrics
+- Review the following useage metrics using `grafanacloud-usage` data source in Grafana Cloud
+- These will be used for the dashboard build
 ```
 grafanacloud_org_metrics_billable_series{}
 grafanacloud_org_metrics_overage{} 
@@ -21,7 +21,6 @@ grafanacloud_instance_info{}
 ## Getting Started
 - A Grafana Cloud account is required for this project, a Grafana Cloud Free tier account may be used
 - To get started create a new dashboard in the Grafana instance and name it `cost-management`
-- 
 
 ## Queries
 
