@@ -164,11 +164,11 @@ Label filters: Optionally add a filter: name =~ .*-prom
 
 #### Add data link to the table panel
 - Add a Data Link to the table panel
-- Copy the first part of the dashboard URL. It will look similar to the following:
-- `https://<DOMAIN_NAME>/d/<DASHBOARD_UID>/<DASHBOARD_NAME>?`
-- Append to the end: var-VAR_ENV=${__data.fields.Environment}
-- The full Data Link URL should now look like this:
-- `https://<DOMAIN_NAME>/d/<DASHBOARD_UID>/<DASHBOARD_NAME>?var-VAR_ENV=${__data.fields.Environment}`
+  - Copy the first part of the dashboard URL. It will look similar to the following:
+  - `https://<DOMAIN_NAME>/d/<DASHBOARD_UID>/<DASHBOARD_NAME>?`
+    - Append to the end: var-VAR_ENV=${__data.fields.Environment}
+  - The full Data Link URL should now look like this:
+  - `https://<DOMAIN_NAME>/d/<DASHBOARD_UID>/<DASHBOARD_NAME>?var-VAR_ENV=${__data.fields.Environment}`
 - Save the Data Link
 - Save the Dashboard
 - Exit Edit
@@ -183,6 +183,43 @@ Label filters: Optionally add a filter: name =~ .*-prom
 - Clicking on a row in the Table will select which environment to show in the right hand side time series panel
 
 ## Next Steps
-- Configure the units for each panel setting the units to either Misc / Short or Currency / Dollars ($) or Percentage (0.0-1.0). The Table panel will require the use of Field Override for each column to set the unit to the required type
 - Add a machine learning forecast job and for Total Billable Series metric
 - Add a threshold Alert on the Total Billable Series
+- Configure the units for each panel setting the units to either Misc / Short or Currency / Dollars ($) or Percentage (0.0-1.0) depdning on their type. The Table panel will require the use of Field Override for each column to set the unit to the required type. This realtively straight forward set of changes to the dashboard and can be done after this webinar
+
+## Create a machine learning forecast job
+- Create machine learning forecast job from the time series panel: Total Billable Series -> Panel Options -> Extensions ->  Create Forecast
+- This will creat a New metric forecast from the metric: grafanacloud_org_metrics_billable_series{ }
+- Save the forecast using the name: cost-mgt-billable-series
+- This will create a new set of metrics represetning the forecasted time series and the upper and lower confidence bounds
+- The job will take about 1-2 minutes to configure since its is evaluating historical data
+- Click into this new Metric forecase job and use the Copy as panel to copy this panel
+- Navigate back to the cost management dashboard and then Edit -> Add -> Paste panel
+- Modify the Query options of this panel to show 2 weeks of data with 3 days into the future
+  ```
+  Relative time: 2w
+  Time shift: 0d/d+3d
+  ```
+- Add an additonal query to this panel:
+  ```
+  cost-mgt-billable-series:anomalous
+  ```
+-  The results of this query oscilates between 0 and 1 so configure an override to place the axis for this query on the right hand side of the panel
+
+## Alerting
+- Configure three types of alerts on the grafanacloud_org_metrics_billable_series{ } metric: 
+  - Threshold based on a static value using the Total Billable Series (timeseries) panel
+  - Anomaly based on forecasted upper and lower limits
+  - Future threshold based on predicted future forecast value 2 weeks into the future
+
+
+### Threshold based alert
+- Create a threshold based alert from the time series panel: Total Billable Series -> Panel Options -> More -> New Alert Rule
+- Configure an appropriate threshhold value
+- Add a label to the alert: `costmgt = metrics ` allowing filtering for this alert in our dashboard
+
+{costmgt="davidryder"}
+Future
+ryder_cost_mgt_billiable_series_1:predicted offset -1w
+ryder_cost_mgt_billiable_series_1:anomalous
+ryder_cost_mgt_billiable_series_1:actual
