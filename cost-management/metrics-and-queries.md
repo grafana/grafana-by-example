@@ -162,7 +162,7 @@ Metric: grafanacloud-instance-info
 Label filters: Optionally add a filter: name =~ .*-prom
 ```
 
-#### Add data link to the table panel
+#### Add a data link to the table panel
 - Add a Data Link to the table panel
   - Copy the first part of the dashboard URL. It will look similar to the following:
   - `https://<DOMAIN_NAME>/d/<DASHBOARD_UID>/<DASHBOARD_NAME>?`
@@ -264,6 +264,14 @@ Label filters: Optionally add a filter: name =~ .*-prom
 Title: Billing Alerts
 Alert instance label: {costmgt="metrics"}
 ```
+
+## Dashboard Build Compelete State
+- Ideally at this stage of the dashboard build process the dashboard you have built looks similar to the following:
+
+![Dashboard Stage 1](https://github.com/grafana/grafana-by-example/blob/main/cost-management/dashboard-stage-2.png)
+
+## Thank you for your participation in this project
+- Please reachout to Grafana Labs to provide comments and feedback
 
 
 ### End
