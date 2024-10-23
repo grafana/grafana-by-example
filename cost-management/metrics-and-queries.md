@@ -187,7 +187,7 @@ Label filters: Optionally add a filter: name =~ .*-prom
 - Add a threshold Alert on the Total Billable Series
 - Configure the units for each panel setting the units to either Misc / Short or Currency / Dollars ($) or Percentage (0.0-1.0) depdning on their type. The Table panel will require the use of Field Override for each column to set the unit to the required type. This realtively straight forward set of changes to the dashboard and can be done after this webinar
 
-## Create a machine learning forecast job
+#### Create a machine learning forecast job
 - Create machine learning forecast job from the time series panel: Total Billable Series -> Panel Options -> Extensions ->  Create Forecast
 - This will creat a New metric forecast from the metric: grafanacloud_org_metrics_billable_series{ }
 - Save the forecast using the name: cost-mgt-billable-series
@@ -204,22 +204,62 @@ Label filters: Optionally add a filter: name =~ .*-prom
   ```
   cost-mgt-billable-series:anomalous
   ```
--  The results of this query oscilates between 0 and 1 so configure an override to place the axis for this query on the right hand side of the panel
+-  The results of this query oscilates between -1 and 1 indicating when time series is outside of the predicted upper and lower limits. Since the value range is between -1 an 1 configure an override to place the axis for this query on the right hand side of the panel so that it does not conflict with the billable series range
+- The following metrics generated from this forecast job:
+  ```
+  cost_mgt_billiable_series_1:predicted 
+  cost_mgt_billiable_series_1:anomalous
+  cost_mgt_billiable_series_1:actual
+  ```
 
-## Alerting
+### Alerting
 - Configure three types of alerts on the grafanacloud_org_metrics_billable_series{ } metric: 
   - Threshold based on a static value using the Total Billable Series (timeseries) panel
   - Anomaly based on forecasted upper and lower limits
   - Future threshold based on predicted future forecast value 2 weeks into the future
 
 
-### Threshold based alert
+#### Threshold based alert
 - Create a threshold based alert from the time series panel: Total Billable Series -> Panel Options -> More -> New Alert Rule
-- Configure an appropriate threshhold value
-- Add a label to the alert: `costmgt = metrics ` allowing filtering for this alert in our dashboard
+- Configure an appropriate threshhold value based on your actual billable series
+- Add a label to the alert: `costmgt = metrics ` allowing filtering for this alert in our dashboard and in notification policies
+- Create an evaluation group `CostMgt5m` with the interval `5m`
 
-{costmgt="davidryder"}
+#### Anomaly based alert
+- Configure an anomaly based alert using the forecasted metrics panel: Panel Options -> More -> New Alert Rule
+- Use only the metric named in the alert rule, delete the other metrics listed
+  ```
+  cost-mgt-billable-series:anomalous
+  ```
+- Configure the alert options
+  ```
+  Threshold
+  IS OUTSIDE RANGE: -0.5 to 0.5
+  Evaluation group and interval: 1h
+  Labels: costmgt = metrics
+  Contact point: Email
+  ```
+
+### Future threshold based alert
+- Configure future threshold based on predicted future forecast value 2 weeks into the future
+ using the forecasted metrics panel: Panel Options -> More -> New Alert Rule
+- Using only the metric named in the alert rule, delete the other metrics listed
+  ```
+  cost-mgt-billable-series:predicted{ ml_forecast="yhat" }
+  ```
+- Configure the alert options
+  ```
+  Threshold: 
+  IS ABOVE: <choose an appropriate threshhold>
+  Evaluation group and interval: costMgt5m
+  Pending period: 5m
+  Labels: costmgt = metrics
+  Contact point: Email
+  ```
+
+
+
+### End
+
+{costmgt="metrics"}
 Future
-ryder_cost_mgt_billiable_series_1:predicted offset -1w
-ryder_cost_mgt_billiable_series_1:anomalous
-ryder_cost_mgt_billiable_series_1:actual
