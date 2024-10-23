@@ -182,8 +182,8 @@ Label filters: Optionally add a filter: name =~ .*-prom
 - Clicking on a row in the Table will select which environment to show in the right hand side time series panel
 
 ## Next Steps
-- Add a machine learning forecast job and for Total Billable Series metric
-- Add a threshold, anomaly and predicted alert on the Total Billable Series
+- Add a machine learning forecast job for Total Billable Series metric
+- Add alerting rules based on a threshold, anomaly detection and forecasted values of the Total Billable Series
 - Add an Alert panel to the dashboard to show triggered alerts
 - Configure the units for each panel setting the units to either Misc / Short or Currency / Dollars ($) or Percentage (0.0-1.0) depdning on their type. The Table panel will require the use of Field Override for each column to set the unit to the required type. This realtively straight forward set of changes to the dashboard and can be done after this webinar
 
