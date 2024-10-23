@@ -184,7 +184,8 @@ Label filters: Optionally add a filter: name =~ .*-prom
 
 ## Next Steps
 - Add a machine learning forecast job and for Total Billable Series metric
-- Add a threshold Alert on the Total Billable Series
+- Add a threshold, anomaly and predicted alert on the Total Billable Series
+- Add an Alert panel to the dashboard to show triggered alerts
 - Configure the units for each panel setting the units to either Misc / Short or Currency / Dollars ($) or Percentage (0.0-1.0) depdning on their type. The Table panel will require the use of Field Override for each column to set the unit to the required type. This realtively straight forward set of changes to the dashboard and can be done after this webinar
 
 #### Create a machine learning forecast job
@@ -240,7 +241,7 @@ Label filters: Optionally add a filter: name =~ .*-prom
   Contact point: Email
   ```
 
-### Future threshold based alert
+#### Future threshold based alert
 - Configure future threshold based on predicted future forecast value 2 weeks into the future
  using the forecasted metrics panel: Panel Options -> More -> New Alert Rule
 - Using only the metric named in the alert rule, delete the other metrics listed
@@ -257,9 +258,13 @@ Label filters: Optionally add a filter: name =~ .*-prom
   Contact point: Email
   ```
 
+#### Add an alert panel to the dashboard to show triggered alerts
+- An an Alert list panel to the dashboard:
+```
+Title: Billing Alerts
+Alert instance label: {costmgt="metrics"}
+```
 
 
 ### End
 
-{costmgt="metrics"}
-Future
