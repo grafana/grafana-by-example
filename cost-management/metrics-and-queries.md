@@ -173,7 +173,7 @@ Label filters: Optionally add a filter: name =~ .*-prom
 - Exit Edit
 - Note the Data link depends on the Table column being named `Environment` and the previously created Dashboard variable `VAR_ENV`
 
-## Dashboard Build Intermediate State
+## Dashboard Build - Stage 1
 
 - Ideally at this stage of the dashboard build process the dashboard you have built looks similar to the following:
 
@@ -264,7 +264,7 @@ Title: Billing Alerts
 Alert instance label: {costmgt="metrics"}
 ```
 
-## Dashboard Build Compelete State
+## Dashboard Build - Stage 2
 - Ideally at this stage of the dashboard build process the dashboard you have built looks similar to the following:
 
 ![Dashboard Stage 1](https://github.com/grafana/grafana-by-example/blob/main/cost-management/dashboard-stage-2.png)
