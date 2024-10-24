@@ -269,12 +269,14 @@ Alert instance label: {costmgt="metrics"}
 
 ![Dashboard Stage 1](https://github.com/grafana/grafana-by-example/blob/main/cost-management/dashboard-stage-2.png)
 
+- A fully build out version of this dashboard is available for importing into your Grafana Cloud instance is avalable here: [dashboard-final.json](https://github.com/grafana/grafana-by-example/blob/main/cost-management/dashboard-final.png)
+- The machine learning forecast job and the alerts will need to be created as described above
+
 ## Next Steps
 - Your cost management dashboard for metrics is complete
 - Grafana dashboards provide for a highly customizable and interactive experience to explore your Grafana Cloud usage data and many other types of observability data
 - Thank you for participating in this project
 - Please reachout to Grafana Labs to provide comments and feedback
-
 
 ### End
 
