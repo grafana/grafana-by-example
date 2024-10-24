@@ -201,11 +201,11 @@ Label filters: Optionally add a filter: name =~ .*-prom
   Relative time: 2w
   Time shift: 0d/d+3d
   ```
-- Add an additional query to this panel:
+- Add an additional third query to this panel:
   ```
   cost_mgt_billable_series:anomalous
   ```
--  The results of this query oscillate between -1 and 1 indicating when time series is outside of the predicted upper and lower limits. Since the value range is between -1 an 1 configure an override to place the axis for this query on the right hand side of the panel so that it does not conflict with the billable series range
+-  The results of this query oscillate between -1 and 1 indicating when the time series is outside of the predicted upper and lower limits. Since the value range is between -1 an 1 configure an override to place the axis for this query on the right hand side of the panel so that it does not conflict with the billable series range
 - The following metrics generated from this forecast job:
   ```
   cost_mgt_billable_series_1:predicted 
