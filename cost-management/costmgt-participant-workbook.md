@@ -189,7 +189,7 @@ Label filters: Optionally add a filter: name =~ .*-prom
 - Add an Alert panel to the dashboard to show triggered alerts
 - Configure the units for each panel setting the units to either Misc / Short or Currency / Dollars ($) or Percentage (0.0-1.0) depending on their type. The Table panel will require the use of Field Override for each column to set the unit to the required type. This relatively straight forward set of changes to the dashboard and can be done after this webinar
 
-### Create a machine learning forecast job
+## Create a machine learning forecast job
 - Create machine learning forecast job from the time series panel: Total Billable Series -> Panel Options -> Extensions ->  Create Forecast
 - This will create a new metric forecast from the metric: `grafanacloud_org_metrics_billable_series{ }`
 - Save the forecast using the name: cost_mgt_billable_series
@@ -215,20 +215,20 @@ Label filters: Optionally add a filter: name =~ .*-prom
 - Since the value range of `cost_mgt_billable_series:anomalous` is between -1 an 1 configure an override to place the axis for this query on the right hand side of the panel so that it does not conflict with the billable series range on the left hand side of the panel. Use the override option: `Axis > Placement = Right` to achieve this
 
 
-### Alerting
+## Alerting
 - Configure three types of alerts on the grafanacloud_org_metrics_billable_series{ } metric: 
   - Threshold based on a static value using the Total Billable Series (time series) panel
   - Anomaly based on forecasted upper and lower limits
   - Future threshold based on predicted future forecast value 2 weeks into the future
 
 
-#### Threshold based alert
+### Threshold based alert
 - Create a threshold based alert from the time series panel: Total Billable Series -> Panel Options -> More -> New Alert Rule
 - Configure an appropriate threshold value based on your actual billable series
 - Add a label to the alert: `costmgt = metrics ` allowing filtering for this alert in our dashboard and in notification policies
 - Create an evaluation group `CostMgt5m` with the interval `5m`
 
-#### Anomaly based alert
+### Anomaly based alert
 - Configure an anomaly based alert using the forecasted metrics panel: Panel Options -> More -> New Alert Rule
 - Use only the metric tagged `anomalous` in the alert rule, delete the other metrics listed
   ```
@@ -244,7 +244,7 @@ Label filters: Optionally add a filter: name =~ .*-prom
   Labels: costmgt = metrics
   Contact point: Email
   ```
-#### Future threshold based alert
+### Future threshold based alert
 - Configure future threshold based on predicted future forecast value 2 weeks into the future
  using the forecasted metrics panel: Panel Options -> More -> New Alert Rule
 - Using only the metric tagged `predicted` in the alert rule, delete the other metrics listed
@@ -260,14 +260,12 @@ Label filters: Optionally add a filter: name =~ .*-prom
   Labels: costmgt = metrics
   Contact point: Email
   ```
-
-#### Add an alert panel to the dashboard to show triggered alerts
+### Add an alert panel to the dashboard to show triggered alerts
 - An an Alert list panel to the dashboard:
 ```
 Title: Billing Alerts
 Alert instance label: {costmgt="metrics"}
 ```
-
 ## Dashboard Build - Stage 2
 - Ideally at this stage of the dashboard build process the dashboard you have built looks similar to the following:
 
