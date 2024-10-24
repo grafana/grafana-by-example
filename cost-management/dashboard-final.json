@@ -1,0 +1,1393 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_GRAFANACLOUD-USAGE",
+      "label": "grafanacloud-usage",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus"
+    },
+    {
+      "name": "DS_GRAFANACLOUD-ML-METRICS",
+      "label": "grafanacloud-ml-metrics",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus"
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "panel",
+      "id": "alertlist",
+      "name": "Alert list",
+      "version": ""
+    },
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "11.4.0-77868"
+    },
+    {
+      "type": "datasource",
+      "id": "prometheus",
+      "name": "Prometheus",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "stat",
+      "name": "Stat",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_GRAFANACLOUD-USAGE}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "B"
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 5,
+        "x": 0,
+        "y": 0
+      },
+      "id": 5,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.4.0-77868",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_GRAFANACLOUD-USAGE}"
+          },
+          "editorMode": "code",
+          "expr": "# Billable series metrics count\ngrafanacloud_org_metrics_billable_series{ }",
+          "instant": false,
+          "legendFormat": "Billable Series",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Total Billable Series",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_GRAFANACLOUD-USAGE}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "currencyUSD"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "B"
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 5,
+        "x": 5,
+        "y": 0
+      },
+      "id": 17,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.4.0-77868",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_GRAFANACLOUD-USAGE}"
+          },
+          "editorMode": "code",
+          "expr": "# Billable Series Cost\nsum( grafanacloud_org_metrics_overage{} )",
+          "instant": false,
+          "legendFormat": "Billable Series",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_GRAFANACLOUD-USAGE}"
+          },
+          "editorMode": "code",
+          "expr": "# Calculate the per stack Billiable Series Count\nsort_desc( \n  sum by ( name ) (\n    grafanacloud_instance_billable_usage{}\n    * on (id) group_left( name ) grafanacloud_instance_info{ name=~\"$VAR_ENV\"   }\n  ) > 0\n)",
+          "hide": true,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Total Billable Series Cost",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_GRAFANACLOUD-USAGE}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "B"
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 5,
+        "x": 10,
+        "y": 0
+      },
+      "id": 7,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.4.0-77868",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_GRAFANACLOUD-USAGE}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "# Calculate the percentage change across the time range\n( grafanacloud_org_metrics_billable_series{ }  @ end() - grafanacloud_org_metrics_billable_series{ } @ start() )\n/ grafanacloud_org_metrics_billable_series{ } @ end()",
+          "instant": false,
+          "legendFormat": "Billable Series",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Change %",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_GRAFANACLOUD-USAGE}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "currencyUSD"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "B"
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 5,
+        "x": 15,
+        "y": 0
+      },
+      "id": 23,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.4.0-77868",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_GRAFANACLOUD-USAGE}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "# Cost impact of change in Billiable Series for the Organization\nsum( grafanacloud_org_metrics_billable_series{ } @end() -  grafanacloud_org_metrics_billable_series{ } @start())\n/ sum( grafanacloud_org_metrics_billable_series{} )\n* sum( grafanacloud_org_metrics_overage{} )",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Billable Series",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_GRAFANACLOUD-USAGE}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum( grafanacloud_org_metrics_overage{} )",
+          "hide": true,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_GRAFANACLOUD-USAGE}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "grafanacloud_org_metrics_billable_series{ } ",
+          "hide": true,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "C"
+        }
+      ],
+      "title": "Cost Difference",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_GRAFANACLOUD-USAGE}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "B"
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 3,
+        "x": 20,
+        "y": 0
+      },
+      "id": 24,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.4.0-77868",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_GRAFANACLOUD-USAGE}"
+          },
+          "editorMode": "code",
+          "expr": "# Calculate the change across the time range\nsum( grafanacloud_org_metrics_billable_series{ }  @end() - grafanacloud_org_metrics_billable_series{ } @start() )",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Change",
+          "range": true,
+          "refId": "Change"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_GRAFANACLOUD-USAGE}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum( grafanacloud_org_metrics_billable_series{ } @start() )",
+          "instant": false,
+          "legendFormat": "Start",
+          "range": true,
+          "refId": "Start"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_GRAFANACLOUD-USAGE}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "sum( grafanacloud_org_metrics_billable_series{ } @end() )",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "End",
+          "range": true,
+          "refId": "End"
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_GRAFANACLOUD-USAGE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "left",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "links": [],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Billable Series Count"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "",
+                    "url": "https://sedemo.grafana.net/d/cardinality-management/cardinality-management-1-overview?var-datasource=${__data.fields.Environment}&from=now-24h&to=now&var-filter=&refresh=15m"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Billable Series Cost"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Environment"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 239
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Change %"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percentunit"
+              },
+              {
+                "id": "custom.width",
+                "value": 99
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Cost Impact"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Environment"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Select to show the active series for this environment",
+                    "url": "https://sedemo.grafana.net/d/fe1nrvda34f0gc/cost-mgt-final-build?var-VAR_ENV=${__data.fields.Environment}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 13,
+        "x": 0,
+        "y": 2
+      },
+      "id": 2,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "Billable Series Count"
+          }
+        ]
+      },
+      "pluginVersion": "11.4.0-77868",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_GRAFANACLOUD-USAGE}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "# Calculate the Billable Series Count for each environment\nsort_desc( \n  sum by ( name ) (\n    grafanacloud_instance_billable_usage{}\n    * on (id) group_left( name ) grafanacloud_instance_info{ name=~\".*prom.*\"   }\n  ) > 0 )",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "Count"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_GRAFANACLOUD-USAGE}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "# Calculate the Series Cost for each environment: (I / O) * OC\nsort_desc( ( (\n      max( grafanacloud_instance_billable_usage{} ) by (id) > 0 ) # Stacks' BillableSeries, where > 0\n      / ignoring(id) group_left() # Divided by Org BillableSeries\n        max(grafanacloud_org_metrics_billable_series{}) by (id)\n  ) * on (id) group_left(name) \n      max by(id, name) (grafanacloud_instance_info{ name=~\".*prom.*\" })\n) * on () group_left() sum (grafanacloud_org_metrics_overage{} ) # Org-wide Metrics bill, dollars:",
+          "format": "table",
+          "hide": false,
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "Cost"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_GRAFANACLOUD-USAGE}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "# Billable change % for each individual environment\nsort_desc(\n  sum by ( name ) (\n      ((grafanacloud_instance_billable_usage{} @end() > 0) - grafanacloud_instance_billable_usage{} @start())\n        / grafanacloud_instance_billable_usage{} @end()\n        * on (id) group_left( name ) grafanacloud_instance_info{ name=~\".*prom.*\" } ) )",
+          "format": "table",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "Change %"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_GRAFANACLOUD-USAGE}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "# Calculate Starting series for this environment\nsort_desc( \n  sum by ( name ) (\n    ( ( grafanacloud_instance_billable_usage{} @start() > 0 ) \n      * on (id) group_left( name ) grafanacloud_instance_info{ name=~\".*prom.*\" }\n  )))",
+          "format": "table",
+          "hide": true,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "Start"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_GRAFANACLOUD-USAGE}"
+          },
+          "editorMode": "code",
+          "expr": "# Calculate Ending series for this env\nsort_desc( \n  sum by ( name ) (\n    ( ( grafanacloud_instance_billable_usage{} @end() > 0 ) \n      * on (id) group_left( name ) grafanacloud_instance_info{ name=~\".*prom.*\" }\n  )))",
+          "format": "table",
+          "hide": true,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "End"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_GRAFANACLOUD-USAGE}"
+          },
+          "editorMode": "code",
+          "expr": "# Difference between start and end of the time range\nsort_desc(\n  sum by ( name ) (\n      ((grafanacloud_instance_billable_usage{} @end() > 0) - grafanacloud_instance_billable_usage{} @start())\n       \n        * on (id) group_left( name ) grafanacloud_instance_info{ name=~\".*prom.*\" } ) )",
+          "format": "table",
+          "hide": true,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "Difference"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_GRAFANACLOUD-USAGE}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "# Cost impact to individual environment of change in active series\nsort_desc(\n  sum by ( name ) (\n     ( (grafanacloud_instance_billable_usage{} @end() > 0) - grafanacloud_instance_billable_usage{} @start() )\n        / on (org_id) group_left( name ) grafanacloud_org_metrics_billable_series{} \n        * on (org_id) group_left( name ) grafanacloud_org_metrics_overage{} \n        * on (id) group_left( name ) grafanacloud_instance_info{ name=~\".*prom.*\" } ) )",
+          "format": "table",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "Cost Impact"
+        }
+      ],
+      "title": "Billable Series Per Environment (Selectable)",
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "name",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time 1": true,
+              "Time 2": true,
+              "Time 3": true,
+              "Time 4": true,
+              "Time 5": true,
+              "Time 6": true,
+              "Time 7": true,
+              "Value #A": true,
+              "id": true
+            },
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Time 3": "",
+              "Value #A": "Start",
+              "Value #B": "End",
+              "Value #Change %": "Change %",
+              "Value #Cost": "Billable Series Cost",
+              "Value #Cost Impact": "Cost Impact",
+              "Value #Count": "Billable Series Count",
+              "Value #Difference": "Difference",
+              "Value #End": "End",
+              "Value #Start": "Start",
+              "name": "Environment"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_GRAFANACLOUD-USAGE}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "B"
+            },
+            "properties": [
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 10,
+        "x": 13,
+        "y": 2
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.4.0-77868",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_GRAFANACLOUD-USAGE}"
+          },
+          "editorMode": "code",
+          "expr": "grafanacloud_org_metrics_billable_series{ }",
+          "instant": false,
+          "legendFormat": "Billable Series",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Total Billable Series",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_GRAFANACLOUD-USAGE}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 10,
+        "x": 13,
+        "y": 6
+      },
+      "id": 3,
+      "options": {
+        "legend": {
+          "calcs": [
+            "first",
+            "last",
+            "delta",
+            "diffperc",
+            "diff"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.4.0-77868",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_GRAFANACLOUD-USAGE}"
+          },
+          "editorMode": "code",
+          "expr": "# Filter using a dashboard variable: $VAR_ENV the instance billable usage\nsum by ( name ) (\n    grafanacloud_instance_billable_usage{}\n    * on (id) group_left( name ) grafanacloud_instance_info{ name=~\"$VAR_ENV\"   }\n  ) > 0",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Environment: $VAR_ENV",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_GRAFANACLOUD-ML-METRICS}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ryder_cost_mgt_billiable_series_1:predicted{cluster=\"prod-us-central-0\", ml_algorithm=\"grafana_prophet_1_0_1\", ml_forecast=\"yhat\", ml_job_id=\"82aa06ef-83e2-481a-a9da-21c1b81fc356\", ml_job_metric=\"ryder_cost_mgt_billiable_series_1\", org_id=\"276038\"}"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Predicted"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ryder_cost_mgt_billiable_series_1:predicted{cluster=\"prod-us-central-0\", ml_algorithm=\"grafana_prophet_1_0_1\", ml_forecast=\"yhat_lower\", ml_job_id=\"82aa06ef-83e2-481a-a9da-21c1b81fc356\", ml_job_metric=\"ryder_cost_mgt_billiable_series_1\", org_id=\"276038\"}"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Predicted (lower)"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 0
+              },
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": true
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ryder_cost_mgt_billiable_series_1:predicted{cluster=\"prod-us-central-0\", ml_algorithm=\"grafana_prophet_1_0_1\", ml_forecast=\"yhat_upper\", ml_job_id=\"82aa06ef-83e2-481a-a9da-21c1b81fc356\", ml_job_metric=\"ryder_cost_mgt_billiable_series_1\", org_id=\"276038\"}"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Predicted (upper)"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "blue",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 0
+              },
+              {
+                "id": "custom.fillBelowTo",
+                "value": "Predicted (lower)"
+              },
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": true
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ryder_cost_mgt_billiable_series_1:actual{cluster=\"prod-us-central-0\", ml_algorithm=\"grafana_prophet_1_0_1\", ml_forecast=\"y\", ml_job_id=\"82aa06ef-83e2-481a-a9da-21c1b81fc356\", ml_job_metric=\"ryder_cost_mgt_billiable_series_1\", org_id=\"276038\"}"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Actual"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "green",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Predicted"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Anamalous"
+            },
+            "properties": [
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 1
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 13,
+        "x": 0,
+        "y": 12
+      },
+      "id": 27,
+      "options": {
+        "legend": {
+          "calcs": [
+            "first",
+            "last",
+            "diff",
+            "diffperc"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.4.0-77868",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "ryder_cost_mgt_billiable_series_1:predicted",
+          "hide": false,
+          "queryType": "metric",
+          "range": true,
+          "refId": "P",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_GRAFANACLOUD-ML-METRICS}"
+          }
+        },
+        {
+          "expr": "ryder_cost_mgt_billiable_series_1:actual",
+          "hide": false,
+          "queryType": "metric",
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_GRAFANACLOUD-ML-METRICS}"
+          }
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_GRAFANACLOUD-ML-METRICS}"
+          },
+          "editorMode": "code",
+          "expr": "ryder_cost_mgt_billiable_series_1:anomalous",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Anamalous",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "timeFrom": "2w",
+      "timeShift": "0d/d+3d",
+      "title": "Ryder-Cost-Mgt-Billiable-Series-1",
+      "type": "timeseries"
+    },
+    {
+      "gridPos": {
+        "h": 8,
+        "w": 10,
+        "x": 13,
+        "y": 12
+      },
+      "id": 26,
+      "options": {
+        "alertInstanceLabelFilter": "{costmgt=\"metrics\"}",
+        "alertName": "",
+        "dashboardAlerts": false,
+        "folder": "",
+        "groupBy": [],
+        "groupMode": "default",
+        "maxItems": 20,
+        "sortOrder": 1,
+        "stateFilter": {
+          "error": true,
+          "firing": true,
+          "noData": false,
+          "normal": true,
+          "pending": true
+        },
+        "viewMode": "list"
+      },
+      "pluginVersion": "11.4.0-77868",
+      "title": "Billing Alerts",
+      "type": "alertlist"
+    }
+  ],
+  "schemaVersion": 40,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_GRAFANACLOUD-USAGE}"
+        },
+        "definition": "label_values(grafanacloud_instance_info{name=~\".*prom.*\"},name)",
+        "description": "",
+        "label": "Environment",
+        "name": "VAR_ENV",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(grafanacloud_instance_info{name=~\".*prom.*\"},name)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-30d",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Cost Mgt - Final Build",
+  "uid": "fe1nrvda34f0gc",
+  "version": 35,
+  "weekStart": ""
+}
