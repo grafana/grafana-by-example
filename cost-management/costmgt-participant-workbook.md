@@ -27,7 +27,7 @@ grafanacloud_instance_info{}
 
 ![Conceptual Dashboard design](https://github.com/grafana/grafana-by-example/blob/main/cost-management/conceptual-dashboard-design.png)
 
-- Begin teh dashboard build process add following set of queries, using cut and paste, to a Grafana Dashboard to start the cost management dashboard build process
+- Begin the dashboard build process add following set of queries, using cut and paste, to a Grafana Dashboard to start the cost management dashboard build process
 - Utilize the layout described in the Conceptual Dashboard design to place the panels
 
 ### Usage Metrics for the Organization
