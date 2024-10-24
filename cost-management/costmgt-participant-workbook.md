@@ -1,10 +1,10 @@
  # Building a cost management dashboard in Grafana Cloud
-- This is the participant workbook instructions for building a cost managment dashboard for metrics usage
+- This is the participant workbook instructions for building a cost management dashboard for metrics usage
 - The same concepts could be applied to other telemetry data types including: logs, traces and profiles
  
 
 ## Grafana Cloud Usage Metrics
-- Review the following useage metrics using `grafanacloud-usage` data source in Grafana Cloud
+- Review the following usage metrics using `grafanacloud-usage` data source in Grafana Cloud
 - These will be used for the dashboard build
 ```
 grafanacloud_org_metrics_billable_series{}
