@@ -689,8 +689,8 @@
         "showHeader": true,
         "sortBy": [
           {
-            "desc": false,
-            "displayName": "Billable Series Count"
+            "desc": true,
+            "displayName": "Cost Impact"
           }
         ]
       },
@@ -1219,7 +1219,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "{__name__=\"cost_mgt_billable_series:anomalous\", cluster=\"prod-us-central-0\", ml_algorithm=\"grafana_prophet_1_0_1\", ml_forecast=\"anomalies\", ml_job_id=\"8a5ed8ec-51aa-47b9-ac77-6101182c0522\", ml_job_metric=\"cost_mgt_billable_series\", org_id=\"276038\"}"
+              "options": "Anamalous"
             },
             "properties": [
               {
@@ -1280,7 +1280,7 @@
           "expr": "cost_mgt_billable_series:anomalous",
           "hide": false,
           "instant": false,
-          "legendFormat": "__auto",
+          "legendFormat": "Anamalous",
           "range": true,
           "refId": "B"
         }
@@ -1355,6 +1355,6 @@
   "timezone": "browser",
   "title": "Cost Mgt - Final Build",
   "uid": "fe1nrvda34f0gc",
-  "version": 40,
+  "version": 43,
   "weekStart": ""
 }
