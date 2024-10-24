@@ -618,7 +618,7 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 239
+                "value": 223
               }
             ]
           },
@@ -1085,7 +1085,7 @@
             },
             "insertNulls": false,
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -1119,7 +1119,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "ryder_cost_mgt_billiable_series_1:predicted{cluster=\"prod-us-central-0\", ml_algorithm=\"grafana_prophet_1_0_1\", ml_forecast=\"yhat\", ml_job_id=\"82aa06ef-83e2-481a-a9da-21c1b81fc356\", ml_job_metric=\"ryder_cost_mgt_billiable_series_1\", org_id=\"276038\"}"
+              "options": "cost_mgt_billable_series:predicted{cluster=\"prod-us-central-0\", ml_algorithm=\"grafana_prophet_1_0_1\", ml_forecast=\"yhat\", ml_job_id=\"8a5ed8ec-51aa-47b9-ac77-6101182c0522\", ml_job_metric=\"cost_mgt_billable_series\", org_id=\"276038\"}"
             },
             "properties": [
               {
@@ -1138,7 +1138,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "ryder_cost_mgt_billiable_series_1:predicted{cluster=\"prod-us-central-0\", ml_algorithm=\"grafana_prophet_1_0_1\", ml_forecast=\"yhat_lower\", ml_job_id=\"82aa06ef-83e2-481a-a9da-21c1b81fc356\", ml_job_metric=\"ryder_cost_mgt_billiable_series_1\", org_id=\"276038\"}"
+              "options": "cost_mgt_billable_series:predicted{cluster=\"prod-us-central-0\", ml_algorithm=\"grafana_prophet_1_0_1\", ml_forecast=\"yhat_lower\", ml_job_id=\"8a5ed8ec-51aa-47b9-ac77-6101182c0522\", ml_job_metric=\"cost_mgt_billable_series\", org_id=\"276038\"}"
             },
             "properties": [
               {
@@ -1167,7 +1167,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "ryder_cost_mgt_billiable_series_1:predicted{cluster=\"prod-us-central-0\", ml_algorithm=\"grafana_prophet_1_0_1\", ml_forecast=\"yhat_upper\", ml_job_id=\"82aa06ef-83e2-481a-a9da-21c1b81fc356\", ml_job_metric=\"ryder_cost_mgt_billiable_series_1\", org_id=\"276038\"}"
+              "options": "cost_mgt_billable_series:predicted{cluster=\"prod-us-central-0\", ml_algorithm=\"grafana_prophet_1_0_1\", ml_forecast=\"yhat_upper\", ml_job_id=\"8a5ed8ec-51aa-47b9-ac77-6101182c0522\", ml_job_metric=\"cost_mgt_billable_series\", org_id=\"276038\"}"
             },
             "properties": [
               {
@@ -1200,7 +1200,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "ryder_cost_mgt_billiable_series_1:actual{cluster=\"prod-us-central-0\", ml_algorithm=\"grafana_prophet_1_0_1\", ml_forecast=\"y\", ml_job_id=\"82aa06ef-83e2-481a-a9da-21c1b81fc356\", ml_job_metric=\"ryder_cost_mgt_billiable_series_1\", org_id=\"276038\"}"
+              "options": "cost_mgt_billable_series:actual{cluster=\"prod-us-central-0\", ml_algorithm=\"grafana_prophet_1_0_1\", ml_forecast=\"y\", ml_job_id=\"8a5ed8ec-51aa-47b9-ac77-6101182c0522\", ml_job_metric=\"cost_mgt_billable_series\", org_id=\"276038\"}"
             },
             "properties": [
               {
@@ -1219,38 +1219,12 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Predicted"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "dark-red",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Anamalous"
+              "options": "{__name__=\"cost_mgt_billable_series:anomalous\", cluster=\"prod-us-central-0\", ml_algorithm=\"grafana_prophet_1_0_1\", ml_forecast=\"anomalies\", ml_job_id=\"8a5ed8ec-51aa-47b9-ac77-6101182c0522\", ml_job_metric=\"cost_mgt_billable_series\", org_id=\"276038\"}"
             },
             "properties": [
               {
                 "id": "custom.axisPlacement",
                 "value": "right"
-              },
-              {
-                "id": "custom.lineWidth",
-                "value": 1
-              },
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "yellow",
-                  "mode": "fixed"
-                }
               }
             ]
           }
@@ -1262,15 +1236,10 @@
         "x": 0,
         "y": 12
       },
-      "id": 27,
+      "id": 28,
       "options": {
         "legend": {
-          "calcs": [
-            "first",
-            "last",
-            "diff",
-            "diffperc"
-          ],
+          "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
@@ -1283,11 +1252,8 @@
       "pluginVersion": "11.4.0-77868",
       "targets": [
         {
-          "editorMode": "code",
-          "expr": "ryder_cost_mgt_billiable_series_1:predicted",
-          "hide": false,
+          "expr": "cost_mgt_billable_series:predicted",
           "queryType": "metric",
-          "range": true,
           "refId": "P",
           "datasource": {
             "type": "prometheus",
@@ -1295,9 +1261,10 @@
           }
         },
         {
-          "expr": "ryder_cost_mgt_billiable_series_1:actual",
-          "hide": false,
+          "editorMode": "code",
+          "expr": "cost_mgt_billable_series:actual",
           "queryType": "metric",
+          "range": true,
           "refId": "A",
           "datasource": {
             "type": "prometheus",
@@ -1310,17 +1277,17 @@
             "uid": "${DS_GRAFANACLOUD-ML-METRICS}"
           },
           "editorMode": "code",
-          "expr": "ryder_cost_mgt_billiable_series_1:anomalous",
+          "expr": "cost_mgt_billable_series:anomalous",
           "hide": false,
           "instant": false,
-          "legendFormat": "Anamalous",
+          "legendFormat": "__auto",
           "range": true,
           "refId": "B"
         }
       ],
       "timeFrom": "2w",
       "timeShift": "0d/d+3d",
-      "title": "Ryder-Cost-Mgt-Billiable-Series-1",
+      "title": "cost-mgt-billable-series",
       "type": "timeseries"
     },
     {
@@ -1388,6 +1355,6 @@
   "timezone": "browser",
   "title": "Cost Mgt - Final Build",
   "uid": "fe1nrvda34f0gc",
-  "version": 35,
+  "version": 40,
   "weekStart": ""
 }
