@@ -192,7 +192,7 @@ Label filters: Optionally add a filter: name =~ .*-prom
 - Create machine learning forecast job from the time series panel: Total Billable Series -> Panel Options -> Extensions ->  Create Forecast
 - This will create a new metric forecast from the metric: `grafanacloud_org_metrics_billable_series{ }`
 - Save the forecast using the name: cost_mgt_billable_series
-- This will create a new set of metrics representing the forecasted time series and the upper and lower confidence bounds. The following metrics are generated from this forecast job:
+- This will create a new set of metrics representing the forecasted time series and the upper and lower confidence bounds. The following metrics are generated from this forecast job and are available in the `grafanacloud-ml-metrics` data source:
   ```
   cost_mgt_billable_series_1:predicted 
   cost_mgt_billable_series_1:anomalous
@@ -235,6 +235,7 @@ Label filters: Optionally add a filter: name =~ .*-prom
   ```
 - Configure the alert options
   ```
+  Name: cost-mgt-billable-series-anomalous
   Query -> Options -> Time Range: now-1h to now
   Threshold
   IS OUTSIDE RANGE: -0.5 to 0.5
