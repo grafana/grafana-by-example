@@ -30,11 +30,11 @@ grafanacloud_instance_info{}
 - Begin the dashboard build process add following set of queries, using cut and paste, to a Grafana Dashboard to start the cost management dashboard build process
 - Utilize the layout described in the Conceptual Dashboard design to place the panels
 
-### Usage Metrics for the Organization
+## Usage Metrics for the Organization
 - Add these queries as individual Time Series panels
 - Use the data source: `grafanacloud-usage` for all panels
 
-#### Billable series metrics count for the Organization
+### Billable series metrics count for the Organization
 - Duplicate this panel as a way to add the rest of the Time Series panels
 ```
 # Title: Total Billable Series
@@ -42,14 +42,14 @@ grafanacloud_instance_info{}
 grafanacloud_org_metrics_billable_series{ }
 ```
 
-#### Billable Series Cost for the Organization
+### Billable Series Cost for the Organization
 ```
 # Title: Total Billable Series Cost
 # Panel: Stat
 sum( grafanacloud_org_metrics_overage{} )
 ```
 
-#### Calculate the percentage change across the time range for the Organization
+### Calculate the percentage change across the time range for the Organization
 ```
 # Title: Change %
 # Panel: Stat
@@ -57,7 +57,7 @@ delta( grafanacloud_org_metrics_billable_series{ } [ $__range ] )
 / grafanacloud_org_metrics_billable_series{ } @end()
 ```
 
-#### Cost impact of change in Billable Series for the Organization
+### Cost impact of change in Billable Series for the Organization
 ```
 # Title: Cost Impact
 # Panel: Stat
@@ -67,14 +67,14 @@ sum( grafanacloud_org_metrics_billable_series{} @end()
 * sum( grafanacloud_org_metrics_overage{} )
 ```
 
-#### Calculate the change across the time range for the Organization
+### Calculate the change across the time range for the Organization
 ```
 # Title: Change
 # Panel: Stat
 delta( grafanacloud_org_metrics_billable_series{ } [ $__range ] )
 ```
 
-#### Optional, Add the series start and end values to the above panel
+### Optional, Add the series start and end values to the above panel
 ```
 # Title: Start
 # Panel: Stat
@@ -83,7 +83,7 @@ sum( grafanacloud_org_metrics_billable_series{ } @start() )
 sum( grafanacloud_org_metrics_billable_series{ } @end() )
 ```
 
-#### Total Billable Series - create a second instance of this panel
+### Total Billable Series - create a second instance of this panel
 ```
 # Title: Total Billable Series
 # Panel: Time Series
@@ -91,7 +91,7 @@ sum( grafanacloud_org_metrics_billable_series{ } @end() )
 grafanacloud_org_metrics_billable_series{ }
 ```
 
-#### Selected Billable Series instance
+### Selected Billable Series instance
 ```
 # Filter using a dashboard variable: $VAR_ENV the instance billable usage
 # Title: Total Billable Series, Environment: $VAR_ENV
@@ -102,13 +102,13 @@ sum by ( name ) (
 ```
 
 
-### Usage Metrics for each Environment (instance) in the Organization
+## Usage Metrics for each Environment (instance) in the Organization
 - Add all of these queries to a `Table panel` using the query format option: `Table`
 - Use a Join by field Transformation to join them by the field name
 - Use an Organize fields by name Transformation to hide the time and id columns, and rename the column headers
 - Notice that for the purpose of this example we are filtering these queries using: name=~".*-prom" 
 
-#### Calculate the Billable Series Count for each environment
+### Calculate the Billable Series Count for each environment
 ```
 # Title: Count
 # Type: Instant
@@ -117,7 +117,7 @@ sort_desc(
    grafanacloud_instance_billable_usage{}
    * on (id) group_left( name ) grafanacloud_instance_info{ name=~".*-prom" } ) )
  ```
-#### Calculate the Series Cost for each environment: (I / O) * OC
+### Calculate the Series Cost for each environment: (I / O) * OC
 ```
 # Title: Cost
 # Type: Instant
@@ -128,7 +128,7 @@ sort_desc( (
 ) * on () group_left() sum (grafanacloud_org_metrics_overage{} ) # Org-wide Metrics bil in USD
 ```
 
-#### Billable Series Change % for each individual environment
+### Billable Series Change % for each individual environment
 ```
 # Title: Change %
 # Type: Range
@@ -139,7 +139,7 @@ sort_desc(
        * on (id) group_left( name ) grafanacloud_instance_info{ name=~".*-prom" } ) )
 ```
 
-#### Cost impact to individual environment of change in active series
+### Cost impact to individual environment of change in active series
 ```
 # Title: Cost Impact
 # Type: Range
@@ -151,7 +151,7 @@ sort_desc(
        * on (id) group_left( name ) grafanacloud_instance_info{ name=~".*-prom" } ))
 ```
 
-### Add a dashboard variable: VAR_ENV
+## Add a dashboard variable: VAR_ENV
 ```
 Type: Query
 Name: VAR_ENV
@@ -163,7 +163,7 @@ Metric: grafanacloud-instance-info
 Label filters: Optionally add a filter: name =~ .*-prom
 ```
 
-### Add a data link to the table panel
+## Add a data link to the table panel
 - Add a Data Link to the table panel
   - Copy the first part of the dashboard URL. It will look similar to the following:
   - `https://<DOMAIN_NAME>/d/<DASHBOARD_UID>/<DASHBOARD_NAME>?`
@@ -244,7 +244,6 @@ Label filters: Optionally add a filter: name =~ .*-prom
   Labels: costmgt = metrics
   Contact point: Email
   ```
-
 #### Future threshold based alert
 - Configure future threshold based on predicted future forecast value 2 weeks into the future
  using the forecasted metrics panel: Panel Options -> More -> New Alert Rule
