@@ -273,7 +273,7 @@ Alert instance label: {costmgt="metrics"}
 
 ![Dashboard Stage 1](https://github.com/grafana/grafana-by-example/blob/main/cost-management/dashboard-stage-2.png)
 
-- A fully build out version of this dashboard is available for importing into your Grafana Cloud instance is available here: [dashboard-final.json](https://github.com/grafana/grafana-by-example/blob/main/cost-management/dashboard-final.png)
+- A fully build out version of this dashboard is available for importing into your Grafana Cloud instance is available here: [dashboard-final.json](https://github.com/grafana/grafana-by-example/blob/main/cost-management/dashboard-final.json)
 - The machine learning forecast job and the alerts will need to be created as described above
 
 ## Next Steps
