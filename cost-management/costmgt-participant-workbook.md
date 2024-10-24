@@ -22,12 +22,14 @@ grafanacloud_instance_info{}
 - A Grafana Cloud account is required for this project, a Grafana Cloud Free tier account may be used
 - To get started create a new dashboard in the Grafana instance and name it `cost-management`
 
-## Queries
-
-- Add the following set of queries, using cut and paste, to a Grafana Dashboard to start the cost management dashboard build process
+### Conceptual Dashboard Design
 - Utilize the layout described in the Conceptual Dashboard design
 
 ![Conceptual Dashboard design](https://github.com/grafana/grafana-by-example/blob/main/cost-management/conceptual-dashboard-design.png)
+### Usage Queries
+
+- Add the following set of queries, using cut and paste, to a Grafana Dashboard to start the cost management dashboard build process
+- Utilize the layout described in the Conceptual Dashboard design to place the panels
 
 ### Usage Metrics for the Organization
 - Add these queries as individual Time Series panels
