@@ -204,7 +204,7 @@ Label filters: Optionally add a filter: name =~ .*-prom
   ```
   cost-mgt-billable-series:anomalous
   ```
--  The results of this query oscilates between -1 and 1 indicating when time series is outside of the predicted upper and lower limits. Since the value range is between -1 an 1 configure an override to place the axis for this query on the right hand side of the panel so that it does not conflict with the billable series range
+-  The results of this query oscillate between -1 and 1 indicating when time series is outside of the predicted upper and lower limits. Since the value range is between -1 an 1 configure an override to place the axis for this query on the right hand side of the panel so that it does not conflict with the billable series range
 - The following metrics generated from this forecast job:
   ```
   cost_mgt_billable_series_1:predicted 
@@ -250,7 +250,7 @@ Label filters: Optionally add a filter: name =~ .*-prom
 - Configure the alert options
   ```
   Threshold: 
-  IS ABOVE: <choose an appropriate threshhold>
+  IS ABOVE: <choose an appropriate threshold>
   Evaluation group and interval: costMgt5m
   Pending period: 5m
   Labels: costmgt = metrics
