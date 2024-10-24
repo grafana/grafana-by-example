@@ -22,13 +22,12 @@ grafanacloud_instance_info{}
 - A Grafana Cloud account is required for this project, a Grafana Cloud Free tier account may be used
 - To get started create a new dashboard in the Grafana instance and name it `cost-management`
 
-### Conceptual Dashboard Design
+## Conceptual Dashboard Design
 - Utilize the layout described in the Conceptual Dashboard design
 
 ![Conceptual Dashboard design](https://github.com/grafana/grafana-by-example/blob/main/cost-management/conceptual-dashboard-design.png)
-### Usage Queries
 
-- Add the following set of queries, using cut and paste, to a Grafana Dashboard to start the cost management dashboard build process
+- Begin teh dashboard build process add following set of queries, using cut and paste, to a Grafana Dashboard to start the cost management dashboard build process
 - Utilize the layout described in the Conceptual Dashboard design to place the panels
 
 ### Usage Metrics for the Organization
@@ -152,7 +151,7 @@ sort_desc(
        * on (id) group_left( name ) grafanacloud_instance_info{ name=~".*-prom" } ))
 ```
 
-#### Add a dashboard variable: VAR_ENV
+### Add a dashboard variable: VAR_ENV
 ```
 Type: Query
 Name: VAR_ENV
@@ -164,7 +163,7 @@ Metric: grafanacloud-instance-info
 Label filters: Optionally add a filter: name =~ .*-prom
 ```
 
-#### Add a data link to the table panel
+### Add a data link to the table panel
 - Add a Data Link to the table panel
   - Copy the first part of the dashboard URL. It will look similar to the following:
   - `https://<DOMAIN_NAME>/d/<DASHBOARD_UID>/<DASHBOARD_NAME>?`
@@ -190,7 +189,7 @@ Label filters: Optionally add a filter: name =~ .*-prom
 - Add an Alert panel to the dashboard to show triggered alerts
 - Configure the units for each panel setting the units to either Misc / Short or Currency / Dollars ($) or Percentage (0.0-1.0) depending on their type. The Table panel will require the use of Field Override for each column to set the unit to the required type. This relatively straight forward set of changes to the dashboard and can be done after this webinar
 
-#### Create a machine learning forecast job
+### Create a machine learning forecast job
 - Create machine learning forecast job from the time series panel: Total Billable Series -> Panel Options -> Extensions ->  Create Forecast
 - This will create a new metric forecast from the metric: `grafanacloud_org_metrics_billable_series{ }`
 - Save the forecast using the name: cost_mgt_billable_series
