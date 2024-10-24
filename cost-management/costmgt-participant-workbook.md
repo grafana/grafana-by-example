@@ -185,43 +185,43 @@ Label filters: Optionally add a filter: name =~ .*-prom
 - Add a machine learning forecast job for the Total Billable Series metric
 - Add alerting rules based on a threshold value, anomaly detection and forecasted values of the Total Billable Series metric
 - Add an Alert panel to the dashboard to show triggered alerts
-- Configure the units for each panel setting the units to either Misc / Short or Currency / Dollars ($) or Percentage (0.0-1.0) depending on their type. The Table panel will require the use of Field Override for each column to set the unit to the required type. This realtively straight forward set of changes to the dashboard and can be done after this webinar
+- Configure the units for each panel setting the units to either Misc / Short or Currency / Dollars ($) or Percentage (0.0-1.0) depending on their type. The Table panel will require the use of Field Override for each column to set the unit to the required type. This relatively straight forward set of changes to the dashboard and can be done after this webinar
 
 #### Create a machine learning forecast job
 - Create machine learning forecast job from the time series panel: Total Billable Series -> Panel Options -> Extensions ->  Create Forecast
-- This will creat a New metric forecast from the metric: grafanacloud_org_metrics_billable_series{ }
+- This will create a New metric forecast from the metric: grafanacloud_org_metrics_billable_series{ }
 - Save the forecast using the name: cost-mgt-billable-series
-- This will create a new set of metrics represetning the forecasted time series and the upper and lower confidence bounds
+- This will create a new set of metrics representing the forecasted time series and the upper and lower confidence bounds
 - The job will take about 1-2 minutes to configure since its is evaluating historical data
-- Click into this new Metric forecase job and use the Copy as panel to copy this panel
+- Click into this new Metric forecast job and use the Copy as panel to copy this panel
 - Navigate back to the cost management dashboard and then Edit -> Add -> Paste panel
 - Modify the Query options of this panel to show 2 weeks of data with 3 days into the future
   ```
   Relative time: 2w
   Time shift: 0d/d+3d
   ```
-- Add an additonal query to this panel:
+- Add an additional query to this panel:
   ```
   cost-mgt-billable-series:anomalous
   ```
 -  The results of this query oscilates between -1 and 1 indicating when time series is outside of the predicted upper and lower limits. Since the value range is between -1 an 1 configure an override to place the axis for this query on the right hand side of the panel so that it does not conflict with the billable series range
 - The following metrics generated from this forecast job:
   ```
-  cost_mgt_billiable_series_1:predicted 
-  cost_mgt_billiable_series_1:anomalous
-  cost_mgt_billiable_series_1:actual
+  cost_mgt_billable_series_1:predicted 
+  cost_mgt_billable_series_1:anomalous
+  cost_mgt_billable_series_1:actual
   ```
 
 ### Alerting
 - Configure three types of alerts on the grafanacloud_org_metrics_billable_series{ } metric: 
-  - Threshold based on a static value using the Total Billable Series (timeseries) panel
+  - Threshold based on a static value using the Total Billable Series (time series) panel
   - Anomaly based on forecasted upper and lower limits
   - Future threshold based on predicted future forecast value 2 weeks into the future
 
 
 #### Threshold based alert
 - Create a threshold based alert from the time series panel: Total Billable Series -> Panel Options -> More -> New Alert Rule
-- Configure an appropriate threshhold value based on your actual billable series
+- Configure an appropriate threshold value based on your actual billable series
 - Add a label to the alert: `costmgt = metrics ` allowing filtering for this alert in our dashboard and in notification policies
 - Create an evaluation group `CostMgt5m` with the interval `5m`
 
@@ -269,14 +269,14 @@ Alert instance label: {costmgt="metrics"}
 
 ![Dashboard Stage 1](https://github.com/grafana/grafana-by-example/blob/main/cost-management/dashboard-stage-2.png)
 
-- A fully build out version of this dashboard is available for importing into your Grafana Cloud instance is avalable here: [dashboard-final.json](https://github.com/grafana/grafana-by-example/blob/main/cost-management/dashboard-final.png)
+- A fully build out version of this dashboard is available for importing into your Grafana Cloud instance is available here: [dashboard-final.json](https://github.com/grafana/grafana-by-example/blob/main/cost-management/dashboard-final.png)
 - The machine learning forecast job and the alerts will need to be created as described above
 
 ## Next Steps
 - Your cost management dashboard for metrics is complete
 - Grafana dashboards provide for a highly customizable and interactive experience to explore your Grafana Cloud usage data and many other types of observability data
 - Thank you for participating in this project
-- Please reachout to Grafana Labs to provide comments and feedback
+- Please reach out to Grafana Labs to provide comments and feedback
 
 ### End
 
