@@ -86,6 +86,7 @@ sum( grafanacloud_org_metrics_billable_series{ } @end() )
 ```
 # Title: Total Billable Series
 # Panel: Time Series
+# Will be used to create the forecast and alerts
 grafanacloud_org_metrics_billable_series{ }
 ```
 
@@ -189,11 +190,11 @@ Label filters: Optionally add a filter: name =~ .*-prom
 
 #### Create a machine learning forecast job
 - Create machine learning forecast job from the time series panel: Total Billable Series -> Panel Options -> Extensions ->  Create Forecast
-- This will create a New metric forecast from the metric: grafanacloud_org_metrics_billable_series{ }
-- Save the forecast using the name: cost-mgt-billable-series
+- This will create a new metric forecast from the metric: `grafanacloud_org_metrics_billable_series{ }`
+- Save the forecast using the name: cost_mgt_billable_series
 - This will create a new set of metrics representing the forecasted time series and the upper and lower confidence bounds
 - The job will take about 1-2 minutes to configure since its is evaluating historical data
-- Click into this new Metric forecast job and use the Copy as panel to copy this panel
+- Click into this new metric forecast job and use the Copy as panel to copy this panel
 - Navigate back to the cost management dashboard and then Edit -> Add -> Paste panel
 - Modify the Query options of this panel to show 2 weeks of data with 3 days into the future
   ```
@@ -202,7 +203,7 @@ Label filters: Optionally add a filter: name =~ .*-prom
   ```
 - Add an additional query to this panel:
   ```
-  cost-mgt-billable-series:anomalous
+  cost_mgt_billable_series:anomalous
   ```
 -  The results of this query oscillate between -1 and 1 indicating when time series is outside of the predicted upper and lower limits. Since the value range is between -1 an 1 configure an override to place the axis for this query on the right hand side of the panel so that it does not conflict with the billable series range
 - The following metrics generated from this forecast job:
@@ -245,7 +246,7 @@ Label filters: Optionally add a filter: name =~ .*-prom
  using the forecasted metrics panel: Panel Options -> More -> New Alert Rule
 - Using only the metric tagged `predicted` in the alert rule, delete the other metrics listed
   ```
-  cost-mgt-billable-series:predicted{ ml_forecast="yhat" } offset -2w
+  cost-mgt-billable-series:predicted{ ml_forecast = "yhat" } offset -2w
   ```
 - Configure the alert options
   ```
