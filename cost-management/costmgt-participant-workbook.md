@@ -205,7 +205,8 @@ Label filters: Optionally add a filter: name =~ .*-prom
   ```
   cost_mgt_billable_series:anomalous
   ```
--  The results of this query oscillate between -1 and 1 indicating when the time series is outside of the predicted upper and lower limits. Since the value range is between -1 an 1 configure an override to place the axis for this query on the right hand side of the panel so that it does not conflict with the billable series range
+-  The results of this query oscillate between -1 and 1 indicating when the time series is outside of the predicted upper and lower limits. 
+- Since the value range of `cost_mgt_billable_series:anomalous` is between -1 an 1 configure an override to place the axis for this query on the right hand side of the panel so that it does not conflict with the billable series range on the left hand side of the panel
 - The following metrics generated from this forecast job:
   ```
   cost_mgt_billable_series_1:predicted 
