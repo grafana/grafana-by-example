@@ -235,6 +235,7 @@ Label filters: Optionally add a filter: name =~ .*-prom
   ```
 - Configure the alert options
   ```
+  Query -> Options -> Time Range: now-1h to now
   Threshold
   IS OUTSIDE RANGE: -0.5 to 0.5
   Evaluation group and interval: 1h
