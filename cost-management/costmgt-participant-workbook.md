@@ -227,7 +227,7 @@ Label filters: Optionally add a filter: name =~ .*-prom
 
 #### Anomaly based alert
 - Configure an anomaly based alert using the forecasted metrics panel: Panel Options -> More -> New Alert Rule
-- Use only the metric named in the alert rule, delete the other metrics listed
+- Use only the metric tagged `anomalous` in the alert rule, delete the other metrics listed
   ```
   cost-mgt-billable-series:anomalous
   ```
@@ -243,9 +243,9 @@ Label filters: Optionally add a filter: name =~ .*-prom
 #### Future threshold based alert
 - Configure future threshold based on predicted future forecast value 2 weeks into the future
  using the forecasted metrics panel: Panel Options -> More -> New Alert Rule
-- Using only the metric named in the alert rule, delete the other metrics listed
+- Using only the metric tagged `predicted` in the alert rule, delete the other metrics listed
   ```
-  cost-mgt-billable-series:predicted{ ml_forecast="yhat" }
+  cost-mgt-billable-series:predicted{ ml_forecast="yhat" } offset -2w
   ```
 - Configure the alert options
   ```
