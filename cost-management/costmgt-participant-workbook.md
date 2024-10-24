@@ -192,7 +192,12 @@ Label filters: Optionally add a filter: name =~ .*-prom
 - Create machine learning forecast job from the time series panel: Total Billable Series -> Panel Options -> Extensions ->  Create Forecast
 - This will create a new metric forecast from the metric: `grafanacloud_org_metrics_billable_series{ }`
 - Save the forecast using the name: cost_mgt_billable_series
-- This will create a new set of metrics representing the forecasted time series and the upper and lower confidence bounds
+- This will create a new set of metrics representing the forecasted time series and the upper and lower confidence bounds. The following metrics are generated from this forecast job:
+  ```
+  cost_mgt_billable_series_1:predicted 
+  cost_mgt_billable_series_1:anomalous
+  cost_mgt_billable_series_1:actual
+  ```
 - The job will take about 1-2 minutes to configure since its is evaluating historical data
 - Click into this new metric forecast job and use the Copy as panel to copy this panel
 - Navigate back to the cost management dashboard and then Edit -> Add -> Paste panel
@@ -206,13 +211,8 @@ Label filters: Optionally add a filter: name =~ .*-prom
   cost_mgt_billable_series:anomalous
   ```
 -  The results of this query oscillate between -1 and 1 indicating when the time series is outside of the predicted upper and lower limits. 
-- Since the value range of `cost_mgt_billable_series:anomalous` is between -1 an 1 configure an override to place the axis for this query on the right hand side of the panel so that it does not conflict with the billable series range on the left hand side of the panel
-- The following metrics generated from this forecast job:
-  ```
-  cost_mgt_billable_series_1:predicted 
-  cost_mgt_billable_series_1:anomalous
-  cost_mgt_billable_series_1:actual
-  ```
+- Since the value range of `cost_mgt_billable_series:anomalous` is between -1 an 1 configure an override to place the axis for this query on the right hand side of the panel so that it does not conflict with the billable series range on the left hand side of the panel. Use the override option: `Axis > Placement = Right` to achieve this
+
 
 ### Alerting
 - Configure three types of alerts on the grafanacloud_org_metrics_billable_series{ } metric: 
