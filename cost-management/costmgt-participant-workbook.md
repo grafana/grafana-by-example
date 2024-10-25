@@ -4,7 +4,7 @@
  
 
 ## Grafana Cloud Usage Metrics
-- Review the following usage metrics using `grafanacloud-usage` data source in Grafana Cloud
+- Review the following usage metrics using the `grafanacloud-usage` data source in Grafana Cloud
 - These will be used for the dashboard build
 ```
 grafanacloud_org_metrics_billable_series{}
@@ -27,8 +27,8 @@ grafanacloud_instance_info{}
 
 ![Conceptual Dashboard design](https://github.com/grafana/grafana-by-example/blob/main/cost-management/conceptual-dashboard-design.png)
 
-- Begin the dashboard build process add following set of queries, using cut and paste, to a Grafana Dashboard to start the cost management dashboard build process
-- Utilize the layout described in the Conceptual Dashboard design to place the panels
+- Begin the dashboard build process by adding the following set of queries to a Grafana dashboard.  Using cut and paste, add each query to an individual panel in the dashboard, some of the panels are of type Stat and others Time series
+- Utilize the layout described in the Conceptual Dashboard design to approximately size and place the panels
 
 ## Usage Metrics for the Organization
 - Add these queries as individual Time Series panels
