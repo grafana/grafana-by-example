@@ -31,11 +31,11 @@ grafanacloud_instance_info{}
 - Utilize the layout described in the Conceptual Dashboard design to approximately size and place the panels
 
 ## Usage Metrics for the Organization
-- Add these queries as individual Time Series panels
+- Add these queries as individual panels to the Grafana dashboard
 - Use the data source: `grafanacloud-usage` for all panels
 
 ### Billable series metrics count for the Organization
-- Duplicate this panel as a way to add the rest of the Time Series panels
+- Duplicate this panel as a way to add the rest of panels
 ```
 # Title: Total Billable Series
 # Panel: Stat
