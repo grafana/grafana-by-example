@@ -1,4 +1,4 @@
- # Building a cost management dashboard in Grafana Cloud
+# Building a cost management dashboard in Grafana Cloud
 - This is the participant workbook instructions for building a cost management dashboard for metrics usage
 - The same concepts could be applied to other telemetry data types including: logs, traces and profiles
  
@@ -39,6 +39,8 @@ grafanacloud_instance_info{}
 ```
 # Title: Total Billable Series
 # Panel: Stat
+# Graph mode: None
+# Unit: Short
 grafanacloud_org_metrics_billable_series{ }
 ```
 
@@ -46,6 +48,8 @@ grafanacloud_org_metrics_billable_series{ }
 ```
 # Title: Total Billable Series Cost
 # Panel: Stat
+# Graph mode: None
+# Unit: Currency > Dollars ($)
 sum( grafanacloud_org_metrics_overage{} )
 ```
 
@@ -53,14 +57,18 @@ sum( grafanacloud_org_metrics_overage{} )
 ```
 # Title: Change %
 # Panel: Stat
+# Graph mode: None
+# Unit: Perent (0.0-1.0)
 delta( grafanacloud_org_metrics_billable_series{ } [ $__range ] )
 / grafanacloud_org_metrics_billable_series{ } @end()
 ```
 
 ### Cost impact of change in Billable Series for the Organization
 ```
-# Title: Cost Impact
+# Title: Cost Difference
 # Panel: Stat
+# Graph mode: None
+# Unit: Currency > Dollars ($) 
 sum( grafanacloud_org_metrics_billable_series{} @end() 
      - grafanacloud_org_metrics_billable_series{} @start() )
 / sum( grafanacloud_org_metrics_billable_series{} )
@@ -69,21 +77,25 @@ sum( grafanacloud_org_metrics_billable_series{} @end()
 
 ### Calculate the change across the time range for the Organization
 ```
-# Title: Change
+# Title: <leave this blank>
 # Panel: Stat
+# Query Label: Change
+# Query Legend: Change
 delta( grafanacloud_org_metrics_billable_series{ } [ $__range ] )
 ```
 
 ### Optional, Add the series start and end values to the above panel
 ```
-# Title: Start
-# Panel: Stat
+# Query Label: Start
+# Query Legend: Start
 sum( grafanacloud_org_metrics_billable_series{ } @start() )
-# End
+
+# Query Label: End
+# Query Legend: End
 sum( grafanacloud_org_metrics_billable_series{ } @end() )
 ```
 
-### Total Billable Series - create a second instance of this panel
+### Total Billable Series - create a second instance of this panel by duplicating the existing panel then changing its visualization type to Time Series
 ```
 # Title: Total Billable Series
 # Panel: Time Series
@@ -110,7 +122,7 @@ sum by ( name ) (
 
 ### Calculate the Billable Series Count for each environment
 ```
-# Title: Count
+# Query Label: Count
 # Type: Instant
 sort_desc(
  sum by ( name ) (
@@ -119,7 +131,7 @@ sort_desc(
  ```
 ### Calculate the Series Cost for each environment: (I / O) * OC
 ```
-# Title: Cost
+# Query Label: Cost
 # Type: Instant
 sort_desc( ( 
   ( max( grafanacloud_instance_billable_usage{} ) by (id) ) # Stacks' Billable Series
@@ -130,7 +142,7 @@ sort_desc( (
 
 ### Billable Series Change % for each individual environment
 ```
-# Title: Change %
+# Query Label: Change %
 # Type: Range
 sort_desc(
  sum by ( name ) (
@@ -141,7 +153,7 @@ sort_desc(
 
 ### Cost impact to individual environment of change in active series
 ```
-# Title: Cost Impact
+# Query Label: Cost Impact
 # Type: Range
 sort_desc(
  sum by ( name ) (
