@@ -103,7 +103,7 @@ sum by ( name ) (
 
 
 ## Usage Metrics for each Environment (instance) in the Organization
-- Add all of these queries to a `Table panel` using the query format option: `Table`
+- Add all 4 of these queries to a `Table panel` using the query format option: `Table`
 - Use a Join by field Transformation to join them by the field name
 - Use an Organize fields by name Transformation to hide the time and id columns, and rename the column headers
 - Notice that for the purpose of this example we are filtering these queries using: name=~".*-prom" 
@@ -151,6 +151,23 @@ sort_desc(
        * on (id) group_left( name ) grafanacloud_instance_info{ name=~".*-prom" } ))
 ```
 
+### Use a `Join by field` Transformation to join them by the field name
+- Click the Transformations tab
+- Join by field
+  - Mode: OUTER (TIME SERIES)
+  - Field: name
+
+### Use an `Organize fields by name` Transformation to hide the time and id columns, and rename the column headers
+- Click Add another transformation
+- Organize fields by name
+  - Hide all 4 `Time` fields
+  - Hide `id` field
+  - Rename `Name` to `Environment`
+  - Rename `Value #Count` to `Billable Series Count`
+  - Rename `Value #Cost` to `Billable Series Cost`
+  - Rename `Value #Change %` to `Change %`
+  - Rename `Value #Cost Impact` to `Cost Impact`
+
 ## Add a dashboard variable: VAR_ENV
 ```
 Type: Query
@@ -164,12 +181,16 @@ Label filters: Optionally add a filter: name =~ .*-prom
 ```
 
 ## Add a data link to the table panel
-- Add a Data Link to the table panel
+- Steps to add a Data Link to the table panel's Environment field 
   - Copy the first part of the dashboard URL. It will look similar to the following:
   - `https://<DOMAIN_NAME>/d/<DASHBOARD_UID>/<DASHBOARD_NAME>?`
     - Append to the end: var-VAR_ENV=${__data.fields.Environment}
   - The full Data Link URL should now look like this:
   - `https://<DOMAIN_NAME>/d/<DASHBOARD_UID>/<DASHBOARD_NAME>?var-VAR_ENV=${__data.fields.Environment}`
+  - Add a Field Override
+    - Fields with name: Environment
+    - Override property: Data links:
+      - Paste in the above full Data Link URL
 - Save the Data Link
 - Save the Dashboard
 - Exit Edit
