@@ -20,3 +20,5 @@ The Grafana Agent in [Flow](https://grafana.com/docs/agent/latest/flow/) mode is
 ### Stopping the services
 ```docker-compose down```
 
+### End
+
