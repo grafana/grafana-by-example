@@ -1,0 +1,68 @@
+
+discovery.docker "DOCKER_ALL_CONTAINERS" {
+	host = "unix:///var/run/docker.sock"
+}
+
+discovery.relabel "DOCKER_ALL_RELABEL_3" {
+  targets = discovery.docker.DOCKER_ALL_CONTAINERS.targets
+}
+
+pyroscope.ebpf "MAIN" {
+  forward_to = [pyroscope.write.PYROSCOPE_GRAFANA_CLOUD.receiver]
+  targets = discovery.relabel.DOCKER_ALL_RELABEL_1.output
+}
+
+pyroscope.write "PYROSCOPE_LOCAL" {
+  endpoint {
+    url = "http://pyroscope:4040"
+  }
+}
+
+pyroscope.write "PYROSCOPE_GRAFANA_CLOUD" {
+  endpoint {
+    url = sys.env("PYROSCOPE_SERVER_ADDRESS")
+    basic_auth {
+      username = sys.env("PYROSCOPE_BASIC_AUTH_USER")
+      password = sys.env("PYROSCOPE_BASIC_AUTH_PASSWORD")
+    }
+  }
+}  
+
+
+// Experimental
+//
+discovery.relabel "DOCKER_ALL_RELABEL_1" {
+    targets = discovery.docker.DOCKER_ALL_CONTAINERS.targets
+    // Filter needed containers based on docker labels
+    // See more info at reference doc https://grafana.com/docs/alloy/next/reference/components/discovery/discovery.docker/
+    rule {
+        source_labels = ["__meta_docker_container_name"]
+        regex = ".*pyroscope.*"
+        action = "keep"
+    }
+    // provide arbitrary service_name label, otherwise it will default to value of __meta_docker_container_name
+    rule {
+        source_labels = ["__meta_docker_container_name"]
+        regex = ".*pyroscope.*"
+        action = "replace"
+        target_label = "service_name"
+        replacement = "ebpf/docker/pyroscope"
+    }
+}
+
+discovery.relabel "DOCKER_ALL_RELABEL_2" {
+  targets = discovery.docker.DOCKER_ALL_CONTAINERS.targets
+  // Only select find-prime processes
+  rule {
+    action = "keep"
+    regex = ".*/find-prime$"
+    source_labels = ["__meta_process_exe"]
+  }
+  // Take the base name as service name
+  rule {
+    source_labels = ["__meta_process_exe"]
+    regex = ".*/(.*)$"
+    target_label  = "service_name"
+    action        = "replace"
+  }
+}

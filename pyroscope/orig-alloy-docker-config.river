@@ -1,0 +1,48 @@
+
+discovery.docker "ALL_DOCKER_CONTAINERS" {
+	host = "unix:///var/run/docker.sock"
+}
+
+discovery.relabel "PYROSCOPE_DOCKER_RELABLE_1" {
+    targets = discovery.docker.ALL_DOCKER_CONTAINERS.targets
+    // Filter needed containers based on docker labels
+    // See more info at reference doc https://grafana.com/docs/alloy/next/reference/components/discovery/discovery.docker/
+    rule {
+        source_labels = ["__meta_docker_container_name"]
+        regex = ".*pyroscope.*"
+        action = "keep"
+    }
+    // provide arbitrary service_name label, otherwise it will default to value of __meta_docker_container_name
+    rule {
+        source_labels = ["__meta_docker_container_name"]
+        regex = ".*pyroscope.*"
+        action = "replace"
+        target_label = "service_name"
+        replacement = "ebpf/docker/pyroscope"
+    }
+}
+
+discovery.relabel "PYROSCOPE_DOCKER_RELABLE_2" {
+  targets = discovery.docker.ALL_DOCKER_CONTAINERS.targets
+}
+
+pyroscope.write "PYROSCOPE_LOCAL" {
+  endpoint {
+    url = "http://pyroscope:4040"
+  }
+}
+
+pyroscope.write "PYROSCOPE_GRAFANA_CLOUD" {
+  endpoint {
+    url = sys.env("<PYROSCOPE_SERVER_ADDRESS>")
+    basic_auth {
+      username = sys.env("<PYROSCOPE_BASIC_AUTH_USER>")
+      password = sys.env("<PYROSCOPE_BASIC_AUTH_PASSWORD>")
+    }
+  }
+}   
+
+pyroscope.ebpf "instance" {
+  forward_to = [pyroscope.write.PYROSCOPE_GRAFANA_CLOUD.receiver]
+  targets = discovery.relabel.PYROSCOPE_DOCKER_RELABLE_2.output
+}
