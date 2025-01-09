@@ -9,7 +9,7 @@ discovery.relabel "DOCKER_ALL_RELABEL_3" {
 
 pyroscope.ebpf "MAIN" {
   forward_to = [pyroscope.write.PYROSCOPE_GRAFANA_CLOUD.receiver]
-  targets = discovery.relabel.DOCKER_ALL_RELABEL_1.output
+  targets = discovery.relabel.DOCKER_ALL_RELABEL_3.output
 }
 
 pyroscope.write "PYROSCOPE_LOCAL" {
