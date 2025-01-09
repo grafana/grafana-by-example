@@ -20,4 +20,3 @@ RUN make
 
 #ENTRYPOINT [ "sleep", "3600" ]
 ENTRYPOINT [ "/usr/src/app/find-prime" ]
-#ENTRYPOINT [ python", "metrics-generator.py", "r"egions" ]
