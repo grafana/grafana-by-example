@@ -1,10 +1,6 @@
-from prometheus_client import start_http_server
-from prometheus_client import Summary
-from prometheus_client import Counter
-from prometheus_client import Gauge
-from prometheus_client import Histogram
-from prometheus_client import Info
 import prometheus_client
+from prometheus_client import start_http_server
+from prometheus_client import Summary, Counter, Gauge, Histogram, Info
 
 import sys, os, math, time, random
 from datetime import datetime, timedelta
@@ -98,10 +94,59 @@ class Regions():
             #samplesSent += 1
             statusDataOffset = (statusDataOffset + 1 ) % self.statusDataRange
 
+
+class SimpleMetric():
+    def __init__(self, metricPrefix, intevalSec, durationMinutes, traceID):
+        self.intervalSec = intevalSec
+        self.endTime = endTime = datetime.now() + timedelta(minutes=durationMinutes)
+        self.metricPrefix = metricPrefix
+        self.traceID = traceID
+  
+    def start(self): 
+        # References
+        # https://prometheus.github.io/client_python/instrumenting/exemplars/
+        # https://cloud.google.com/stackdriver/docs/managed-prometheus/exemplars
+        # To see openmetric format use
+        # curl -H 'Accept: application/openmetrics-text' localhost:8001/metrics
+        # To see Prometheus formet use
+        # curl localhost:8001/metrics
+        
+        # Create the Promethues Metrics
+        # Only Counter and Histogram support Exemplars
+        metric1 = Gauge( "{}_guage".format(self.metricPrefix),    "Simple Metric Guage",   ["job" ])
+        metric2 = Counter( "{}_counter".format(self.metricPrefix), "Simple Metric Counter", ["job" ] )
+        metric3 = Histogram( "{}_hist".format(self.metricPrefix), "Simple Metric Histogram", [ "job" ]  )
+
+        n = 0
+        statusDataOffset = 0
+        startTime = datetime.now()
+        while (datetime.now() < self.endTime):
+            sendMetricTime = roundDatetimeUp(datetime.now(), timedelta(seconds=self.intervalSec))
+            waitForSec = (sendMetricTime - datetime.now()).total_seconds()
+            logging.info( "{} now: {} next: {} waitSec: {} end: {}".format(n, datetime.now(), sendMetricTime, waitForSec, self.endTime ))
+            time.sleep(waitForSec) # Sleep until next send metric time
+          
+           # Update the metrics
+            metric1.labels( job="simple1" ).set(random.randint(1,10))
+            metric2.labels( job="simple1" ).inc( exemplar={ "trace_id": traceID } )
+            metric3.labels( job="simple1" ).observe( random.random(), exemplar={ "trace_id": traceID })
+            n = n + 1
+
+
 if __name__ == "__main__":
     cmd = sys.argv[1] if len(sys.argv) > 1 else "unknown command"
 
-    if cmd == "regions":
+    if cmd == "simplemetric1":
+        traceID = os.environ.get( "SIMPLE_TRACE_ID", "00000000000000000000000000000001" )
+        metricPrefix =      getArg(1, "simplemetric") 
+        durationMinutes =   getArg(2, 360) 
+        produceIntervalSec = getArg(3, 60)  # Produce metrics every nn seconds
+        reportIntervalSec = getArg(4, 300.0) 
+        r = SimpleMetric( metricPrefix, produceIntervalSec, durationMinutes, traceID)
+        start_http_server(prometheusHttpPort)
+        r.start()
+
+    elif cmd == "regions":
         metricPrefix =      getArg(2, "abc") 
         numberOfRegions =   getArg(3, 3) 
         numberOfServices =  getArg(4, 3) 
