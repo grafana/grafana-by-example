@@ -1,0 +1,40 @@
+version: "3.8"
+volumes:
+  grafana:
+  postgres:
+
+services:
+
+  # Metrics Generator
+  # https://github.com/prometheus/client_python
+  simplemetric-generator:
+    image: metrics-generator/metrics-generator
+    build: ./metrics-generator
+    environment:
+      - PROMTHEUS_HTTP_PORT=8001
+    ports:
+      - "8001:8001"
+    command: [ "python3", "metrics-generator.py", "simplemetric1", "3600", "15" ]
+
+  grafana-alloy:
+    image: grafana/alloy:latest
+    container_name: grafana-alloy
+    ports:
+      - 12345:12345 # Alloy Controller
+      - 24318:24318 # OTEL  Receiver HTTP
+      - 24317:24317 # OTEL  Receiver GRPC
+    volumes:
+      - ./grafana-alloy/grafana-alloy-1.river:/etc/alloy/config.alloy
+      - ./grafana-cloud-authentication.json:/grafana-cloud-authentication.json
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
+      - GRAFANA_CLOUD_OTLP_INSTANCE_ID=${GRAFANA_CLOUD_OTLP_INSTANCE_ID}
+      - GRAFANA_CLOUD_OTLP_PASSWORD=${GRAFANA_CLOUD_OTLP_PASSWORD}
+      - GRAFANA_METRICS_WRITE_URL=${GRAFANA_METRICS_WRITE_URL}
+      - GRAFANA_METRICS_USERNAME=${GRAFANA_METRICS_USERNAME}
+      - GRAFANA_METRICS_API_KEY=${GRAFANA_METRICS_API_KEY}
+      - PROMETHEUS_SCRAPE_NODE=simplemetric-generator:8001
+    command: [  "run",
+                "--server.http.listen-addr=0.0.0.0:12345",
+                "--stability.level=experimental",
+                "/etc/alloy/config.alloy", ]  
