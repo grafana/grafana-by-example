@@ -106,6 +106,7 @@ class SimpleMetric():
         # References
         # https://prometheus.github.io/client_python/instrumenting/exemplars/
         # https://cloud.google.com/stackdriver/docs/managed-prometheus/exemplars
+        # https://grafana.com/docs/grafana/latest/datasources/prometheus/configure-prometheus-data-source/
         # To see openmetric format use
         # curl -H 'Accept: application/openmetrics-text' localhost:8001/metrics
         # To see Prometheus formet use
@@ -118,9 +119,9 @@ class SimpleMetric():
         metric3 = Histogram( "{}_hist".format(self.metricPrefix), "Simple Metric Histogram", [ "job" ]  )
 
         n = 0
-        statusDataOffset = 0
         startTime = datetime.now()
         while (datetime.now() < self.endTime):
+            traceID = "{:032d}".format(n)
             sendMetricTime = roundDatetimeUp(datetime.now(), timedelta(seconds=self.intervalSec))
             waitForSec = (sendMetricTime - datetime.now()).total_seconds()
             logging.info( "{} now: {} next: {} waitSec: {} end: {}".format(n, datetime.now(), sendMetricTime, waitForSec, self.endTime ))
@@ -128,8 +129,8 @@ class SimpleMetric():
           
            # Update the metrics
             metric1.labels( job="simple1" ).set(random.randint(1,10))
-            metric2.labels( job="simple1" ).inc( exemplar={ "trace_id": traceID } )
-            metric3.labels( job="simple1" ).observe( random.random(), exemplar={ "trace_id": traceID })
+            metric2.labels( job="simple1" ).inc( exemplar={ "traceID": traceID } ) # Exemplar, note label "traceID"
+            metric3.labels( job="simple1" ).observe( random.random(), exemplar={ "traceID": traceID  }) # Exemplar, note label "traceID"
             n = n + 1
 
 

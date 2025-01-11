@@ -6,4 +6,4 @@ COPY requirements.txt ./
 COPY metrics-generator.py ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-ENTRYPOINT [ "sleep", "3600" ]
+#ENTRYPOINT [ "sleep", "3600" ]
