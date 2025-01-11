@@ -27,13 +27,14 @@ services:
       - ./grafana-alloy/grafana-alloy-1.river:/etc/alloy/config.alloy
       - ./grafana-cloud-authentication.json:/grafana-cloud-authentication.json
     environment:
-      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
+      - GRAFANA_CLOUD_OTEL_EXPORTER_OTLP_ENDPOINT=${GRAFANA_CLOUD_OTEL_EXPORTER_OTLP_ENDPOINT}
       - GRAFANA_CLOUD_OTLP_INSTANCE_ID=${GRAFANA_CLOUD_OTLP_INSTANCE_ID}
       - GRAFANA_CLOUD_OTLP_PASSWORD=${GRAFANA_CLOUD_OTLP_PASSWORD}
       - GRAFANA_METRICS_WRITE_URL=${GRAFANA_METRICS_WRITE_URL}
       - GRAFANA_METRICS_USERNAME=${GRAFANA_METRICS_USERNAME}
       - GRAFANA_METRICS_API_KEY=${GRAFANA_METRICS_API_KEY}
       - PROMETHEUS_SCRAPE_NODE=simplemetric-generator:8001
+      - METRIC_GEN_SIMPEL_TRACE_ID=${METRIC_GEN_SIMPEL_TRACE_ID}
     command: [  "run",
                 "--server.http.listen-addr=0.0.0.0:12345",
                 "--stability.level=experimental",

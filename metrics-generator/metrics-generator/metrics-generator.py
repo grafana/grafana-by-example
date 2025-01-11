@@ -137,7 +137,7 @@ if __name__ == "__main__":
     cmd = sys.argv[1] if len(sys.argv) > 1 else "unknown command"
 
     if cmd == "simplemetric1":
-        traceID = os.environ.get( "SIMPLE_TRACE_ID", "00000000000000000000000000000001" )
+        traceID = os.environ.get( "METRIC_GEN_SIMPLE_TRACE_ID", "00000000000000000000000000000001" )
         metricPrefix =      getArg(1, "simplemetric") 
         durationMinutes =   getArg(2, 360) 
         produceIntervalSec = getArg(3, 60)  # Produce metrics every nn seconds
