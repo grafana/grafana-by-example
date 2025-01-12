@@ -17,27 +17,51 @@ import io.prometheus.client.exporter.HTTPServer;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.metrics.model.registry.*;
 
+// OTEL
+import io.opentelemetry.api.OpenTelemetry; 
+import io.opentelemetry.sdk.OpenTelemetrySdk; 
+import io.opentelemetry.sdk.metrics.export.MetricReader;
+import io.opentelemetry.api.common.Attributes;
+import io.opentelemetry.api.metrics.Meter;
+import io.opentelemetry.api.metrics.LongCounter;
+import io.opentelemetry.api.GlobalOpenTelemetry; 
+
+
 // References
 // https://github.com/prometheus/client_java/tree/main/examples/example-exemplars-tail-sampling
 
 @Service
 public class OrderService {
-    HTTPServer promServer;
-    Counter searchCounterMetric;
+    public HTTPServer promServer;
+    public Counter     searchCounterMetricProm;
+    public io.opentelemetry.api.metrics.LongCounter m1;
 
     public OrderService() {
         // Create a custom Appliation Metric
         try {
-            searchCounterMetric = Counter
+            // Prometheues Metric
+            searchCounterMetricProm = Counter
                 .build()
                 .name("appsearches")
                 .help("Count of Searches")
                 .labelNames("job", "type")
                 .register();
             promServer = new HTTPServer( 8002 );
+
+            // Otel Metric
+            Meter meter = GlobalOpenTelemetry.getMeter("rideshare");
+            m1 = meter
+                .counterBuilder("app.searches.otel")
+                .setDescription("Count of Searches")
+                .setUnit("events")
+                .build();
         } catch( Exception e ) {
             e.printStackTrace();
         }
+        
+
+        //     implementation platform("io.opentelemetry:opentelemetry-bom")
+       
         
         // Attempt to rename trace_id to traceID - TBD
         //PrometheusRegistry pr1 = PrometheusRegistry.defaultRegistry;
@@ -45,6 +69,10 @@ public class OrderService {
         //CollectorRegistry defaultRegistry = CollectorRegistry.defaultRegistry;
         //defaultRegistry.config().commonTags("trace_id", "traceID");
     }
+
+    //Meter meter = GlobalOpenTelemetry.getMeter("my-java-app");
+    //LongCounter counter = meter.counterBuilder("requests_processed").build();
+    //counter.add(1);
 
     //Meter meter = OpenTelemetry.getMeterProvider().get("your.application.name");
 
@@ -62,7 +90,8 @@ public class OrderService {
             checkDriverAvailability(searchRadius);
         }
         // Metric
-        searchCounterMetric.labels("appjava1", "findNearestVehicle").inc();
+        searchCounterMetricProm.labels("appjava1", "findNearestVehicle").inc();
+        m1.add(1);
     }
 
     private void checkDriverAvailability(int searchRadius) {
@@ -80,7 +109,7 @@ public class OrderService {
             mutexLock(searchRadius);
         }
         // Metric
-        searchCounterMetric.labels("appjava1", "checkDriverAvailability").inc();
+        searchCounterMetricProm.labels("appjava1", "checkDriverAvailability").inc();
     }
 
     private void mutexLock(int searchRadius) {
