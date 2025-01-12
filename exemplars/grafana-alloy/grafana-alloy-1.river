@@ -1,0 +1,63 @@
+///
+// Prometheus
+//
+prometheus.scrape "PROMETHEUS_SCRAPE" {
+  // Collect metrics from the default listen address.
+  targets = [ 
+    { __address__ = "app-python-1:8001", "instance" = "python1"},
+    { __address__ = "app-java-1:8002", "instance" = "java1"}  ]
+  scrape_interval = "15s"
+
+  //forward_to = [ otelcol.receiver.prometheus.PROMETHEUS_TO_OTLP.receiver ] // Does not forward exemplars
+  forward_to = [ prometheus.remote_write.GRAFANA_CLOUD.receiver ] // Does forward exemplars
+}
+
+prometheus.remote_write "GRAFANA_CLOUD" {
+  endpoint {
+    url = env("GRAFANA_METRICS_WRITE_URL")
+
+    // Get basic authentication based on environment variables.
+    basic_auth {
+      username = sys.env("GRAFANA_METRICS_USERNAME")
+      password = sys.env("GRAFANA_METRICS_API_KEY")
+    }
+    send_exemplars = true
+  }
+}
+
+//
+// OTEL
+//
+otelcol.receiver.otlp "ALLOY_OTEL" {
+  http { endpoint = "0.0.0.0:24318" } // 4318
+  grpc { endpoint = "0.0.0.0:24317" } // 4317
+
+  output {
+    metrics = [ otelcol.exporter.otlphttp.GRAFANA_CLOUD_OTLPHTTP.input ]
+    logs    = [ otelcol.exporter.otlphttp.GRAFANA_CLOUD_OTLPHTTP.input ]
+    traces  = [ otelcol.exporter.otlphttp.GRAFANA_CLOUD_OTLPHTTP.input ]
+  }
+}
+
+otelcol.receiver.prometheus "PROMETHEUS_TO_OTLP" {
+  output {
+    metrics = [ otelcol.exporter.otlphttp.GRAFANA_CLOUD_OTLPHTTP.input ]
+  }
+}
+
+otelcol.auth.basic "GRAFANA_CLOUD" {
+	username = sys.env("GRAFANA_CLOUD_OTLP_INSTANCE_ID")
+	password = sys.env("GRAFANA_CLOUD_OTLP_PASSWORD")
+}
+
+otelcol.exporter.otlphttp "GRAFANA_CLOUD_OTLPHTTP" {
+  	client {
+		  auth = otelcol.auth.basic.GRAFANA_CLOUD.handler
+    	endpoint = sys.env("GRAFANA_CLOUD_OTEL_EXPORTER_OTLP_ENDPOINT")
+
+  	}
+}
+
+//
+//
+//

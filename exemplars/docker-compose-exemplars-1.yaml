@@ -1,0 +1,100 @@
+volumes:
+  grafana:
+  postgres:
+
+services:
+
+  # Metrics Generator
+  # https://github.com/prometheus/client_python
+  app-python-1:
+    image: app-python-1/metrics-generator
+    container_name: app-python-1
+    build: ./app-python-1
+    environment:
+      - PROMTHEUS_HTTP_PORT=8001
+    ports:
+      - "8001:8001"
+    command: [ "python3", "metrics-generator.py", "simplemetric1", "3600", "15" ]
+
+  app-java-1:
+    build: app-java-1
+    container_name: app-java-1
+    ports:
+      - "5001:5000" # Sprintboot app
+      - "8002:8002" # Prometheus Client Metrics
+    environment:
+      OTLP_INSECURE: true
+      OTEL_TRACES_SAMPLER: always_on
+      OTEL_PROPAGATORS: tracecontext
+      OTEL_SERVICE_NAME: test1
+      OTEL_METRICS_EXPORTER: otlp
+      OTEL_TRACES_EXPORTER: otlp
+      OTEL_EXPORTER_OTLP_PROTOCOL: http/protobuf
+      #
+      # Grafana Cloud Direct
+      #
+      #OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT}
+      #OTEL_EXPORTER_OTLP_HEADERS: ${OTEL_EXPORTER_OTLP_HEADERS}
+      #
+      # OTEL Collector to Grafana Cloud
+      # Alloy works for both metrics and traces
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://grafana-alloy:24318/"
+      #
+      #OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:14318"
+      #
+      # Legacy
+      #OTEL_RESOURCE_ATTRIBUTES: "service.name=testA,service.namespace=testA"
+      #GRAFANA_CLOUD_OTLP_PASSWORD: ${GRAFANA_CLOUD_OTLP_PASSWORD}
+      #GRAFANA_CLOUD_OTLP_INSTANCE_ID: ${GRAFANA_CLOUD_OTLP_INSTANCE_ID}
+      #OTEL_EXPORTER_OTLP_ENDPOINT: "https://otlp-gateway-prod-us-west-0.grafana.net/otlp"
+      # Otel Collector
+      #OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:14318/"
+      #
+      # Grafana Alloy
+      #OTEL_EXPORTER_OTLP_ENDPOINT: "http://grafana-alloy:14318/"
+      #
+      #OTLP_URL: tempo:4318
+      #OTLP_URL: otlp-gateway-prod-us-west-0.grafana.net
+
+      #OTEL_EXPORTER_OTLP_ENDPOINT: http://tempo:4317
+      # Grafana Cloud
+      #OTEL_EXPORTER_OTLP_HEADERS: "Authorization=Basic MTEyMDE2MTpnbGNfZXlKdklqb2lNVEEyT0RZek1DSXNJbTRpT2lKemRHRmpheTB4TVRJd01UWXhMVzkwYkhBdGQzSnBkR1V0Y25sa1pYSXRNVFl0WkdWakxUSXdNalFpTENKcklqb2ljek0zU1RkT01UazFZalZhT1VkMVdqZHBSM2t3YzBsVklpd2liU0k2ZXlKeUlqb2ljSEp2WkMxMWN5MTNaWE4wTFRBaWZYMD0="
+      #
+      # Profiles
+      #
+      PYROSCOPE_APPLICATION_NAME: rideshare.java.push.app.us-east
+      REGION: us-east
+      PYROSCOPE_LABELS: region=us-east
+      #PYROSCOPE_SERVER_ADDRESS: http://pyroscope:4040
+      PYROSCOPE_SERVER_ADDRESS: ${PYROSCOPE_SERVER_ADDRESS}
+      PYROSCOPE_BASIC_AUTH_USER: ${PYROSCOPE_BASIC_AUTH_USER}
+      PYROSCOPE_BASIC_AUTH_PASSWORD: ${PYROSCOPE_BASIC_AUTH_PASSWORD}
+
+
+  grafana-alloy:
+    image: grafana/alloy:latest
+    container_name: grafana-alloy
+    ports:
+      - 12345:12345 # Alloy Controller
+      - 24318:24318 # OTEL  Receiver HTTP
+      - 24317:24317 # OTEL  Receiver GRPC
+    volumes:
+      - ./grafana-alloy/grafana-alloy-1.river:/etc/alloy/config.alloy
+      - ./grafana-cloud-authentication.json:/grafana-cloud-authentication.json
+    environment:
+      - GRAFANA_CLOUD_OTEL_EXPORTER_OTLP_ENDPOINT=${GRAFANA_CLOUD_OTEL_EXPORTER_OTLP_ENDPOINT}
+      - GRAFANA_CLOUD_OTLP_INSTANCE_ID=${GRAFANA_CLOUD_OTLP_INSTANCE_ID}
+      - GRAFANA_CLOUD_OTLP_PASSWORD=${GRAFANA_CLOUD_OTLP_PASSWORD}
+      - GRAFANA_METRICS_WRITE_URL=${GRAFANA_METRICS_WRITE_URL}
+      - GRAFANA_METRICS_USERNAME=${GRAFANA_METRICS_USERNAME}
+      - GRAFANA_METRICS_API_KEY=${GRAFANA_METRICS_API_KEY}
+      - PROMETHEUS_SCRAPE_NODE=simplemetric-generator:8001
+      - METRIC_GEN_SIMPLE_TRACE_ID=${METRIC_GEN_SIMPLE_TRACE_ID}
+    command: [  "run",
+                "--server.http.listen-addr=0.0.0.0:12345",
+                "--stability.level=experimental",
+                "/etc/alloy/config.alloy", ]  
+
+  load-generator:
+    build: load-gen
+    container_name: load-gen
