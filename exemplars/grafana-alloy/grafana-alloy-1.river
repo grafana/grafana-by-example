@@ -11,6 +11,8 @@ prometheus.scrape "PROMETHEUS_SCRAPE" {
   //forward_to = [ otelcol.receiver.prometheus.PROMETHEUS_TO_OTLP.receiver ] // Does not forward exemplars
   forward_to = [ prometheus.remote_write.GRAFANA_CLOUD.receiver ] // Does forward exemplars
 }
+// OpenMetrics: curl -H 'Accept: application/openmetrics-text' localhost:8002/metrics
+// Prometheus Metrics: curl localhost:8002/metrics
 
 prometheus.remote_write "GRAFANA_CLOUD" {
   endpoint {
