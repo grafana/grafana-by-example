@@ -5,7 +5,7 @@ prometheus.scrape "PROMETHEUS_SCRAPE" {
   // Collect metrics from the default listen address.
   targets = [ 
     { __address__ = "app-python-1:8001", "instance" = "python1"},
-    { __address__ = "app-java-1:8002", "instance" = "java1"}  ]
+    { __address__ = "app-java-1:8002",   "instance" = "java1"}  ]
   scrape_interval = "15s"
 
   //forward_to = [ otelcol.receiver.prometheus.PROMETHEUS_TO_OTLP.receiver ] // Does not forward exemplars
