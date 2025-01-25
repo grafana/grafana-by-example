@@ -1,0 +1,108 @@
+
+// Grafana Cloud Authentication
+local.file "GRAFANA_CLOUD_AUTH" {
+  filename = "./grafana-cloud-authentication.json"
+}
+
+pyroscope.receive_http "PROFILES_HTTP" {
+  http {
+    listen_address = "0.0.0.0"
+    listen_port = 7001
+  }
+  forward_to = [ pyroscope.write.PYROSCOPE_GRAFANA_CLOUD.receiver ]
+}
+
+pyroscope.write "PYROSCOPE_GRAFANA_CLOUD" {
+  endpoint {
+    url = sys.env("PYROSCOPE_SERVER_ADDRESS")
+    basic_auth {
+      username = sys.env("PYROSCOPE_BASIC_AUTH_USER")
+      password = sys.env("PYROSCOPE_BASIC_AUTH_PASSWORD")
+    }
+  }
+} 
+
+otelcol.receiver.otlp "ALLOY_OTEL" {
+  http { endpoint = "0.0.0.0:24318" } // 4318
+  grpc { endpoint = "0.0.0.0:24317" } // 4317
+
+  output {
+    metrics = [ otelcol.exporter.otlphttp.GRAFANA_CLOUD_OTLPHTTP.input ]
+    logs    = [ otelcol.exporter.otlphttp.GRAFANA_CLOUD_OTLPHTTP.input ]
+    traces  = [ otelcol.exporter.otlphttp.GRAFANA_CLOUD_OTLPHTTP.input ]
+  }
+}
+
+prometheus.scrape "DIRECT" {
+  // Collect metrics from the default listen address.
+  targets = [{
+    __address__ = "prometheus:9090",
+  }]
+
+  forward_to = [ otelcol.receiver.prometheus.PROMETHEUS_TO_OTLP.receiver ]
+}
+
+prometheus.scrape "USING_ENVVARS" {
+  // Collect metrics from the default listen address.
+  targets = [{
+    __address__ = env("PROMETHEUS_NODE"),
+  }]
+
+  forward_to = [ otelcol.receiver.prometheus.PROMETHEUS_TO_OTLP.receiver ]
+}
+
+otelcol.receiver.prometheus "PROMETHEUS_TO_OTLP" {
+  output {
+    metrics = [ otelcol.exporter.otlphttp.GRAFANA_CLOUD_OTLPHTTP.input ]
+  }
+}
+
+prometheus.remote_write "NOT_USED" {
+  endpoint {
+    url = "http://localhost:9090/api/prom/push"
+  }
+
+  endpoint {
+    url = "https://prometheus-us-central1.grafana.net/api/prom/push"
+
+    // Get basic authentication based on environment variables.
+    basic_auth {
+      username = sys.env("<REMOTE_WRITE_USERNAME>")
+      password = sys.env("<REMOTE_WRITE_PASSWORD>")
+    }
+  }
+}
+
+otelcol.auth.basic "GRAFANA_CLOUD" {
+	username = sys.env("GRAFANA_CLOUD_OTLP_INSTANCE_ID")
+	password = sys.env("GRAFANA_CLOUD_OTLP_PASSWORD")
+}
+
+
+otelcol.exporter.otlphttp "GRAFANA_CLOUD_OTLPHTTP" {
+  	client {
+    	endpoint = sys.env("OTEL_EXPORTER_OTLP_ENDPOINT")
+		  auth = otelcol.auth.basic.GRAFANA_CLOUD.handler
+  	}
+}
+
+
+// Validation
+// TraceQL  {.pyroscope.profile.id != "" && resource.service.name="rideshare.java.push.app"}
+// PyroQL 
+
+// Legacy
+//
+
+otelcol.auth.basic "GRAFANA_CLOUD_1" {
+	username = json_path( local.file.GRAFANA_CLOUD_AUTH.content, ".otlp.username" )[0]
+	password = json_path( local.file.GRAFANA_CLOUD_AUTH.content, ".otlp.password" )[0]
+}
+
+
+otelcol.exporter.otlphttp "GRAFANA_CLOUD_OTLPHTTP_1" {
+  	client {
+    	endpoint = json_path( local.file.GRAFANA_CLOUD_AUTH.content, ".otlp.otlphttp_endpoint" )[0]
+		  auth = otelcol.auth.basic.GRAFANA_CLOUD.handler
+  	}
+}
