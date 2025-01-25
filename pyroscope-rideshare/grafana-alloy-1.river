@@ -1,9 +1,4 @@
 
-// Grafana Cloud Authentication
-local.file "GRAFANA_CLOUD_AUTH" {
-  filename = "./grafana-cloud-authentication.json"
-}
-
 pyroscope.receive_http "PROFILES_HTTP" {
   http {
     listen_address = "0.0.0.0"
@@ -93,16 +88,3 @@ otelcol.exporter.otlphttp "GRAFANA_CLOUD_OTLPHTTP" {
 
 // Legacy
 //
-
-otelcol.auth.basic "GRAFANA_CLOUD_1" {
-	username = json_path( local.file.GRAFANA_CLOUD_AUTH.content, ".otlp.username" )[0]
-	password = json_path( local.file.GRAFANA_CLOUD_AUTH.content, ".otlp.password" )[0]
-}
-
-
-otelcol.exporter.otlphttp "GRAFANA_CLOUD_OTLPHTTP_1" {
-  	client {
-    	endpoint = json_path( local.file.GRAFANA_CLOUD_AUTH.content, ".otlp.otlphttp_endpoint" )[0]
-		  auth = otelcol.auth.basic.GRAFANA_CLOUD.handler
-  	}
-}
