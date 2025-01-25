@@ -33,7 +33,7 @@ services:
       #OTLP_URL: tempo:4318
       OTLP_INSECURE: 1
       OTEL_TRACES_EXPORTER: otlp
-      OTEL_SERVICE_NAME: rideshare.java.push.app
+      OTEL_SERVICE_NAME: rideshare.java.ryder
       OTEL_METRICS_EXPORTER: otlp
       OTEL_TRACES_SAMPLER: always_on
       OTEL_PROPAGATORS: tracecontext
