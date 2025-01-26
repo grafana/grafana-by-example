@@ -1,4 +1,4 @@
-
+// Receive profiles via http
 pyroscope.receive_http "PROFILES_HTTP" {
   http {
     listen_address = "0.0.0.0"
@@ -17,6 +17,7 @@ pyroscope.write "PYROSCOPE_GRAFANA_CLOUD" {
   }
 } 
 
+// Receive OTLP telemetry data
 otelcol.receiver.otlp "ALLOY_OTEL" {
   http { endpoint = "0.0.0.0:24318" } // 4318
   grpc { endpoint = "0.0.0.0:24317" } // 4317
@@ -51,6 +52,51 @@ otelcol.receiver.prometheus "PROMETHEUS_TO_OTLP" {
     metrics = [ otelcol.exporter.otlphttp.GRAFANA_CLOUD_OTLPHTTP.input ]
   }
 }
+
+discovery.docker "DOCKER_LINUX" {
+  host = "unix:///var/run/docker.sock"
+}
+
+// Collect logs from Docker containers
+loki.source.docker "LOKI_DOCKER_LOGS" {
+  host       = "unix:///var/run/docker.sock"
+  targets    = discovery.docker.DOCKER_LINUX.targets
+  labels     = { "job" = "rideshare", "service_name" = sys.env("OTEL_SERVICE_NAME"), "exporter" = "OTLP"  } 
+  forward_to = [ loki.write.GRAFANA_CLOUD_LOGS.receiver ]
+}
+
+loki.write "GRAFANA_CLOUD_LOGS" {
+  endpoint {
+    url = env("GRAFANA_CLOUD_LOGS_ENDPOINT")
+
+    basic_auth {
+      username = env("GRAFANA_CLOUD_LOGS_ID")
+      password = env("GRAFANA_CLOUD_LOGS_PASSWORD")
+    }
+  }
+}
+
+otelcol.receiver.loki "LOKI_LOGS_TO_OTLP" {
+  output {
+    logs    = [ otelcol.processor.attributes.OTEL_ADD_ATTRIBUTES.input ]
+  }
+}
+
+otelcol.processor.attributes "OTEL_ADD_ATTRIBUTES" {
+
+  action {
+    key = "loki.resource.labels"
+    action = "insert"
+    value = "service.name, service.namespace"
+  }
+
+  output {
+    logs = [ otelcol.exporter.otlphttp.GRAFANA_CLOUD_OTLPHTTP.input ]
+  }
+}
+
+
+
 
 prometheus.remote_write "NOT_USED" {
   endpoint {

@@ -11,7 +11,10 @@ services:
     volumes:
       - ./grafana-alloy-1.river:/etc/alloy/config.alloy
       - ./grafana-cloud-authentication.json:/grafana-cloud-authentication.json
+      - /var/run/docker.sock:/var/run/docker.sock
     environment:
+      # Application
+      OTEL_SERVICE_NAME: ${OTEL_SERVICE_NAME}
       # Configure the Grafana Cloud Pyroscope Endpoint
       PYROSCOPE_SERVER_ADDRESS: ${PYROSCOPE_SERVER_ADDRESS}
       PYROSCOPE_BASIC_AUTH_USER: ${PYROSCOPE_BASIC_AUTH_USER}
@@ -20,6 +23,10 @@ services:
       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT}
       GRAFANA_CLOUD_OTLP_INSTANCE_ID: ${GRAFANA_CLOUD_OTLP_INSTANCE_ID}
       GRAFANA_CLOUD_OTLP_PASSWORD: ${GRAFANA_CLOUD_OTLP_PASSWORD}
+      # Grafana Cloud Logs - Loki
+      GRAFANA_CLOUD_LOGS_ENDPOINT: ${GRAFANA_CLOUD_LOGS_ENDPOINT}
+      GRAFANA_CLOUD_LOGS_ID: ${GRAFANA_CLOUD_LOGS_ID}
+      GRAFANA_CLOUD_LOGS_PASSWORD: ${GRAFANA_CLOUD_LOGS_PASSWORD}
     command: [  "run",
                 "--server.http.listen-addr=0.0.0.0:12345",
                 "--stability.level=experimental",
@@ -33,15 +40,19 @@ services:
       #OTLP_URL: tempo:4318
       OTLP_INSECURE: 1
       OTEL_TRACES_EXPORTER: otlp
-      OTEL_SERVICE_NAME: rideshare.java.ryder
+      OTEL_SERVICE_NAME: ${OTEL_SERVICE_NAME}
       OTEL_METRICS_EXPORTER: otlp
       OTEL_TRACES_SAMPLER: always_on
       OTEL_PROPAGATORS: tracecontext
       REGION: us-east
+      #Pyroscope Profiles
+      PYROSCOPE_APPLICATION_NAME: ${OTEL_SERVICE_NAME}
       # Export OTEL Telemetry (Metrics, Traces) to local Grafana Alloy
       OTEL_EXPORTER_OTLP_ENDPOINT: http://grafana-alloy:24317
       # Send Profiles to local Grafana Alloy
       PYROSCOPE_SERVER_ADDRESS: http://grafana-alloy:7001
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     build:
       context: .
   eu-north:

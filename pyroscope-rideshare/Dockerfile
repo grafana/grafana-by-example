@@ -21,7 +21,7 @@ FROM  openjdk:17-slim-bullseye
 
 RUN apt-get update && apt-get install ca-certificates -y && update-ca-certificates
 
-ENV PYROSCOPE_APPLICATION_NAME=rideshare.java.ryder
+#ENV PYROSCOPE_APPLICATION_NAME=rideshare.java.ryder
 ENV PYROSCOPE_FORMAT=jfr
 ENV PYROSCOPE_PROFILING_INTERVAL=10ms
 ENV PYROSCOPE_PROFILER_EVENT=itimer
@@ -31,11 +31,13 @@ ENV PYROSCOPE_UPLOAD_INTERVAL=15s
 ENV PYROSCOPE_LOG_LEVEL=debug
 #ENV PYROSCOPE_SERVER_ADDRESS=http://localhost:4040
 
-ENV OTEL_JAVAAGENT_EXTENSIONS=./pyroscope-otel.jar
 
 ENV OTEL_PYROSCOPE_ADD_PROFILE_URL=false
 ENV OTEL_PYROSCOPE_ADD_PROFILE_BASELINE_URL=false
 ENV OTEL_PYROSCOPE_START_PROFILING=true
+
+# Add the pyroscope-otel.jar as an extension to the OTEL Java Agent
+ENV OTEL_JAVAAGENT_EXTENSIONS=./pyroscope-otel.jar
 
 COPY --from=builder /opt/app/build/libs/rideshare-1.0-SNAPSHOT.jar /opt/app/build/libs/rideshare-1.0-SNAPSHOT.jar
 
