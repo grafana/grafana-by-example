@@ -50,7 +50,33 @@ def getMetricNamesList( stackId ):
 
 nArgs = len(sys.argv)
 cmd = sys.argv[1] if nArgs > 1 else "help"
-if cmd == "tables-create":
+if cmd == "metric-tsdb-stats":
+    stackId = int( sys.argv[2] )
+    #q = queryURL( stackId, "status/tsdb" )
+    q = queryURL( stackId, "labels" ) # works
+    r = requests.get(q)
+    j1 = json.loads( r.content )
+    print ("metric-tsdb-stats", stackId, j1['status'])
+    print ("metric-tsdb-stats", stackId, j1['data'])
+
+elif cmd == "metadata":
+    # https://grafana.com/docs/mimir/latest/references/http-api/#get-metric-metadata
+    stackId = int( sys.argv[2] )
+    q = queryURL( stackId, "metadata" )
+    r = requests.get(q)
+    print( "query", q )
+    print( "r", r)
+    #j1 = d1
+    j1 = json.loads( r.content )
+    print ("metric-tsdb-stats", stackId, j1['status'])
+    print ("metric-tsdb-stats", stackId, j1['data'])
+
+elif cmd == "get-metrics-list":
+    stackId = int( sys.argv[2] )
+    m1 = getMetricNamesList( stackId )
+    print( m1 )
+
+elif cmd == "tables-create":
     c = sqlite3.connect(config["SQLITE_DB_FILE"])
     cursor = c.cursor()
 
@@ -173,32 +199,6 @@ elif cmd == "label-update-names-stack":
     c.commit()
     c.close()
     print(j1)
-
-elif cmd == "metric-tsdb-stats":
-    stackId = int( sys.argv[2] )
-    #q = queryURL( stackId, "status/tsdb" )
-    q = queryURL( stackId, "labels" ) # works
-    r = requests.get(q)
-    j1 = json.loads( r.content )
-    print ("metric-tsdb-stats", stackId, j1['status'])
-    print ("metric-tsdb-stats", stackId, j1['data'])
-
-elif cmd == "metadata":
-    # https://grafana.com/docs/mimir/latest/references/http-api/#get-metric-metadata
-    stackId = int( sys.argv[2] )
-    q = queryURL( stackId, "metadata" )
-    r = requests.get(q)
-    print( "query", q )
-    print( "r", r)
-    #j1 = d1
-    j1 = json.loads( r.content )
-    print ("metric-tsdb-stats", stackId, j1['status'])
-    print ("metric-tsdb-stats", stackId, j1['data'])
-
-elif cmd == "get-metrics-list":
-    stackId = int( sys.argv[2] )
-    m1 = getMetricNamesList( stackId )
-    print( m1 )
 
 elif cmd == "test":
     print( "test" ) 
