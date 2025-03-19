@@ -1,0 +1,27 @@
+///
+// Prometheus
+//
+prometheus.scrape "PROMETHEUS_SCRAPE" {
+  // Collect metrics from the default listen address.
+  targets = [ 
+      { __address__ = "metrics-generator1:8001",},
+      { __address__ = "metrics-generator2:8002",},
+      { __address__ = "metrics-generator3:8003",}, ]
+  scrape_interval = "15s"
+
+  //forward_to = [ otelcol.receiver.prometheus.PROMETHEUS_TO_OTLP.receiver ] // Does not forward exemplars
+  forward_to = [ prometheus.remote_write.GRAFANA_CLOUD.receiver ] // Does forward exemplars
+}
+
+prometheus.remote_write "GRAFANA_CLOUD" {
+  endpoint {
+    url = env("GRAFANA_METRICS_WRITE_URL")
+
+    // Get basic authentication based on environment variables.
+    basic_auth {
+      username = sys.env("GRAFANA_METRICS_USERNAME")
+      password = sys.env("GRAFANA_METRICS_API_KEY")
+    }
+    send_exemplars = true
+  }
+}

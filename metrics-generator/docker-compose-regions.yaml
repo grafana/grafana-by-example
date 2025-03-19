@@ -14,7 +14,7 @@ services:
       - PROMTHEUS_HTTP_PORT=8001
     ports:
       - "8001:8001"
-    command: [ "regions", "5", "5", "5", "360", "60" ]
+    command: [ "regions",  "test1", "5", "5", "5", "360", "60" ]
 
   metrics-generator2:
     image: metrics-generator/metrics-generator
@@ -23,7 +23,7 @@ services:
       - PROMTHEUS_HTTP_PORT=8002
     ports:
       - "8002:8002"
-    command: [ "regions", "5", "5", "5", "360", "60" ]
+    command: [ "regions",  "test2", "5", "5", "5", "360", "60" ]
 
   metrics-generator3:
     image: metrics-generator/metrics-generator
@@ -32,7 +32,7 @@ services:
       - PROMTHEUS_HTTP_PORT=8003
     ports:
       - "8003:8003"
-    command: [ "regions", "5", "5", "5", "360", "60" ]
+    command: [ "regions", "test3", "5", "5", "5", "360", "60" ]
 
 
   grafana-alloy:
@@ -43,12 +43,9 @@ services:
       - 24318:24318 # OTEL  Receiver HTTP
       - 24317:24317 # OTEL  Receiver GRPC
     volumes:
-      - ./grafana-alloy/grafana-alloy-1.river:/etc/alloy/config.alloy
+      - ./grafana-alloy/grafana-alloy-2.river:/etc/alloy/config.alloy
       - ./grafana-cloud-authentication.json:/grafana-cloud-authentication.json
     environment:
-      - GRAFANA_CLOUD_OTEL_EXPORTER_OTLP_ENDPOINT=${GRAFANA_CLOUD_OTEL_EXPORTER_OTLP_ENDPOINT}
-      - GRAFANA_CLOUD_OTLP_INSTANCE_ID=${GRAFANA_CLOUD_OTLP_INSTANCE_ID}
-      - GRAFANA_CLOUD_OTLP_PASSWORD=${GRAFANA_CLOUD_OTLP_PASSWORD}
       - GRAFANA_METRICS_WRITE_URL=${GRAFANA_METRICS_WRITE_URL}
       - GRAFANA_METRICS_USERNAME=${GRAFANA_METRICS_USERNAME}
       - GRAFANA_METRICS_API_KEY=${GRAFANA_METRICS_API_KEY}
