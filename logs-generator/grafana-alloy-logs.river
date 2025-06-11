@@ -2,6 +2,7 @@ local.file_match "localhost_output_log_file" {
 	path_targets = [ {
 		__address__ = "localhost", __path__    = "./output.log",
 		job         = "test1",
+		sensitive = "true_json",
 	},
 	{
 		__address__ = "localhost", __path__    = "./output.log",
@@ -11,12 +12,116 @@ local.file_match "localhost_output_log_file" {
 
 loki.source.file "logs_scrape_local_files" {
 	targets               = local.file_match.localhost_output_log_file.targets
-	forward_to            = [ loki.write.loki_local.receiver ]
+	//forward_to            = [ loki.process.TRANSFORM_LOGS_LABEL_REDACT.receiver ]
+	forward_to            = [ loki.process.TRANSFORM_LOGS_JSON_VALUE_REDACT.receiver ]
+	//forward_to            = [ loki.write.LOKI_LOCAL.receiver ]
 }
 
-loki.write "loki_local" {
+loki.process "TRANSFORM_LOGS_LABEL_REDACT" {
+	forward_to = [ loki.write.GRAFANA_CLOUD_LOGS.receiver ]
+
+	// Redact a label value
+	stage.match {
+		selector = "{ sensitive  = \"true\" }"
+		action = "keep"
+		stage.static_labels {
+			values = {
+				avalabs_org_log_mask = "REDACTED",
+			}
+		}
+	}
+} // TRANSFORM_LOGS_LABEL_REDACT
+
+loki.process "TRANSFORM_LOGS_JSON_VALUE_REDACT" {
+	forward_to = [ loki.write.GRAFANA_CLOUD_LOGS.receiver ]
+
+	stage.json {
+		expressions = {
+			http_route = "",
+		}
+	}
+
+	// Redact a label value
+	stage.match {
+		// Match label and line contents
+		selector = "{ sensitive  = \"true_json\" } |= \"http_route\" "
+		action = "keep"
+		stage.replace {
+			expression = ".*(test1).*"
+			replace = "-REDACTED-"
+		}
+	}
+} // TRANSFORM_LOGS_LABEL_REDACT
+
+loki.process "TRANSFORM_LOGS_TRUNCATE" {
+	// Drop logs greater than specific size
+	// Truncate logs to a specific lenght
+	forward_to = [ loki.write.GRAFANA_CLOUD_LOGS.receiver ]
+
+	stage.drop {
+			longer_than = "1KB"
+			drop_counter_reason = "greater than 1KB"
+	}
+
+	stage.regex {
+		// Truncate to the first 25 chars
+		expression = "(?P<firstpart>^.{25})(?P<remainder>.*})"
+	}
+
+	stage.output {
+		source = "firstpart"
+	}
+}
+
+loki.write "LOKI_LOCAL" {
 	endpoint {
-		url = "http://192.168.1.82:3100/loki/api/v1/push"
+		url = "http://grafana1:3100/loki/api/v1/push"
 	}
 	external_labels = {}
+}
+
+loki.write "GRAFANA_CLOUD_LOGS" {
+  endpoint {
+    url = env("GRAFANA_LOGS_WRITE_URL")
+
+    basic_auth {
+      username = env("GRAFANA_LOGS_USERNAME")
+      password = env("GRAFANA_LOGS_API_KEY")
+    }
+  }
+}
+
+
+
+loki.process "TRANSFORM_LOGS_EXPERIMENTAL" {
+	forward_to = [loki.write.GRAFANA_CLOUD_LOGS.receiver]
+
+	stage.drop {
+			older_than = "1h"
+			drop_counter_reason = "older than 1h"
+	}
+
+	stage.regex {
+		expression = "(?P<firstpart>^.{25})(?P<remainder>.*})"
+	}
+	stage.output {
+		source = "firstpart"
+	}
+
+	//stage.replace {
+		//expression = "(?P<firstpart>^.{25}).*" // Works
+		//source = ".Value.firstpart"
+		//replace = "START {{.Value | ToUpper }} END" // Works
+		//replace = "START {{\\1 | ToUpper }} END" // Works
+		//replace = "START {{ Values | ToUpper}} END"
+	//}
+
+	stage.match {
+		selector = `{job="test1"} != "Application_2"` // Does not contain, Drop these lines
+		stage.drop {
+			expression = ".*"
+			drop_counter_reason = "drop"
+		}
+	}
+
 }
