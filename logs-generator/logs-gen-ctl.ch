@@ -4,11 +4,12 @@
 
 # Example Log Lines
 TEST1_LOG_LINE='YYYY MMM DD HH:MM:SS |app=APPLICATION_NAME|domain=local_host|sequence=SEQ_NUMBER|uuid=15F8E71E-A469-42C0-A9FC-45AF19439260|segment=SEGMENT_N|seq=SEQ_N|msg=MESSAGE_1'
-JSON_LOG_LINE_1='{"http_code":"200","http_method":"GET","http_route":"/view","level":"info","memory_usage":44444,"msg":"","response_time":0.9263,"server_hostname":"node1","server_pid":123,"service_time":"1719267518216383068","time":"2024-06-24T22:18:38Z"}'
-JSON_LOG_LINE_2='variable text - <code> 400 - {"http_code":"200","http_method":"GET","http_route":"/view1"} variable text'
+JSON_LOG_LINE_1='{"http_code":"200","http_method":"GET","http_route":"/viewtest1view","level":"info","memory_usage":44444,"msg":"","response_time":0.9263,"server_hostname":"node1","server_pid":123,"service_time":"1719267518216383068","time":"2024-06-24T22:18:38Z"}'
+JSON_LOG_LINE_2='variable text - <code> 400 - {"http_code":"200","http_method":"GET","http_route":"/view1test1view1"} variable text'
 
+# Set the log line here
 TEST_LOG_LINE=$TEST1_LOG_LINE
-TEST_LOG_LINE=$JSON_LOG_LINE_2
+TEST_LOG_LINE=$JSON_LOG_LINE_1
 
 # Example LogQL regex to extract field values
 # expression ="^.+\\|app=(?P<app_extracted>.*?)\\|.*\\|segment=(?P<segment_extracted>.*?)\\|.*$"
@@ -93,8 +94,8 @@ case "$CMD" in
             N=$(( N + 1 ))
         done
     ;;
-    start-alloy-darwin)
-        ./alloy-darwin-amd64 run grafana-alloy-logs.river
+    start-alloy-arm64)
+        ./alloy-darwin-arm64 run grafana-alloy-logs.river
     ;;
     post-local)
         LOKI_PORT=${2:-"3100"}
@@ -111,7 +112,7 @@ case "$CMD" in
     post-remote)
         JOB="status"
         HOST_NAME=$HOSTNAME
-        _lokiPost "\"job\": \"$JOB\", \"hostname\": \"$HOST_NAME\"" "{\\\"v1\\\":$(( RANDOM % 10 )) , \\\"v2\\\":$(( RANDOM % 10 )) }"
+        _lokiPost "\"job\": \"$JOB\", \"hostname\": \"$HOST_NAME\"" "{\\\"v1\\\":$(( RANDOM % 10 )) , \\\"v2\\\":$(( RANDOM % 10 )), \\\"v3\\\":\\\"test1test2test3\\\" }"
     ;;
     gen-test-data)
         NOW_NS=$( date +%s%N );
