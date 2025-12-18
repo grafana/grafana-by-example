@@ -3,7 +3,7 @@ services:
 
   # https://medium.com/opentracing/take-opentracing-for-a-hotrod-ride-f6e3141f7941
   hotrod:
-    image: jaegertracing/example-hotrod:1.28
+    image: jaegertracing/example-hotrod:1.60@sha256:d8d31e769e054bd66f93398f66200ae2ecbe2120549fbc29c42d0de743c74e9e
     ports:
       - 8080-8083:8080-8083
     environment:
