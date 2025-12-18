@@ -7,7 +7,7 @@ services:
 
   # Grafana for exploring and visualizing data
   grafana-server-1:
-    image: grafana/grafana:10.2.0
+    image: grafana/grafana:10.4.19@sha256:a9043254ba16fb10945cc27333963dfd08eccbb43b51f1222d831cc564e3a1f4
     #image: grafana/grafana:latest
     #image: grafana/grafana:9.0.6-ubuntu
     #image: grafana/grafana:latest
@@ -22,7 +22,7 @@ services:
 
   # Grafana for exploring and visualizing data
   grafana-server-2:
-    image: grafana/grafana:9.5.0
+    image: grafana/grafana:9.5.21@sha256:ec106c7d446c88377f9d6c4cd363361b5846c361a28f5669d1b5e92926d94891
     #image: grafana/grafana:latest
     #image: grafana/grafana:9.0.6-ubuntu
     #image: grafana/grafana:latest
@@ -37,7 +37,7 @@ services:
  
   # Grafana for exploring and visualizing data
   grafana-server-3:
-    image: grafana/grafana:8.5.22
+    image: grafana/grafana:8.5.27@sha256:b43abed8a2b8c5a4055c3729d77ae11c9646c4b9feefb5c136b7c67dcdad21c0
     #image: grafana/grafana:latest
     #image: grafana/grafana:9.0.6-ubuntu
     #image: grafana/grafana:latest
@@ -53,7 +53,7 @@ services:
 
   # Grafana for exploring and visualizing data
   grafana-server-4:
-    image: grafana/grafana:8.0.0
+    image: grafana/grafana:8.5.27@sha256:b43abed8a2b8c5a4055c3729d77ae11c9646c4b9feefb5c136b7c67dcdad21c0
     #image: grafana/grafana:latest
     #image: grafana/grafana:9.0.6-ubuntu
     #image: grafana/grafana:latest
@@ -68,7 +68,7 @@ services:
 
     # Grafana for exploring and visualizing data
   grafana-server-5:
-    image: grafana/grafana:7.0.0
+    image: grafana/grafana:7.5.17@sha256:15abb652aa82eeb9f45589278b34ae6ef0e96f74c389cadde31831eb0b1ce228
     #image: grafana/grafana:latest
     #image: grafana/grafana:9.0.6-ubuntu
     #image: grafana/grafana:latest
