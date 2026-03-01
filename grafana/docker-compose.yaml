@@ -7,7 +7,7 @@ services:
 
   # Grafana for exploring and visualizing data
   grafana-server-1:
-    image: grafana/grafana:10.2.0
+    image: grafana/grafana:10.2.0@sha256:1ee0c54286b8ca09a3dd1419ff8653e7780a148a006ac088544203bb0affe550
     #image: grafana/grafana:latest
     #image: grafana/grafana:9.0.6-ubuntu
     #image: grafana/grafana:latest
@@ -22,7 +22,7 @@ services:
 
   # Grafana for exploring and visualizing data
   grafana-server-2:
-    image: grafana/grafana:9.5.0
+    image: grafana/grafana:9.5.0@sha256:eb08867312c6d0f977259cf4c59e34368d163bce15957a06dc6364446022cf7d
     #image: grafana/grafana:latest
     #image: grafana/grafana:9.0.6-ubuntu
     #image: grafana/grafana:latest
@@ -37,7 +37,7 @@ services:
  
   # Grafana for exploring and visualizing data
   grafana-server-3:
-    image: grafana/grafana:8.5.22
+    image: grafana/grafana:8.5.22@sha256:39ebb524a1686d5d58d929fb3f0b2a38d571c30f7095bb5d5fa40ca48c86d776
     #image: grafana/grafana:latest
     #image: grafana/grafana:9.0.6-ubuntu
     #image: grafana/grafana:latest
@@ -53,7 +53,7 @@ services:
 
   # Grafana for exploring and visualizing data
   grafana-server-4:
-    image: grafana/grafana:8.0.0
+    image: grafana/grafana:8.0.0@sha256:e763b7a6e167ae9de617b14843a2fca9a826f4b4b9b042e82688de99f92ec6ac
     #image: grafana/grafana:latest
     #image: grafana/grafana:9.0.6-ubuntu
     #image: grafana/grafana:latest
@@ -68,7 +68,7 @@ services:
 
     # Grafana for exploring and visualizing data
   grafana-server-5:
-    image: grafana/grafana:7.0.0
+    image: grafana/grafana:7.0.0@sha256:b7ebf5e058402cb924d9a1ccc5c389086d7ceebd164800454454411f028e767c
     #image: grafana/grafana:latest
     #image: grafana/grafana:9.0.6-ubuntu
     #image: grafana/grafana:latest
@@ -83,7 +83,7 @@ services:
 
    # Grafana Metrics
   mimir:
-    image: grafana/mimir:latest
+    image: grafana/mimir:latest@sha256:df4b7a5fefba96c19fa3e0b3d3ecceed32892ef49ae893ce37492cfe4f299645
     depends_on:
       - grafana-server-1
       - grafana-server-2
@@ -98,7 +98,7 @@ services:
 
   # Grafana Agent
   grafana-agent:
-    image: grafana/agent:latest
+    image: grafana/agent:latest@sha256:b0038b7fa776c3e3e3bc2b09b08c287e8041324217efa6f0c9a78a007bd63e95
     depends_on:
       - mimir
     ports:

@@ -49,7 +49,7 @@ services:
   # Grafana Agent
   # https://grafana.com/docs/agent/latest/
   grafana-agent:
-    image: grafana/agent:latest
+    image: grafana/agent:latest@sha256:b0038b7fa776c3e3e3bc2b09b08c287e8041324217efa6f0c9a78a007bd63e95
     ports:
       - "12347:12345"
       - "12348:12348"

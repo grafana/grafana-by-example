@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:latest@sha256:d1e2e92c075e5ca139d51a140fff46f84315c0fdce203eab2807c7e495eff4f9
 
 ENV HOME_DIR="/home/test"
 RUN mkdir ${HOME_DIR}
