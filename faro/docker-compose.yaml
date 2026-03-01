@@ -4,7 +4,7 @@ services:
 
   # Grafana for exploring and visualizing data
   grafana-server:
-    image: grafana/grafana-enterprise:latest-ubuntu
+    image: grafana/grafana-enterprise:latest-ubuntu@sha256:ff80aec107ee6bca728a29df3b52e6ccd958dd1841d001ae95f7e866b885bd69
     #image: grafana-enterprise:main-ubuntu
     #image: grafana/grafana:9.0.6-ubuntu
     #image: grafana/grafana:latest

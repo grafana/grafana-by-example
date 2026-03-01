@@ -6,7 +6,7 @@ services:
 
   # Grafana for exploring and visualizing data
   grafana-server-1:
-    image: grafana/grafana:latest
+    image: grafana/grafana:latest@sha256:b0ae311af06228bcfd4a620504b653db80f5b91e94dc3dc2a5b7dab202bcde20
     volumes:
       - "./grafana/grafana.ini:/etc/grafana/grafana.ini"
       - "./grafana/provisioning:/etc/grafana/provisioning"
@@ -15,7 +15,7 @@ services:
 
    # Grafana Metrics
   mimir:
-    image: grafana/mimir:latest
+    image: grafana/mimir:latest@sha256:df4b7a5fefba96c19fa3e0b3d3ecceed32892ef49ae893ce37492cfe4f299645
     depends_on:
       - grafana-server-1
     volumes:
@@ -28,7 +28,7 @@ services:
 
   # Grafana Agent
   grafana-agent:
-    image: grafana/agent:latest
+    image: grafana/agent:latest@sha256:b0038b7fa776c3e3e3bc2b09b08c287e8041324217efa6f0c9a78a007bd63e95
     depends_on:
       - mimir
     ports:

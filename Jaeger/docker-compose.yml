@@ -3,7 +3,7 @@ services:
 
   # https://medium.com/opentracing/take-opentracing-for-a-hotrod-ride-f6e3141f7941
   hotrod:
-    image: jaegertracing/example-hotrod:1.28
+    image: jaegertracing/example-hotrod:1.28@sha256:fbcdec6e28d20c578a4cf6f67365c6fa1392a1c9af44d4eab634696d0467dbdb
     ports:
       - 8080-8083:8080-8083
     environment:
@@ -19,7 +19,7 @@ services:
 
   # https://grafana.com/docs/agent/latest/configuration/traces-config/
   grafana-agent:
-    image: grafana/agent:latest
+    image: grafana/agent:latest@sha256:b0038b7fa776c3e3e3bc2b09b08c287e8041324217efa6f0c9a78a007bd63e95
     ports:
       - "12347:12345"
       - "12348:12348"
@@ -31,7 +31,7 @@ services:
     command: [ "-config.file=/etc/agent/agent.yaml" ]
 
   jaeger:
-    image: jaegertracing/all-in-one:latest
+    image: jaegertracing/all-in-one:latest@sha256:ab6f1a1f0fb49ea08bcd19f6b84f6081d0d44b364b6de148e1798eb5816bacac
     ports:
       - 6831:6831
       - "26831:6831"
@@ -39,7 +39,7 @@ services:
 
   # https://grafana.com/blog/2021/04/13/how-to-send-traces-to-grafana-clouds-tempo-service-with-opentelemetry-collector/
   otel-collector:
-    image: otel/opentelemetry-collector:latest
+    image: otel/opentelemetry-collector:latest@sha256:23f75833cfcf0ebdde9b2e1ba41616b9092294af6947f2feea1b4ebc393030f5
     ports:
       - "36831:36831"
     command: "--config /etc/otel-config.yaml"

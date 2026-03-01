@@ -72,7 +72,7 @@ services:
 
 
   grafana-alloy:
-    image: grafana/alloy:latest
+    image: grafana/alloy:latest@sha256:8abcd0d97a97099cabb34be8dcfc448fca6c35931ae9291aaf74056105dedcca
     container_name: grafana-alloy
     ports:
       - 12345:12345 # Alloy Controller

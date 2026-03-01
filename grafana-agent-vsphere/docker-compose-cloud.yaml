@@ -19,7 +19,7 @@ services:
   #   ]
 
   grafana-alloy:
-    image: grafana/alloy:latest
+    image: grafana/alloy:latest@sha256:8abcd0d97a97099cabb34be8dcfc448fca6c35931ae9291aaf74056105dedcca
     ports:
       - "12347:12345"
       - "12348:12348"
@@ -36,7 +36,7 @@ services:
   # vsphere Simulator  
   # docker run --rm -d -p 443:443/tcp nimmis/vcsim:latest
   vcsimulator:
-    image: nimmis/vcsim:latest
+    image: nimmis/vcsim:latest@sha256:99c2b330ab4f18c1b7816a6ce34b25f4738cd598c2dd4745d3f742be731bd3ed
     hostname: vcsimulator
     restart: always
     ports:
@@ -48,7 +48,7 @@ services:
   # Connect-VIServer -Server vcsimulator -Port 443 -User u -Password p
   # Get-VM
   vcpowerclicore:
-    image: vmware/powerclicore
+    image: vmware/powerclicore@sha256:5d13398ec75c0c3858f2f68a598db4368f4c22a98d0d67ce926b181e420778d3
     hostname: vcpowerclicore
     entrypoint: [ "sleep", "86400" ]
     #network_mode: "host"
