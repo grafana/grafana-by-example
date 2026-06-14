@@ -16,7 +16,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
 
-    implementation("io.prometheus:prometheus-metrics-bom:1.3.5")
+    implementation("io.prometheus:prometheus-metrics-bom:1.8.0")
     implementation("io.prometheus:simpleclient")
     implementation("io.prometheus:simpleclient_httpserver")
     implementation("io.prometheus:prometheus-metrics-model:1.3.5")
