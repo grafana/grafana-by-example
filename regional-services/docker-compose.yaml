@@ -8,7 +8,7 @@ services:
   # Grafana for exploring and visualizing data
   grafana-server:
     #image: grafana/grafana:latest
-    image: grafana/grafana-enterprise:latest
+    image: grafana/grafana-enterprise:latest@sha256:a297072de9f2f02e52166cf853281d1478e94d738e4e1905938c4257f59d88b3
     #image: grafana/grafana:9.0.6-ubuntu
     #image: grafana/grafana:8.2.1
     #image: grafana/grafana:8.5.6
@@ -23,7 +23,7 @@ services:
 
   # Grafana Metrics
   mimir:
-    image: grafana/mimir:latest
+    image: grafana/mimir:latest@sha256:736f7459913d262444e70813565e3ca24b64dce24343da20af554ae6ee5268e8
     depends_on:
       - grafana-server
     volumes:
@@ -48,7 +48,7 @@ services:
   # Grafana Agent
   # https://grafana.com/docs/agent/latest/
   grafana-agent:
-    image: grafana/agent:latest
+    image: grafana/agent:latest@sha256:473928c1cace5a23fdb1c187dba4ec0fe733d4627ae65383861a7beb997db88c
     ports:
       - "12347:12345"
       - "12348:12348"
