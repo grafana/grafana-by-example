@@ -22,7 +22,7 @@ dependencies {
     implementation("io.prometheus:prometheus-metrics-model:1.3.5")
 
     implementation("io.opentelemetry:opentelemetry-api:1.46.0")
-    implementation("io.opentelemetry:opentelemetry-sdk:1.46.0")
+    implementation("io.opentelemetry:opentelemetry-sdk:1.66.0")
 }
 
 tasks.getByName<Test>("test") {
