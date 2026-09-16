@@ -7,7 +7,7 @@ services:
 
   # Grafana for exploring and visualizing data
   grafana-server:
-    image: grafana/grafana-enterprise:latest-ubuntu
+    image: grafana/grafana-enterprise:latest-ubuntu@sha256:085990dd0002060feb89e1e551bef9c856ebc392a95a4c8216a4641d68ac0d0b
     #image: grafana-enterprise:main-ubuntu
     #image: grafana/grafana:9.0.6-ubuntu
     #image: grafana/grafana:latest
@@ -23,7 +23,7 @@ services:
 
   # Grafana Metrics
   mimir:
-    image: grafana/mimir:latest
+    image: grafana/mimir:latest@sha256:92838f113ba54230014e79bc812e57ca90bb9ebc06e665f59e4f700098c2dd04
     depends_on:
       - grafana-server
     volumes:
@@ -36,7 +36,7 @@ services:
 
   # Grafana logs
   loki:
-    image: grafana/loki:latest
+    image: grafana/loki:latest@sha256:d70e4659623f3e109af669cae76fe2a5dd5be54e2298fe8aed380d982fbc2500
     depends_on:
       - grafana-server
     ports:
