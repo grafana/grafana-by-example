@@ -4,7 +4,7 @@ services:
 
   # https://hub.docker.com/_/postgres
   postgres-server:
-    image: postgres:latest
+    image: postgres:latest@sha256:86c951e05bf56c93d95d397747fb8820ac76cc3bedb78f43abd83eedbe3666ae
     ports:
       - "5432:5432"
     environment:
@@ -24,7 +24,7 @@ services:
   # https://www.adminer.org/
   # Login localhost:8080 PostgreSQL / postgres-server / postgres / welcome1
   adminer:
-    image: adminer
+    image: adminer@sha256:51262b555d9e8ac3e1fa197eec41a3f47d05aea5520ac2ccc78a03ffc7d39b3a
     restart: always
     ports:
       - 8080:8080
@@ -49,7 +49,7 @@ services:
   # Grafana Agent
   # https://grafana.com/docs/agent/latest/
   grafana-agent:
-    image: grafana/agent:latest
+    image: grafana/agent:latest@sha256:473928c1cace5a23fdb1c187dba4ec0fe733d4627ae65383861a7beb997db88c
     ports:
       - "12345:12345"
       - "12346:12346"
