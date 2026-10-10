@@ -6,7 +6,7 @@ services:
 
   # Grafana Enterprise
   grafana-server:
-    image: grafana/grafana-enterprise
+    image: grafana/grafana-enterprise@sha256:06f65b30ff6513f55316beb6ff3e22d0132189297032ada2dfdc116f95663a60
     container_name: grafana-server
     environment:
       - GF_INSTALL_PLUGINS=grafana-splunk-datasource
@@ -19,7 +19,7 @@ services:
 
    # Splunk Enterprise
   splunk-enterprise:
-    image: splunk/splunk:latest
+    image: splunk/splunk:latest@sha256:9280f9ce267b212e5596aa1832cdfd3f9be886c378da35ebc87499323ee447a4
     container_name: splunk-enterprise
     environment:
       - SPLUNK_START_ARGS=--accept-license
