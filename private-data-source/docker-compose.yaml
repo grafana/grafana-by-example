@@ -3,7 +3,7 @@ version: "3.9"
 services:
 
   grafana-pdc-agent:
-    image: grafana/pdc-agent:latest
+    image: grafana/pdc-agent:latest@sha256:f2c3b93bd1881b5f8fb9f6bf3d7e6d1dedeaf213a567172f278082e735a63c99
     #entrypoint: [ /usr/bin/pdc  ]
     command: [ -token, $GRAFANA_CLOUD_PDC_TOKEN,
                -cluster, $GRAFANA_CLOUD_PDC_CLUSTER,
@@ -13,7 +13,7 @@ services:
 
   # https://hub.docker.com/_/postgres
   postgres-server:
-    image: postgres:latest
+    image: postgres:latest@sha256:e3d24f6906d0760bf4da0dae872415391ededefad23fd471c47dc53b0ddf3c42
     depends_on:
       - grafana-pdc-agent
     ports:
@@ -33,7 +33,7 @@ services:
       
   # Grafana Metrics
   mimir:
-    image: grafana/mimir:latest
+    image: grafana/mimir:latest@sha256:e4ff85d922c7c0a5131576d2659a1b98b3abfd73c92448dccf8ad3a6049a7ed8
     depends_on:
       - grafana-pdc-agent 
     volumes:
@@ -46,7 +46,7 @@ services:
 
     # Grafana Agent
   grafana-agent:
-    image: grafana/agent:latest
+    image: grafana/agent:latest@sha256:473928c1cace5a23fdb1c187dba4ec0fe733d4627ae65383861a7beb997db88c
     depends_on:
       - mimir
     ports:
