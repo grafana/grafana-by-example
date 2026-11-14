@@ -1,4 +1,4 @@
-FROM golang:latest
+FROM golang:latest@sha256:ec47ea3725fea0cc88f6de94919aef19f40f12fc1ec0e2d1b3426dbf15ecca04
 
 ENV HOME_DIR="/home/test"
 RUN mkdir ${HOME_DIR}
