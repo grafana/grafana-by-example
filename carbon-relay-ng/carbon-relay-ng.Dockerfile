@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:latest@sha256:d66b366dac61b575bee2aef07e9c26e8070096fbe84a3d4d3eb0da069b5d76db
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     vim unzip wget curl netcat net-tools iputils-ping ca-certificates
@@ -8,7 +8,7 @@ ENV SW_DIR=/carbon-relay-ng
 
 #FROM grafana/carbon-relay-ng:latest as carbon-relay
 
-COPY --from=grafana/carbon-relay-ng:latest          /bin/carbon-relay-ng /bin
+COPY --from=grafana/carbon-relay-ng:latest@sha256:c3ab39791140e512f7754a0bcd2276a2df4ead22688a4cb42957c2c79a793a0d          /bin/carbon-relay-ng /bin
 #COPY $SRC_DIR/carbon-relay-ng-configured.ini        /etc/carbon-relay-ng/carbon-relay-ng.ini 
 COPY $SRC_DIR/storage-schemas.conf                  /etc/carbon-relay-ng/
 COPY $SRC_DIR/storage-aggregation.conf              /etc/carbon-relay-ng/
